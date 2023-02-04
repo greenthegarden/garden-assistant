@@ -16,21 +16,8 @@ data = []
 
 
 @app.on_event("startup")
-async def startup_event():
-    DATAFILE = pathlib.Path() / 'data' / 'plantings.json'
-    session = Session(engine)
-    # check if the database is already populated
-    stmt = select(Planting)
-    result = session.exec(stmt).first()
-
-    # Load data if there are no results
-    if result is None:
-        with open(DATAFILE, 'r') as f:
-            plantings = json.load(f)
-            for planting in plantings:
-                session.add(Planting(**planting))
-        session.commit()
-    session.close()
+def on_startup():
+  create_db_and_tables()
 
 
 # See https://sqlmodel.tiangolo.com/tutorial/fastapi/session-with-dependency/
@@ -39,27 +26,11 @@ def get_session():
         yield session
 
 
-@app.get('/plantings/', response_model=List[PlantingRead])
-def plantings(offset: int = 0,
-           limit: int = Query(default=100, lte=100),
-           session: Session = Depends(get_session)):
-    # select * from
-    stmt = select(Planting).offset(offset).limit(limit)
-    db_plantings = session.exec(stmt).all()
-    return db_plantings
-
-
-@app.get('/plantings/{planting_id}/', response_model=PlantingRead)
-def planting(planting_id: int, session: Session = Depends(get_session)):
-    # find the planting with the given ID, or None if it does not exist
-    db_planting = session.get(Planting, planting_id)
-    if not db_planting:
-        raise HTTPException(status_code=404, detail="Planting not found")
-    return db_planting
-
-
-@app.post("/plantings/", response_model=PlantingRead, status_code=201)
-def create_planting(planting: PlantingCreate, session: Session = Depends(get_session)):
+@app.post("/plantings/", response_model=PlantingRead)
+def create_planting(*,
+                    session: Session = Depends(get_session),
+                    planting: PlantingCreate
+                    ):
     db_planting = Planting.from_orm(planting)
     session.add(db_planting)
     session.commit()
@@ -67,10 +38,34 @@ def create_planting(planting: PlantingCreate, session: Session = Depends(get_ses
     return db_planting
 
 
+@app.get("/plantings/", response_model=List[PlantingRead])
+def read_plantings(*,
+                   session: Session = Depends(get_session),
+                   offset: int = 0,
+                   limit: int = Query(default=100, lte=100)
+                   ):
+    # select * from
+    stmt = select(Planting).offset(offset).limit(limit)
+    db_plantings = session.exec(stmt).all()
+    return db_plantings
+
+
+@app.get("/plantings/{planting_id}", response_model=PlantingRead)
+def read_planting(*, session: Session = Depends(get_session), planting_id: int):
+    # find the planting with the given ID, or None if it does not exist
+    db_planting = session.get(Planting, planting_id)
+    if not db_planting:
+        raise HTTPException(status_code=404, detail="Planting not found")
+    return db_planting
+
+
+
 @app.patch("/plantings/{planting_id}", response_model=PlantingRead)
-def update_planting(planting_id: int,
-                 planting: PlantingUpdate,
-                 session: Session = Depends(get_session)):
+def update_planting(*,
+                    session: Session = Depends(get_session),
+                    planting_id: int,
+                    planting: PlantingUpdate,
+                    ):
     db_planting = session.get(Planting, planting_id)
     if not db_planting:
         raise HTTPException(status_code=404, detail="planting not found")
@@ -85,8 +80,10 @@ def update_planting(planting_id: int,
 
 
 @app.delete("/plantings/{planting_id}")
-def delete_planting(planting_id: int,
-                 session: Session = Depends(get_session)):
+def delete_planting(*,
+                    session: Session = Depends(get_session),
+                    planting_id: int,
+                    ):
     db_plantings = session.get(Planting, planting_id)
     if not db_plantings:
         raise HTTPException(status_code=404, detail="planting not found")
