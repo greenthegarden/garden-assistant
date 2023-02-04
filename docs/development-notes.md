@@ -1,5 +1,10 @@
 # Garden Assistant Development Notes
 
+## Dependencies
+
+* [FastAPI](https://fastapi.tiangolo.com/) as the web framework
+* [SQLModel](https://sqlmodel.tiangolo.com/) as the SQL database abstraction layer
+
 ## Project structure
 
 Code structure updated to conform with <https://sqlmodel.tiangolo.com/tutorial/code-structure/>
@@ -19,5 +24,5 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 Run the server using
 
 ```sh
-uvicorn app:app --reload
+uvicorn main:app --reload
 ```
