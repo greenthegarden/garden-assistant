@@ -19,6 +19,19 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 .\Scripts\Activate.ps1
 ```
 
+## VSCode
+
+To ensure Pylance extension finds the correct modules, ensure the Python interpretor being used is set to `Scripts\python.exe`.
+
+
+## Tests
+
+To run tests use
+
+```sh
+pytest test_main.py
+```
+
 ## Server
 
 Run the server using
