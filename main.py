@@ -1,6 +1,8 @@
 # import external modules
 
+import json
 from fastapi import Depends, FastAPI, HTTPException, Header, Query, Request
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
@@ -17,6 +19,12 @@ from models import Bed, BedCreate, BedRead, BedUpdate, Planting, PlantingCreate,
 app = FastAPI()
 
 templates = Jinja2Templates(directory="templates")
+
+
+# See https://sqlmodel.tiangolo.com/tutorial/fastapi/session-with-dependency/
+def get_session():
+    with Session(engine) as session:
+        yield session
 
 
 @app.on_event("startup")
@@ -37,13 +45,38 @@ def index(request: Request,
   return templates.TemplateResponse("index.html", context)
 
 
-# See https://sqlmodel.tiangolo.com/tutorial/fastapi/session-with-dependency/
-def get_session():
-    with Session(engine) as session:
-        yield session
+@app.get("/beds/", response_class=HTMLResponse)
+def beds(request: Request,
+         session: Session = Depends(get_session),
+         ):
+    db_beds = session.exec(select(Bed))
+    context = {"request": request, "beds": db_beds}
+    return templates.TemplateResponse("beds.html", context)
 
 
-@app.post("/plantings/", response_model=PlantingRead)
+@app.get("/plantings/", response_class=HTMLResponse)
+def plantings(request: Request,
+              session: Session = Depends(get_session),
+              ):
+    # db_plantings = session.exec(select(Planting))
+    stmt = select(Planting, Bed).where(Planting.bed_id == Bed.id)
+    results = session.exec(stmt).all()
+    print(results[0])
+    print(type(results))
+    plantings_data = jsonable_encoder(results)
+    beds = set([p['Bed']['name'] for p in plantings_data])
+    print(plantings_data)
+    print(type(plantings_data))
+    context = {"request": request,
+               "plantings": json.dumps(plantings_data),
+               "beds": beds
+               }
+    print(json.dumps(plantings_data))
+    print(type(json.dumps(plantings_data)))
+    return templates.TemplateResponse("plantings.html", context)
+    
+
+@app.post("/api/plantings/", response_model=PlantingRead)
 def create_planting(*,
                     session: Session = Depends(get_session),
                     planting: PlantingCreate
@@ -55,7 +88,7 @@ def create_planting(*,
     return db_planting
 
 
-@app.get("/plantings/", response_model=List[PlantingRead])
+@app.get("/api/plantings/", response_model=List[PlantingRead])
 def read_plantings(*,
                    session: Session = Depends(get_session),
                    offset: int = 0,
@@ -67,7 +100,7 @@ def read_plantings(*,
     return db_plantings
 
 
-@app.get("/plantings/{planting_id}", response_model=PlantingRead)
+@app.get("/api/plantings/{planting_id}", response_model=PlantingRead)
 def read_planting(*, session: Session = Depends(get_session), planting_id: int):
     # find the planting with the given ID, or None if it does not exist
     db_planting = session.get(Planting, planting_id)
@@ -77,7 +110,7 @@ def read_planting(*, session: Session = Depends(get_session), planting_id: int):
 
 
 
-@app.patch("/plantings/{planting_id}", response_model=PlantingRead)
+@app.patch("/api/plantings/{planting_id}", response_model=PlantingRead)
 def update_planting(*,
                     session: Session = Depends(get_session),
                     planting_id: int,
@@ -96,7 +129,7 @@ def update_planting(*,
     return db_planting
 
 
-@app.delete("/plantings/{planting_id}")
+@app.delete("/api/plantings/{planting_id}")
 def delete_planting(*,
                     session: Session = Depends(get_session),
                     planting_id: int,
@@ -109,7 +142,7 @@ def delete_planting(*,
     return {"ok": True}
 
 
-@app.post("/beds/", response_model=BedRead)
+@app.post("/api/beds/", response_model=BedRead)
 def create_bed(*,
                session: Session = Depends(get_session),
                bed: BedCreate
@@ -121,7 +154,7 @@ def create_bed(*,
     return db_bed
 
 
-@app.get("/beds/", response_model=List[BedRead])
+@app.get("/api/beds/", response_model=List[BedRead])
 def read_beds(*,
               session: Session = Depends(get_session),
               offset: int = 0,
@@ -133,7 +166,7 @@ def read_beds(*,
     return db_beds
 
 
-@app.get("/beds/{bed_id}", response_model=BedRead)
+@app.get("/api/beds/{bed_id}", response_model=BedRead)
 def read_bed(*, session: Session = Depends(get_session), bed_id: int):
     # find the planting with the given ID, or None if it does not exist
     db_bed = session.get(Bed, bed_id)
@@ -143,7 +176,7 @@ def read_bed(*, session: Session = Depends(get_session), bed_id: int):
 
 
 
-@app.patch("/beds/{bed_id}", response_model=BedRead)
+@app.patch("/api/beds/{bed_id}", response_model=BedRead)
 def update_bed(*,
                session: Session = Depends(get_session),
                bed_id: int,
@@ -162,7 +195,7 @@ def update_bed(*,
     return db_bed
 
 
-@app.delete("/beds/{bed_id}")
+@app.delete("/api/beds/{bed_id}")
 def delete_bed(*,
                session: Session = Depends(get_session),
                bed_id: int,
