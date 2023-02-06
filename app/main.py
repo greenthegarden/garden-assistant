@@ -12,8 +12,8 @@ from typing import List, Optional
 
 # import local modules
 
-from database import engine, create_db_and_tables
-from models import Bed, BedCreate, BedRead, BedUpdate, Planting, PlantingCreate, PlantingRead, PlantingUpdate, Bed
+from app.database import engine, create_db_and_tables
+from app.models import Bed, BedCreate, BedRead, BedUpdate, Planting, PlantingCreate, PlantingRead, PlantingUpdate, Bed
 
 # instantiate the FastAPI app
 app = FastAPI()

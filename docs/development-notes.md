@@ -29,7 +29,7 @@ To ensure Pylance extension finds the correct modules, ensure the Python interpr
 To run tests use
 
 ```sh
-pytest test_main.py
+pytest tests/test_main.py
 ```
 
 ## Server
@@ -37,5 +37,5 @@ pytest test_main.py
 Run the server using
 
 ```sh
-uvicorn main:app --reload
+uvicorn app.main:app --reload
 ```
