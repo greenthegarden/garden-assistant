@@ -1,0 +1,7 @@
+{
+  "cSpell.words": [
+    "fastapi",
+    "sqlmodel"
+  ],
+  "python.formatting.provider": "black"
+}
