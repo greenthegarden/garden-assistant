@@ -1,4 +1,6 @@
 fastapi
 Jinja2
+markdown
+python-multipart
 sqlmodel
 uvicorn

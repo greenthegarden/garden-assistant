@@ -1,9 +1,29 @@
 # Garden Assistant Development Notes
 
+## Project References
+
+* <https://medium.com/gitconnected/building-a-website-starter-with-fastapi-92d077092864>
+* <https://betterprogramming.pub/fastapi-best-practices-1f0deeba4fce>
+* [FastAPI - SQLModel Relationships and Alpine.js integration](https://www.youtube.com/watch?v=qlXJu2U1jc4)
+* <https://www.youtube.com/watch?v=mGU3j51waWA>
+* [Forms and File Uploads with FastAPI and Jinja2](https://www.youtube.com/watch?v=L4WBFRQB7Lk)
+
 ## Dependencies
 
 * [FastAPI](https://fastapi.tiangolo.com/) as the web framework
 * [SQLModel](https://sqlmodel.tiangolo.com/) as the SQL database abstraction layer
+
+For production deployment install dependencies using
+
+```sh
+pip install -r requirements/prod.txt
+```
+
+For development, to support running tests, install dependencies using
+
+```sh
+pip install -r requirements/dev.txt
+```
 
 ## Project structure
 

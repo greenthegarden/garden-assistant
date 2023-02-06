@@ -12,12 +12,44 @@
 </head>
 <body>
 
-<div class="mx-4">
+  <div class="mx-4">
+
+    <h1 class="text-2xl font-bold mb-4">Create a Garden Bed</h1>
+
+    <form method="POST">
+      <label for="name">Name:</label><br>
+      <input type="text" name="name"><br>
+      <label for="soil_type">Soil Type:</label><br>
+      <input type="text" name="soil_type"><br>
+      <input type="submit" value="Submit">
+    </form>
+
+  </div>
+
+  <div class="mx-4" x-data="{ results: {{ beds }} }">
 
     <h1 class="text-2xl font-bold mb-4">Garden Beds</h1>
 
+    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" class="py-3 px-6">Name</th>
+          <th scope="col" class="py-3 px-6">Soil Type</th>
+          <th scope="col" class="py-3 px-6">Irrigation Zone</th>
+        </tr>
+      </thead>
+      <tbody>
+        <template x-for="result in results">
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <td x-text="result.name"></td>
+            <td x-text="result.soil_type"></td>
+            <td x-text="result.irrigation_zone"></td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
 
-</div>
+  </div>
 
 </body>
 </html>

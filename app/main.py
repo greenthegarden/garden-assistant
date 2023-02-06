@@ -1,8 +1,9 @@
 # import external modules
 
 import json
-from fastapi import Depends, FastAPI, HTTPException, Header, Query, Request
+from fastapi import Depends, FastAPI, Form, HTTPException, Header, Path, Query, Request
 from fastapi.encoders import jsonable_encoder
+from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
@@ -13,13 +14,14 @@ from typing import List, Optional
 # import local modules
 
 from app.database import engine, create_db_and_tables
+from app.library.helpers import *
 from app.models import Bed, BedCreate, BedRead, BedUpdate, Planting, PlantingCreate, PlantingRead, PlantingUpdate, Bed
 
 # instantiate the FastAPI app
 app = FastAPI()
 
 templates = Jinja2Templates(directory="templates")
-
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # See https://sqlmodel.tiangolo.com/tutorial/fastapi/session-with-dependency/
 def get_session():
@@ -29,29 +31,53 @@ def get_session():
 
 @app.on_event("startup")
 def on_startup():
-  create_db_and_tables()
+    create_db_and_tables()
 
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request,
           hx_request: Optional[str] = Header(None),
           ):
-  plantings = [
-    {'plant': 'cucumber', 'variety': 'lebanese', 'notes': ''}
-  ]
-  context = {"request": request, "plantings": plantings}
-  if hx_request:
-    return templates.TemplateResponse("table.html", context)
-  return templates.TemplateResponse("index.html", context)
+    plantings = [
+        {'plant': 'cucumber', 'variety': 'lebanese', 'notes': ''}
+    ]
+    context = {"request": request, "plantings": plantings}
+    if hx_request:
+        return templates.TemplateResponse("table.html", context)
+    return templates.TemplateResponse("index.html", context)
+
 
 
 @app.get("/beds/", response_class=HTMLResponse)
 def beds(request: Request,
          session: Session = Depends(get_session),
          ):
-    db_beds = session.exec(select(Bed))
-    context = {"request": request, "beds": db_beds}
-    return templates.TemplateResponse("beds.html", context)
+  stmt = select(Bed)
+  db_beds = session.exec(stmt).all()
+  beds_data = jsonable_encoder(db_beds)
+  print(beds_data)
+  context = {"request": request, "beds": json.dumps(beds_data)}
+  return templates.TemplateResponse("beds.html", context)
+
+
+# Get a form and process contents to create a garden bed
+@app.post("/beds/", response_class=HTMLResponse)
+def post_bed_create_form(request: Request,
+                         session: Session = Depends(get_session),
+                         form_data: BedCreate = Depends(BedCreate.as_form),
+                         ):
+  print(f"Form data: {form_data}")
+  # create_bed(bed=form_data)  
+  db_bed = Bed.from_orm(form_data)
+  session.add(db_bed)
+  session.commit()
+  session.refresh(db_bed)
+  stmt = select(Bed)
+  db_beds = session.exec(stmt).all()
+  beds_data = jsonable_encoder(db_beds)
+  print(beds_data)
+  context = {"request": request, "beds": json.dumps(beds_data)}
+  return templates.TemplateResponse("beds.html", context)
 
 
 @app.get("/plantings/", response_class=HTMLResponse)
@@ -101,7 +127,9 @@ def read_plantings(*,
 
 
 @app.get("/api/plantings/{planting_id}", response_model=PlantingRead)
-def read_planting(*, session: Session = Depends(get_session), planting_id: int):
+def read_planting(*,
+                  session: Session = Depends(get_session),
+                  planting_id: int = Path(None, description="The ID of the planting  to return")):
     # find the planting with the given ID, or None if it does not exist
     db_planting = session.get(Planting, planting_id)
     if not db_planting:

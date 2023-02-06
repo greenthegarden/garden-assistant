@@ -1,4 +1,6 @@
 from datetime import datetime
+from fastapi import Form
+from sqlalchemy import Column, DateTime, func
 from sqlmodel import Field, Relationship, SQLModel
 from typing import List, Optional
 
@@ -17,6 +19,16 @@ class Bed(BedBase, table=True):
 class BedCreate(BedBase):
   pass
 
+  @classmethod
+  def as_form(
+    cls,
+    name: str = Form(...),
+    soil_type: str = Form(...)
+  ):
+    return cls(
+      name=name,
+      soil_type=soil_type
+    )
 
 class BedRead(BedBase):
   id: int
@@ -32,7 +44,6 @@ class PlantingBase(SQLModel):
   # name: str = Field(index=True)
   plant: str
   variety: Optional[str]
-  # date_planted: Optional[datetime]
   # date_first_harvested: Optional[datetime]
   # date_removed: Optional[datetime]
   notes: Optional[str]
@@ -41,7 +52,9 @@ class PlantingBase(SQLModel):
   
 class Planting(PlantingBase, table=True):
   id: Optional[int] = Field(default=None, primary_key=True)
-  # date_planted: datetime
+  # date_planted: Optional[datetime] = Field(
+  #   sa_column=Column(DateTime(timezone=True), server_default=func.now())
+  #   )
   bed: Optional[Bed] = Relationship(back_populates="plantings")
 
 class PlantingCreate(PlantingBase):
@@ -49,6 +62,7 @@ class PlantingCreate(PlantingBase):
 
 class PlantingRead(PlantingBase):
   id: int
+  date_planted: datetime
   
 class PlantingUpdate(SQLModel):
   plant: Optional[str]
