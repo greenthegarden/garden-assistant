@@ -29,7 +29,7 @@ class BedUpdate(SQLModel):
 
 
 class PlantingBase(SQLModel):
-  name: str = Field(index=True)
+  # name: str = Field(index=True)
   plant: str
   variety: Optional[str]
   # date_planted: Optional[datetime]

@@ -5,8 +5,8 @@ from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool
 # from urllib import response
 
-from main import app, get_session
-from models import Planting
+from app.main import app, get_session
+from app.models import Planting
 
 # Based on https://sqlmodel.tiangolo.com/tutorial/fastapi/tests/
 
@@ -37,7 +37,7 @@ def client_fixture(session: Session):
   
 def test_create_planting(client: TestClient):
     response = client.post(
-      "/plantings",
+      "/api/plantings",
       json={"plant": "cucumber"}
     )
     data = response.json()
@@ -52,7 +52,7 @@ def test_create_planting(client: TestClient):
 def test_create_planting_incomplete(client: TestClient):
   # no name
   response = client.post(
-    "/plantings",
+    "/api/plantings",
     json={"notes": "test"}
   )
   assert response.status_code == 422
@@ -65,7 +65,7 @@ def test_read_plantings(session: Session, client: TestClient):
   session.add(planting_2)
   session.commit()
   
-  response = client.get("/plantings/")
+  response = client.get("/api/plantings/")
   data = response.json()
   
   assert response.status_code == 200
@@ -86,7 +86,7 @@ def test_read_planting(session: Session, client: TestClient):
   session.add(planting_1)
   session.commit()
   
-  response = client.get(f"/plantings/{planting_1.id}")
+  response = client.get(f"/api/plantings/{planting_1.id}")
   data = response.json()
   
   assert response.status_code == 200
@@ -102,7 +102,7 @@ def test_update_planting(session: Session, client: TestClient):
   session.add(planting_1)
   session.commit()
   
-  response = client.patch(f"/plantings/{planting_1.id}", json={"notes": "updated"})
+  response = client.patch(f"/api/plantings/{planting_1.id}", json={"notes": "updated"})
   data = response.json()
   
   assert response.status_code == 200
@@ -118,7 +118,7 @@ def test_delete_planting(session: Session, client: TestClient):
   session.add(planting_1)
   session.commit()
   
-  response = client.delete(f"/plantings/{planting_1.id}")
+  response = client.delete(f"/api/plantings/{planting_1.id}")
 
   dp_planting = session.get(Planting, planting_1.id)
     
