@@ -9,7 +9,7 @@ from fastapi.templating import Jinja2Templates
 
 from sqlmodel import Session, select
 
-from typing import List, Optional
+from typing import Any, List, Optional
 
 # import local modules
 
@@ -47,6 +47,11 @@ def index(request: Request,
     return templates.TemplateResponse("index.html", context)
 
 
+@app.get("/bed/add", response_class=HTMLResponse)
+def beds_add(request: Request):
+    context = {"request": request}
+    return templates.TemplateResponse('beds/partials/add_bed_form.html', context)
+
 
 @app.get("/beds/", response_class=HTMLResponse)
 def beds(request: Request,
@@ -56,18 +61,27 @@ def beds(request: Request,
   db_beds = session.exec(stmt).all()
   beds_data = jsonable_encoder(db_beds)
   print(beds_data)
-  context = {"request": request, "beds": json.dumps(beds_data)}
-  return templates.TemplateResponse("beds.html", context)
+  # context for alpine.js
+  # context = {"request": request, "beds": json.dumps(beds_data)}
+  # context for htmx
+  context = {"request": request, "beds": beds_data}
+  return templates.TemplateResponse("beds/beds.html", context)
 
 
 # Get a form and process contents to create a garden bed
 @app.post("/beds/", response_class=HTMLResponse)
 def post_bed_create_form(request: Request,
                          session: Session = Depends(get_session),
-                         form_data: BedCreate = Depends(BedCreate.as_form),
+                         name: str = Form(...),
+                         soil_type: str = Form(...),
+                         irrigation_zone: str = Form(...),
+                         form_data: BedCreate = Depends(BedCreate.as_form)
                          ):
+  print(f"name: {name}")
+  print(f"soil_type: {soil_type}")
+  print(f"irrigation_zone: {irrigation_zone}")
   print(f"Form data: {form_data}")
-  # create_bed(bed=form_data)  
+  # create_bed(bed=form_data)
   db_bed = Bed.from_orm(form_data)
   session.add(db_bed)
   session.commit()
@@ -76,30 +90,22 @@ def post_bed_create_form(request: Request,
   db_beds = session.exec(stmt).all()
   beds_data = jsonable_encoder(db_beds)
   print(beds_data)
-  context = {"request": request, "beds": json.dumps(beds_data)}
-  return templates.TemplateResponse("beds.html", context)
+  context = {"request": request, "beds": beds_data}
+  return templates.TemplateResponse("beds/beds.html", context)
 
 
 @app.get("/plantings/", response_class=HTMLResponse)
 def plantings(request: Request,
               session: Session = Depends(get_session),
               ):
-    # db_plantings = session.exec(select(Planting))
-    stmt = select(Planting, Bed).where(Planting.bed_id == Bed.id)
+    stmt = select(Planting)
     results = session.exec(stmt).all()
-    print(results[0])
-    print(type(results))
     plantings_data = jsonable_encoder(results)
-    beds = set([p['Bed']['name'] for p in plantings_data])
-    print(plantings_data)
-    print(type(plantings_data))
+    # beds = set([p['Bed']['name'] for p in plantings_data])
     context = {"request": request,
-               "plantings": json.dumps(plantings_data),
-               "beds": beds
+               "plantings": plantings_data,
                }
-    print(json.dumps(plantings_data))
-    print(type(json.dumps(plantings_data)))
-    return templates.TemplateResponse("plantings.html", context)
+    return templates.TemplateResponse("plantings/plantings.html", context)
     
 
 @app.post("/api/plantings/", response_model=PlantingRead)
@@ -175,11 +181,12 @@ def create_bed(*,
                session: Session = Depends(get_session),
                bed: BedCreate
                ):
-    db_bed = Bed.from_orm(bed)
-    session.add(db_bed)
-    session.commit()
-    session.refresh(db_bed)
-    return db_bed
+  print(f"Bed: {bed}")
+  db_bed = Bed.from_orm(bed)
+  session.add(db_bed)
+  session.commit()
+  session.refresh(db_bed)
+  return db_bed
 
 
 @app.get("/api/beds/", response_model=List[BedRead])

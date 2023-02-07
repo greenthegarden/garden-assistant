@@ -23,11 +23,13 @@ class BedCreate(BedBase):
   def as_form(
     cls,
     name: str = Form(...),
-    soil_type: str = Form(...)
+    soil_type: str = Form(...),
+    irrigation_zone: str = Form(...)
   ):
     return cls(
       name=name,
-      soil_type=soil_type
+      soil_type=soil_type,
+      irrigation_zone=irrigation_zone
     )
 
 class BedRead(BedBase):
