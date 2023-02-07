@@ -31,26 +31,24 @@ def get_session():
 
 @app.on_event("startup")
 def on_startup():
-    create_db_and_tables()
+  create_db_and_tables()
 
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request,
-          hx_request: Optional[str] = Header(None),
+          session: Session = Depends(get_session),
           ):
-    plantings = [
-        {'plant': 'cucumber', 'variety': 'lebanese', 'notes': ''}
-    ]
-    context = {"request": request, "plantings": plantings}
-    if hx_request:
-        return templates.TemplateResponse("table.html", context)
-    return templates.TemplateResponse("index.html", context)
+  stmt = select(Planting)
+  db_plantings = session.exec(stmt).all()
+  print(db_plantings)
+  context = {"request": request, "plantings": db_plantings}
+  return templates.TemplateResponse("index.html", context)
 
 
 @app.get("/bed/add", response_class=HTMLResponse)
 def beds_add(request: Request):
-    context = {"request": request}
-    return templates.TemplateResponse('beds/partials/add_bed_form.html', context)
+  context = {"request": request}
+  return templates.TemplateResponse('beds/partials/add_bed_form.html', context)
 
 
 @app.get("/beds/", response_class=HTMLResponse)
@@ -92,6 +90,13 @@ def post_bed_create_form(request: Request,
   print(beds_data)
   context = {"request": request, "beds": beds_data}
   return templates.TemplateResponse("beds/beds.html", context)
+
+
+
+@app.get("/plantings/add", response_class=HTMLResponse)
+def plantings_add(request: Request):
+    context = {"request": request}
+    return templates.TemplateResponse('plantings/partials/show_add_form.html', context)
 
 
 @app.get("/plantings/", response_class=HTMLResponse)
