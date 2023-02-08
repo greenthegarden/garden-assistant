@@ -3,4 +3,5 @@ Jinja2
 markdown
 python-multipart
 sqlmodel
+types-Markdown
 uvicorn
