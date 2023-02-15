@@ -1,8 +1,8 @@
 from sqlmodel import Session
 
 from app.database import engine
-from app.models import IrrigationZone, SoilType
-from app.models import Bed, BedCreate, Planting
+from app.models.garden_models import IrrigationZone, SoilType
+from app.models.garden_models import Bed, Planting
 
 
 def create_bed():

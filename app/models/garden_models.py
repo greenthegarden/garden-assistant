@@ -1,10 +1,17 @@
 from datetime import datetime
-from enum import Enum
+from enum import Enum as Enum_
 from fastapi import Form
 from fastapi_restful.enums import StrEnum
 from sqlalchemy import Column, DateTime, func
 from sqlmodel import Field, Relationship, SQLModel
 from typing import List, Optional
+
+
+# Class to return list of enum values
+class Enum(Enum_):
+    @classmethod
+    def list(cls):
+        return list(map(lambda c: c.value, cls))
 
 
 class SoilType(str, Enum):
@@ -26,8 +33,8 @@ class IrrigationZone(str, Enum):
 
 class BedBase(SQLModel):
   name: str = Field(index=True)
-  soil_type: Optional[SoilType]
-  irrigation_zone: Optional[IrrigationZone]
+  soil_type: Optional[SoilType] = None
+  irrigation_zone: Optional[IrrigationZone] = None
 
 
 class Bed(BedBase, table=True):
@@ -65,10 +72,10 @@ class BedUpdate(SQLModel):
 class PlantingBase(SQLModel):
   # name: str = Field(index=True)
   plant: str
-  variety: Optional[str]
+  variety: Optional[str] = None
   # date_first_harvested: Optional[datetime]
   # date_removed: Optional[datetime]
-  notes: Optional[str]
+  notes: Optional[str] = None
   bed_id: Optional[int] = Field(default=None, foreign_key="bed.id")
   
   

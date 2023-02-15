@@ -17,7 +17,7 @@ import uvicorn
 
 from app.database import engine, create_db_and_tables
 from app.library.helpers import *
-from app.models import Bed, BedCreate, BedRead, BedUpdate, Planting, PlantingCreate, PlantingRead, PlantingUpdate, Bed
+from app.models.garden_models import Bed, BedCreate, BedRead, BedUpdate, Planting, PlantingCreate, PlantingRead, PlantingUpdate, Bed
 from app.populate import create_planting_db
 
 # instantiate the FastAPI app

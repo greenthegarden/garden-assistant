@@ -1,12 +1,13 @@
 from fastapi.testclient import TestClient
 import pytest
+import random
 from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool
 from urllib import response
 
 from app.main import app, get_session
-from app.models import Bed, Planting
-from app.models import SoilType, IrrigationZone
+from app.models.garden_models import Bed, Planting
+from app.models.garden_models import SoilType, IrrigationZone
 
 # Based on https://sqlmodel.tiangolo.com/tutorial/fastapi/tests/
 
@@ -62,8 +63,10 @@ def test_create_bed_incomplete(client: TestClient):
   
 
 def test_read_beds(session: Session, client: TestClient):
-  bed_1 = Bed(name="Vegetable Plot", irrigation_zone=IrrigationZone.VEGETABLES)
-  bed_2 = Bed(name="Seedlings", soil_type=SoilType.SEED_RAISING_MIX)
+  irrigation_zone=random.choice(IrrigationZone.list())
+  soil_type=random.choice(SoilType.list())
+  bed_1 = Bed(name="Vegetable Plot", irrigation_zone=irrigation_zone)
+  bed_2 = Bed(name="Seedlings", soil_type=soil_type)
   session.add(bed_1)
   session.add(bed_2)
   session.commit()
@@ -221,3 +224,25 @@ def test_delete_planting(session: Session, client: TestClient):
   assert response.status_code == 200
   
   assert dp_planting is None
+
+
+def test_read_planting_with_bed(session: Session, client: TestClient):
+  bed_1 = Bed(name="Vegetable Plot", irrigation_zone=IrrigationZone.VEGETABLES)
+  session.add(bed_1)
+  session.commit()
+  planting_1 = Planting(plant="corn", bed_id=bed_1.id)
+  session.add(planting_1)
+  session.commit()
+
+  response = client.get(f"/api/plantings/{planting_1.id}")
+  data = response.json()
+  
+  assert response.status_code == 200
+  
+  assert data["plant"] == planting_1.plant
+  assert data["variety"] == planting_1.variety
+  assert data["notes"] == planting_1.notes
+  assert data["bed_id"] == planting_1.bed_id
+  assert data["id"] == planting_1.id
+  assert planting_1.bed.name == bed_1.name
+  

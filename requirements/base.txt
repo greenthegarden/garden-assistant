@@ -1,7 +1,9 @@
+alembic
 fastapi
 fastapi-restful
 Jinja2
 markdown
+pydantic[email]
 python-multipart
 sqlmodel
 types-Markdown

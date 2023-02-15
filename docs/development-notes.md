@@ -59,3 +59,24 @@ Run the server using
 ```sh
 uvicorn app.main:app --reload
 ```
+
+
+## Database Migrations
+
+[Alembic](https://alembic.sqlalchemy.org/en/latest/) is utilised to enable database migration.
+
+To initialise use
+
+```sh
+alembic init migrations
+```
+
+Ensure import statements for `sqlmodel` ardded to both the `migrations/script.py.mako` and `migrations/env.py` files. In addition, ensure all models are imported into the `migrations/env.py` file
+
+Update sqlalchemy url in `alembic.ini` file
+
+To create the first migration use
+
+```sh
+alembic revision --autogenerate -m "initial migration"
+```
