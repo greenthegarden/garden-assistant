@@ -1,6 +1,6 @@
 # import external modules
 
-from fastapi import APIRouter, Depends, HTTPException, Path, Query
+from fastapi import APIRouter, Depends, HTTPException, Path, Query, Response, status
 from sqlmodel import Session, select
 from typing import List
 
@@ -10,7 +10,7 @@ from app.database.session import get_session
 from app.library.helpers import *
 from app.models.garden_models import Bed, BedCreate, BedRead, BedUpdate
 from app.models.garden_models import Planting, PlantingCreate, PlantingRead, PlantingUpdate
-
+from app.endpoints.api_user import auth_handler
 
 garden_router = APIRouter()
 
@@ -20,8 +20,13 @@ garden_router = APIRouter()
 @garden_router.post("/api/beds/", response_model=BedRead, tags=["Garden Beds API"])
 def create_bed(*,
                session: Session = Depends(get_session),
+               response: Response,
+               user=Depends(auth_handler.get_current_user),
                bed: BedCreate
                ):
+  if not user.gardener:
+    response.status_code = status.HTTP_401_UNAUTHORIZED
+    return {}
   print(f"Bed: {bed}")
   db_bed = Bed.from_orm(bed)
   session.add(db_bed)
@@ -47,7 +52,7 @@ def read_bed(*, session: Session = Depends(get_session), bed_id: int):
   # find the planting with the given ID, or None if it does not exist
   db_bed = session.get(Bed, bed_id)
   if not db_bed:
-    raise HTTPException(status_code=404, detail="Bed not found")
+    raise HTTPException(status_code=404, detail='Bed not found')
   return db_bed
 
 
@@ -59,7 +64,7 @@ def update_bed(*,
                ):
   db_bed = session.get(Bed, bed_id)
   if not db_bed:
-    raise HTTPException(status_code=404, detail="Bed not found")
+    raise HTTPException(status_code=404, detail='Bed not found')
   # update the planting data
   bed_data = bed.dict(exclude_unset=True)
   for key, val in bed_data.items():
@@ -77,10 +82,10 @@ def delete_bed(*,
                ):
   db_bed = session.get(Bed, bed_id)
   if not db_bed:
-    raise HTTPException(status_code=404, detail="Bed not found")
+    raise HTTPException(status_code=404, detail='Bed not found')
   session.delete(db_bed)
   session.commit()
-  return {"ok": True}
+  return {'ok': True}
 
 
 # CRUD API methods for Garden Plantings

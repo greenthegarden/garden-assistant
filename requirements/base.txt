@@ -1,8 +1,11 @@
 alembic
+bcrypt
 fastapi
 Jinja2
 markdown
+passlib
 pydantic[email]
+pyJWT
 python-multipart
 sqlmodel
 types-Markdown

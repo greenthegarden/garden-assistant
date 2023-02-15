@@ -9,6 +9,7 @@ import uvicorn
 
 from app.database.database import create_db_and_tables
 from app.endpoints.api_garden import garden_router
+from app.endpoints.api_user import user_router
 from app.endpoints.pages import pages_router
 from app.populate import create_planting_db
 
@@ -17,6 +18,7 @@ from app.populate import create_planting_db
 app = FastAPI()
 
 app.include_router(garden_router)
+app.include_router(user_router)
 app.include_router(pages_router)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")

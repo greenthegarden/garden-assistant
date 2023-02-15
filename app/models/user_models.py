@@ -2,7 +2,7 @@ import datetime
 from typing import Optional
 
 from pydantic import validator, EmailStr
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import SQLModel, Field
 
 
 class User(SQLModel, table=True):
@@ -11,7 +11,7 @@ class User(SQLModel, table=True):
   password: str = Field(max_length=256, min_length=6)
   email: EmailStr
   created_at: datetime.datetime = datetime.datetime.now()
-  is_seller: bool = False
+  gardener: bool = True
 
 
 class UserInput(SQLModel):
@@ -19,16 +19,15 @@ class UserInput(SQLModel):
   password: str = Field(max_length=256, min_length=6)
   password2: str
   email: EmailStr
-  is_seller: bool = False
+  gardener: bool = True
 
-  @validator('password2')
+  @validator("password2")
   def password_match(cls, v, values, **kwargs):
     if 'password' in values and v != values['password']:
-      raise ValueError('passwords don\'t match')
+      raise ValueError("Passwords don\'t match")
     return v
 
 
 class UserLogin(SQLModel):
   username: str
   password: str
-  
