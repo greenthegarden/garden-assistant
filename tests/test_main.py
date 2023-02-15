@@ -5,7 +5,8 @@ from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool
 from urllib import response
 
-from app.main import app, get_session
+from app.main import app
+from app.database.session import get_session
 from app.models.garden_models import Bed, Planting
 from app.models.garden_models import SoilType, IrrigationZone
 
