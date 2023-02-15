@@ -9,4 +9,5 @@ pyJWT
 python-multipart
 sqlmodel
 types-Markdown
+types-passlib
 uvicorn

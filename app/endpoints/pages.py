@@ -36,10 +36,10 @@ def beds_add(request: Request):
 @pages_router.get("/beds/cancel_add", tags=["Pages API"])
 def cancel_beds(request: Request):
     url = request.headers.get('HX-Current-URL')
-    url = url.split('/')[-2]
-    print(url)
+    url_path = url.split('/')[-2]
+    print(url_path)
     context = {"request": request}
-    if url == 'beds':
+    if url_path == 'beds':
         return templates.TemplateResponse('beds/partials/show_add_bed_form.html', context)
     return templates.TemplateResponse('plantings/partials/show_add_form.html', context)
 
