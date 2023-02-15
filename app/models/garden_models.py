@@ -8,9 +8,9 @@ from typing import List, Optional
 
 # Class to return list of enum values
 class Enum(Enum_):
-    @classmethod
-    def list(cls):
-        return list(map(lambda c: c.value, cls))
+  @classmethod
+  def list(cls):
+    return list(map(lambda c: c.value, cls))
 
 
 class SoilType(str, Enum):

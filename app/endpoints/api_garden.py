@@ -17,7 +17,7 @@ garden_router = APIRouter()
 
 # CRUD API methods for Garden Beds
 
-@garden_router.post("/api/beds/", response_model=BedRead)
+@garden_router.post("/api/beds/", response_model=BedRead, tags=["Garden Beds API"])
 def create_bed(*,
                session: Session = Depends(get_session),
                bed: BedCreate
@@ -30,7 +30,7 @@ def create_bed(*,
   return db_bed
 
 
-@garden_router.get("/api/beds/", response_model=List[BedRead])
+@garden_router.get("/api/beds/", response_model=List[BedRead], tags=["Garden Beds API"])
 def read_beds(*,
               session: Session = Depends(get_session),
               offset: int = 0,
@@ -42,7 +42,7 @@ def read_beds(*,
   return db_beds
 
 
-@garden_router.get("/api/beds/{bed_id}", response_model=BedRead)
+@garden_router.get("/api/beds/{bed_id}", response_model=BedRead, tags=["Garden Beds API"])
 def read_bed(*, session: Session = Depends(get_session), bed_id: int):
   # find the planting with the given ID, or None if it does not exist
   db_bed = session.get(Bed, bed_id)
@@ -51,7 +51,7 @@ def read_bed(*, session: Session = Depends(get_session), bed_id: int):
   return db_bed
 
 
-@garden_router.patch("/api/beds/{bed_id}", response_model=BedRead)
+@garden_router.patch("/api/beds/{bed_id}", response_model=BedRead, tags=["Garden Beds API"])
 def update_bed(*,
                session: Session = Depends(get_session),
                bed_id: int,
@@ -70,7 +70,7 @@ def update_bed(*,
   return db_bed
 
 
-@garden_router.delete("/api/beds/{bed_id}")
+@garden_router.delete("/api/beds/{bed_id}", tags=["Garden Beds API"])
 def delete_bed(*,
                session: Session = Depends(get_session),
                bed_id: int,
@@ -85,7 +85,7 @@ def delete_bed(*,
 
 # CRUD API methods for Garden Plantings
 
-@garden_router.post("/api/plantings/", response_model=PlantingRead)
+@garden_router.post("/api/plantings/", response_model=PlantingRead, tags=["Garden Plantings API"])
 def create_planting(*,
                     session: Session = Depends(get_session),
                     planting: PlantingCreate
@@ -97,7 +97,7 @@ def create_planting(*,
   return db_planting
 
 
-@garden_router.get("/api/plantings/", response_model=List[PlantingRead])
+@garden_router.get("/api/plantings/", response_model=List[PlantingRead], tags=["Garden Plantings API"])
 def read_plantings(*,
                    session: Session = Depends(get_session),
                    offset: int = 0,
@@ -109,7 +109,7 @@ def read_plantings(*,
   return db_plantings
 
 
-@garden_router.get("/api/plantings/{planting_id}", response_model=PlantingRead)
+@garden_router.get("/api/plantings/{planting_id}", response_model=PlantingRead, tags=["Garden Plantings API"])
 def read_planting(*,
                   session: Session = Depends(get_session),
                   planting_id: int = Path(None, description="The ID of the planting  to return")):
@@ -120,7 +120,7 @@ def read_planting(*,
   return db_planting
 
 
-@garden_router.patch("/api/plantings/{planting_id}", response_model=PlantingRead)
+@garden_router.patch("/api/plantings/{planting_id}", response_model=PlantingRead, tags=["Garden Plantings API"])
 def update_planting(*,
                     session: Session = Depends(get_session),
                     planting_id: int,
@@ -139,7 +139,7 @@ def update_planting(*,
   return db_planting
 
 
-@garden_router.delete("/api/plantings/{planting_id}")
+@garden_router.delete("/api/plantings/{planting_id}", tags=["Garden Plantings API"])
 def delete_planting(*,
                     session: Session = Depends(get_session),
                     planting_id: int,

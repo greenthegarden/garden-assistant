@@ -16,7 +16,7 @@ from app.models.garden_models import Planting, PlantingCreate, PlantingRead, Pla
 pages_router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
-@pages_router.get("/", response_class=HTMLResponse)
+@pages_router.get("/", response_class=HTMLResponse, tags=["Pages API"])
 def index(request: Request,
           session: Session = Depends(get_session),
           ):
@@ -27,13 +27,13 @@ def index(request: Request,
   return templates.TemplateResponse("index.html", context)
 
 
-@pages_router.get("/bed/add", response_class=HTMLResponse)
+@pages_router.get("/bed/add", response_class=HTMLResponse, tags=["Pages API"])
 def beds_add(request: Request):
   context = {"request": request}
   return templates.TemplateResponse('beds/partials/add_bed_form.html', context)
 
 
-@pages_router.get("/beds/cancel_add")
+@pages_router.get("/beds/cancel_add", tags=["Pages API"])
 def cancel_beds(request: Request):
     url = request.headers.get('HX-Current-URL')
     url = url.split('/')[-2]
@@ -44,7 +44,7 @@ def cancel_beds(request: Request):
     return templates.TemplateResponse('plantings/partials/show_add_form.html', context)
 
 
-@pages_router.get("/beds/", response_class=HTMLResponse)
+@pages_router.get("/beds/", response_class=HTMLResponse, tags=["Pages API"])
 def beds(request: Request,
          session: Session = Depends(get_session),
          ):
@@ -60,7 +60,7 @@ def beds(request: Request,
 
 
 # Get a form and process contents to create a garden bed
-@pages_router.post("/beds/", response_class=HTMLResponse)
+@pages_router.post("/beds/", response_class=HTMLResponse, tags=["Pages API"])
 def post_bed_create_form(request: Request,
                          session: Session = Depends(get_session),
                          name: str = Form(...),
@@ -85,13 +85,13 @@ def post_bed_create_form(request: Request,
   return templates.TemplateResponse("beds/beds.html", context)
 
 
-@pages_router.get("/plantings/add", response_class=HTMLResponse)
+@pages_router.get("/plantings/add", response_class=HTMLResponse, tags=["Pages API"])
 def plantings_add(request: Request):
   context = {"request": request}
   return templates.TemplateResponse('plantings/partials/show_add_form.html', context)
 
 
-@pages_router.get("/plantings/", response_class=HTMLResponse)
+@pages_router.get("/plantings/", response_class=HTMLResponse, tags=["Pages API"])
 def plantings(request: Request,
               session: Session = Depends(get_session),
               ):
@@ -103,4 +103,3 @@ def plantings(request: Request,
               "plantings": plantings_data,
               }
   return templates.TemplateResponse("plantings/plantings.html", context)
-    
