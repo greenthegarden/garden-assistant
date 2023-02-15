@@ -1,6 +1,5 @@
 alembic
 fastapi
-fastapi-restful
 Jinja2
 markdown
 pydantic[email]

@@ -1,7 +1,6 @@
 from datetime import datetime
 from enum import Enum as Enum_
 from fastapi import Form
-from fastapi_restful.enums import StrEnum
 from sqlalchemy import Column, DateTime, func
 from sqlmodel import Field, Relationship, SQLModel
 from typing import List, Optional

@@ -1,6 +1,6 @@
 from sqlmodel import Session
 
-from app.database import engine
+from app.database.database import engine
 from app.models.garden_models import IrrigationZone, SoilType
 from app.models.garden_models import Bed, Planting
 
