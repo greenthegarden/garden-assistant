@@ -1,14 +1,33 @@
 from datetime import datetime
+from enum import Enum
 from fastapi import Form
+from fastapi_restful.enums import StrEnum
 from sqlalchemy import Column, DateTime, func
 from sqlmodel import Field, Relationship, SQLModel
 from typing import List, Optional
 
 
+class SoilType(str, Enum):
+  LOAM = "Loam"
+  CLAY = "Clay"
+  SILT = "Silt"
+  SAND = "Sand"
+  POTTING_MIX = "Potting Mix"
+  SEED_RAISING_MIX = "Seed Raising Mix"
+  COMPOST = "Compost"
+
+
+class IrrigationZone(str, Enum):
+  GRASS = "Grass"
+  TREES = "Trees"
+  SHRUBS = "Shrubs"
+  VEGETABLES = "Vegetables"
+
+
 class BedBase(SQLModel):
   name: str = Field(index=True)
-  soil_type: Optional[str]
-  irrigation_zone: Optional[str]
+  soil_type: Optional[SoilType]
+  irrigation_zone: Optional[IrrigationZone]
 
 
 class Bed(BedBase, table=True):
@@ -31,6 +50,7 @@ class BedCreate(BedBase):
       soil_type=soil_type,
       irrigation_zone=irrigation_zone
     )
+
 
 class BedRead(BedBase):
   id: int
@@ -59,12 +79,15 @@ class Planting(PlantingBase, table=True):
   #   )
   bed: Optional[Bed] = Relationship(back_populates="plantings")
 
+
 class PlantingCreate(PlantingBase):
   pass
 
+
 class PlantingRead(PlantingBase):
   id: int
-  date_planted: datetime
+  # date_planted: datetime
+
   
 class PlantingUpdate(SQLModel):
   plant: Optional[str]

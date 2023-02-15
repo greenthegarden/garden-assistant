@@ -11,12 +11,14 @@ from sqlmodel import Session, select
 
 from typing import Any, List, Optional
 
+import uvicorn
+
 # import local modules
 
 from app.database import engine, create_db_and_tables
 from app.library.helpers import *
 from app.models import Bed, BedCreate, BedRead, BedUpdate, Planting, PlantingCreate, PlantingRead, PlantingUpdate, Bed
-
+from app.populate import create_planting_db
 
 # instantiate the FastAPI app
 app = FastAPI()
@@ -33,8 +35,11 @@ def get_session():
 
 @app.on_event("startup")
 def on_startup():
+  print(f"Creating database and tables...")
   create_db_and_tables()
-
+  print(f"Populating tables...")  
+  create_planting_db()
+  
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request,
@@ -125,72 +130,7 @@ def plantings(request: Request,
   return templates.TemplateResponse("plantings/plantings.html", context)
     
 
-@app.post("/api/plantings/", response_model=PlantingRead)
-def create_planting(*,
-                    session: Session = Depends(get_session),
-                    planting: PlantingCreate
-                    ):
-  db_planting = Planting.from_orm(planting)
-  session.add(db_planting)
-  session.commit()
-  session.refresh(db_planting)
-  return db_planting
-
-
-@app.get("/api/plantings/", response_model=List[PlantingRead])
-def read_plantings(*,
-                   session: Session = Depends(get_session),
-                   offset: int = 0,
-                   limit: int = Query(default=100, lte=100)
-                   ):
-  # select * from
-  stmt = select(Planting).offset(offset).limit(limit)
-  db_plantings = session.exec(stmt).all()
-  return db_plantings
-
-
-@app.get("/api/plantings/{planting_id}", response_model=PlantingRead)
-def read_planting(*,
-                  session: Session = Depends(get_session),
-                  planting_id: int = Path(None, description="The ID of the planting  to return")):
-  # find the planting with the given ID, or None if it does not exist
-  db_planting = session.get(Planting, planting_id)
-  if not db_planting:
-    raise HTTPException(status_code=404, detail="Planting not found")
-  return db_planting
-
-
-@app.patch("/api/plantings/{planting_id}", response_model=PlantingRead)
-def update_planting(*,
-                    session: Session = Depends(get_session),
-                    planting_id: int,
-                    planting: PlantingUpdate,
-                    ):
-  db_planting = session.get(Planting, planting_id)
-  if not db_planting:
-    raise HTTPException(status_code=404, detail="Planting not found")
-  # update the planting data
-  planting_data = planting.dict(exclude_unset=True)
-  for key, val in planting_data.items():
-    setattr(db_planting, key, val)
-  session.add(db_planting)
-  session.commit()
-  session.refresh(db_planting)
-  return db_planting
-
-
-@app.delete("/api/plantings/{planting_id}")
-def delete_planting(*,
-                    session: Session = Depends(get_session),
-                    planting_id: int,
-                    ):
-  db_planting = session.get(Planting, planting_id)
-  if not db_planting:
-    raise HTTPException(status_code=404, detail="Planting not found")
-  session.delete(db_planting)
-  session.commit()
-  return {"ok": True}
-
+# CRUD API methods for Garden Beds
 
 @app.post("/api/beds/", response_model=BedRead)
 def create_bed(*,
@@ -258,9 +198,82 @@ def delete_bed(*,
   return {"ok": True}
 
 
+# CRUD API methods for Garden Plantings
+
+@app.post("/api/plantings/", response_model=PlantingRead)
+def create_planting(*,
+                    session: Session = Depends(get_session),
+                    planting: PlantingCreate
+                    ):
+  db_planting = Planting.from_orm(planting)
+  session.add(db_planting)
+  session.commit()
+  session.refresh(db_planting)
+  return db_planting
+
+
+@app.get("/api/plantings/", response_model=List[PlantingRead])
+def read_plantings(*,
+                   session: Session = Depends(get_session),
+                   offset: int = 0,
+                   limit: int = Query(default=100, lte=100)
+                   ):
+  # select * from
+  stmt = select(Planting).offset(offset).limit(limit)
+  db_plantings = session.exec(stmt).all()
+  return db_plantings
+
+
+@app.get("/api/plantings/{planting_id}", response_model=PlantingRead)
+def read_planting(*,
+                  session: Session = Depends(get_session),
+                  planting_id: int = Path(None, description="The ID of the planting  to return")):
+  # find the planting with the given ID, or None if it does not exist
+  db_planting = session.get(Planting, planting_id)
+  if not db_planting:
+    raise HTTPException(status_code=404, detail="Planting not found")
+  return db_planting
+
+
+@app.patch("/api/plantings/{planting_id}", response_model=PlantingRead)
+def update_planting(*,
+                    session: Session = Depends(get_session),
+                    planting_id: int,
+                    planting: PlantingUpdate,
+                    ):
+  db_planting = session.get(Planting, planting_id)
+  if not db_planting:
+    raise HTTPException(status_code=404, detail="Planting not found")
+  # update the planting data
+  planting_data = planting.dict(exclude_unset=True)
+  for key, val in planting_data.items():
+    setattr(db_planting, key, val)
+  session.add(db_planting)
+  session.commit()
+  session.refresh(db_planting)
+  return db_planting
+
+
+@app.delete("/api/plantings/{planting_id}")
+def delete_planting(*,
+                    session: Session = Depends(get_session),
+                    planting_id: int,
+                    ):
+  db_planting = session.get(Planting, planting_id)
+  if not db_planting:
+    raise HTTPException(status_code=404, detail="Planting not found")
+  session.delete(db_planting)
+  session.commit()
+  return {"ok": True}
+
+
 def main():
+  print(f"Creating database and tables...")
   create_db_and_tables()
+  print(f"Populating tables...")  
+  create_planting_db()
 
 
 if __name__ == "__main__":
   main()
+  # uvicorn.run(app.main, host="127.0.0.1", port=8000)
