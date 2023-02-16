@@ -1,5 +1,6 @@
 # import external modules
- 
+
+import logging
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import HTMLResponse
@@ -9,12 +10,18 @@ from sqlmodel import Session, select
 # import local modules
 
 from app.database.session import get_session
+from app.library.routers import TimedRoute
+from app.models.garden_models import IrrigationZone, SoilType
 from app.models.garden_models import Bed, BedCreate, BedRead, BedUpdate
 from app.models.garden_models import Planting, PlantingCreate, PlantingRead, PlantingUpdate
 
 
-pages_router = APIRouter()
+logger = logging.getLogger(__name__)
+
+
+pages_router = APIRouter(route_class=TimedRoute)
 templates = Jinja2Templates(directory="templates")
+
 
 @pages_router.get("/", response_class=HTMLResponse, tags=["Pages API"])
 def index(request: Request,
@@ -29,7 +36,9 @@ def index(request: Request,
 
 @pages_router.get("/bed/add", response_class=HTMLResponse, tags=["Pages API"])
 def beds_add(request: Request):
-  context = {"request": request}
+  irrigation_zones = IrrigationZone.list()
+  soil_types = SoilType.list()
+  context = {"request": request, "irrigation_zones": irrigation_zones, "soil_types": soil_types }
   return templates.TemplateResponse('beds/partials/add_bed_form.html', context)
 
 
@@ -68,11 +77,14 @@ def post_bed_create_form(request: Request,
                          irrigation_zone: str = Form(...),
                          form_data: BedCreate = Depends(BedCreate.as_form)
                          ):
+  # async with request.form() as form:
+  #   print(f"form: {form}")
   print(f"name: {name}")
   print(f"soil_type: {soil_type}")
   print(f"irrigation_zone: {irrigation_zone}")
   print(f"Form data: {form_data}")
   # create_bed(bed=form_data)
+  print(request)
   db_bed = Bed.from_orm(form_data)
   session.add(db_bed)
   session.commit()

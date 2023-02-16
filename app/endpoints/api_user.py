@@ -42,7 +42,7 @@ def login(*, session: Session = Depends(get_session), user: UserLogin):
   return {'token': token}
 
 
-@user_router.get("/users/me", tags=["Users API"])
+@user_router.get("/users/current", tags=["Users API"])
 def get_current_user(*, user: User = Depends(auth_handler.get_current_user)):
   """Return the current user"""
   return user

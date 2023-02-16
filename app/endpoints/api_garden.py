@@ -1,4 +1,5 @@
 # import external modules
+import logging
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, Response, status
 from sqlmodel import Session, select
@@ -8,12 +9,18 @@ from typing import List
 
 from app.database.session import get_session
 from app.library.helpers import *
+from app.library.routers import TimedRoute
+from app.models.garden_models import IrrigationZone, SoilType
 from app.models.garden_models import Bed, BedCreate, BedRead, BedUpdate
 from app.models.garden_models import Planting, PlantingCreate, PlantingRead, PlantingUpdate
 from app.models.user_models import User
 from app.endpoints.api_user import auth_handler
 
-garden_router = APIRouter()
+
+logger = logging.getLogger(__name__)
+
+                                      
+garden_router = APIRouter(route_class=TimedRoute)
 
 
 # CRUD API methods for Garden Beds
@@ -29,6 +36,10 @@ def create_bed(*,
   if not user.gardener:
     response.status_code = status.HTTP_401_UNAUTHORIZED
     return {}
+  statement = select(Bed)
+  db_beds = session.exec(statement).all()
+  if any(x.name == bed.name for x in db_beds):
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Bed with name {bed.name} already exists")
   print(f"Bed: {bed}")
   db_bed = Bed.from_orm(bed)
   session.add(db_bed)
@@ -83,23 +94,39 @@ def update_bed(*,
   return db_bed
 
 
-@garden_router.delete("/api/beds/{bed_id}", status_code=status.HTTP_202_ACCEPTED, tags=["Garden Beds API"])
+@garden_router.delete("/api/beds/{bed_id}", response_model=None, status_code=status.HTTP_202_ACCEPTED, tags=["Garden Beds API"])
 def delete_bed(*,
                session: Session = Depends(get_session),
                response: Response,
-               user: User = Depends(auth_handler.get_current_user),
                bed_id: int,
                ):
   """Delete the garden bed with the given ID."""
-  if not user.gardener:
-    response.status_code = status.HTTP_401_UNAUTHORIZED
-    return {}
+              #  user: User = Depends(auth_handler.get_current_user),
+  # if not user.gardener:
+  #   response.status_code = status.HTTP_401_UNAUTHORIZED
+  #   return {}
   db_bed = session.get(Bed, bed_id)
   if not db_bed:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Bed not found')
   session.delete(db_bed)
   session.commit()
-  return {'ok': True}
+  return Response(status_code=status.HTTP_200_OK)
+
+
+@garden_router.get("/api/beds/soil_types/", response_model=List[SoilType], tags=["Garden Beds API"])
+def read_soil_types():
+  """Get the list of defined soil types."""
+  soil_types = SoilType.list()
+  print(soil_types)
+  return soil_types
+
+
+@garden_router.get("/api/beds/irrigation_zones/", response_model=List[IrrigationZone], tags=["Garden Beds API"])
+def read_irrigation_zones():
+  """Get the list of defined irrigation zones."""
+  irrigation_zones = IrrigationZone.list()
+  print(irrigation_zones)
+  return irrigation_zones
 
 
 # CRUD API methods for Garden Plantings
@@ -171,4 +198,4 @@ def delete_planting(*,
     raise HTTPException(status_code=404, detail="Planting not found")
   session.delete(db_planting)
   session.commit()
-  return {"ok": True}
+  return Response(status_code=status.HTTP_200_OK)

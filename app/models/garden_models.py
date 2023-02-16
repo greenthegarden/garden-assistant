@@ -64,8 +64,8 @@ class BedRead(BedBase):
   
 class BedUpdate(SQLModel):
   name: Optional[str] = None
-  soil_type: Optional[str] = None
-  irrigation_zone: Optional[str] = None
+  soil_type: Optional[SoilType] = None
+  irrigation_zone: Optional[IrrigationZone] = None
 
 
 class PlantingBase(SQLModel):

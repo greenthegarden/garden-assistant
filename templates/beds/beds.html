@@ -1,23 +1,28 @@
 {% extends "shared/_layout.html" %}
 {% block main_content %}
 
-<div class="mx-4" id="bed-main-content">
+<div id="bed-main-content">
   <div>
     <h1 class="text-2xl font-bold mb-4">Garden Beds</h1>
-    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+    <table class="w-full text-sm">
+      <thead>
         <tr>
-          <th scope="col" class="py-3 px-6">Name</th>
-          <th scope="col" class="py-3 px-6">Soil Type</th>
-          <th scope="col" class="py-3 px-6">Irrigation Zone</th>
+          <th scope="col">Name</th>
+          <th scope="col">Soil Type</th>
+          <th scope="col">Irrigation Zone</th>
         </tr>
       </thead>
-      <tbody class="text-center text-sm" id="bed-table-body">
+      <tbody id="bed-table-body" hx-confirm="Are you sure?" hx-target="closest tr" hx-swap="outerHTML swap:1s">
         {% for bed in beds %}
-          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+          <tr>
             <td>{{ bed.name }}</td>
             <td>{{ bed.soil_type }}</td>
             <td>{{ bed.irrigation_zone }}</td>
+            <td>
+              <button class="btn btn-danger" hx-delete="/api/beds/{{ bed.id }}">
+                Delete
+              </button>
+            </td>
           </tr>
         {% endfor %}
       </tbody>

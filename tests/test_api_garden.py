@@ -1,3 +1,4 @@
+from fastapi import status
 from fastapi.testclient import TestClient
 import pytest
 import random
@@ -10,8 +11,11 @@ from app.database.session import get_session
 from app.models.garden_models import Bed, Planting
 from app.models.garden_models import SoilType, IrrigationZone
 
-# Based on https://sqlmodel.tiangolo.com/tutorial/fastapi/tests/
+# Based on
+# https://fastapi.tiangolo.com/tutorial/testing/
+# https://sqlmodel.tiangolo.com/tutorial/fastapi/tests/
 
+fake_secret_token = "coneofsilence"
 
 @pytest.fixture(name="session")
 def session_fixture():
@@ -39,15 +43,26 @@ def client_fixture(session: Session):
 
 # Garden Bed API tests
 
-def test_create_bed(client: TestClient):
+def test_create_bed_no_auth(client: TestClient):
     response = client.post(
       "/api/beds",
-      json={"name": "Vegetable Plot", "soil_type": SoilType.LOAM, "irrigation_zone": IrrigationZone.VEGETABLES}
+      json={"name": "Test Plot", "soil_type": SoilType.LOAM, "irrigation_zone": IrrigationZone.VEGETABLES}
     )
     data = response.json()
     print(data)
     
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_create_bed(client: TestClient):
+    response = client.post(
+      "/api/beds",
+      json={"name": "Test Plot", "soil_type": SoilType.LOAM, "irrigation_zone": IrrigationZone.VEGETABLES}
+    )
+    data = response.json()
+    print(data)
+    
+    assert response.status_code == status.HTTP_201_CREATED
     assert data["name"] == "Vegetable Plot"
     assert data["soil_type"] == "Loam"
     assert data["irrigation_zone"] == "Vegetables"

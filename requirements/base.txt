@@ -4,7 +4,7 @@ fastapi
 Jinja2
 markdown
 passlib
-pydantic[email]
+pydantic[dotenv, email]
 pyJWT
 python-multipart
 sqlmodel

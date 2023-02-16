@@ -7,13 +7,23 @@
     <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Name</label>
     <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" name="name" placeholder="Name" required><br>
   </div>
-  <div class="mb-4">
+  <div class="mb-4" hx-target="#soil_type_select">
     <label class="block text-gray-700 text-sm font-bold mb-2" for="soil_type">Soil Type</label>
-    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="soil_type" type="text" name="soil_type" placeholder="Soil Type" required><br>
+    <select name="soil_type" hx-indicator=".htmx-indicator">
+      {% for soil_type in soil_types %}
+        <option value="{{ soil_type }}">{{ soil_type }}</option>
+      {% endfor %}
+    </select>
+    <!-- <label class="block text-gray-700 text-sm font-bold mb-2" for="soil_type">Soil Type</label>
+    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="soil_type" type="text" name="soil_type" placeholder="Soil Type" required><br> -->
   </div>
   <div class="mb-4">
     <label class="block text-gray-700 text-sm font-bold mb-2" for="irrigation_zone">Irrigation Zone</label>
-    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="irrigation_zone" type="text" name="irrigation_zone" placeholder="Irrigation Zone" required><br>
+    <select name="irrigation_zone" hx-indicator=".htmx-indicator">
+      {% for irrigation_zone in irrigation_zones %}
+      <option value="{{ irrigation_zone }}">{{ irrigation_zone }}</option>
+      {% endfor %}
+    </select>
   </div>
   <div class="mb-4">
     <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
