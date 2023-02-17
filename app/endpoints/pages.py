@@ -3,7 +3,7 @@
 import logging
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.encoders import jsonable_encoder
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select
 
@@ -33,8 +33,8 @@ def index(request: Request,
   return templates.TemplateResponse("index.html", context)
 
 
-@pages_router.get("/bed/add", response_class=HTMLResponse, tags=["Pages API"])
-def beds_add(request: Request):
+@pages_router.get("/bed/form", response_class=HTMLResponse, tags=["Pages API"])
+def beds_form(request: Request):
   irrigation_zones = IrrigationZone.list()
   soil_types = SoilType.list()
   context = {"request": request, "irrigation_zones": irrigation_zones, "soil_types": soil_types }
@@ -80,7 +80,7 @@ def beds(request: Request,
 
 
 # Get a form and process contents to create a garden bed
-@pages_router.post("/beds/", response_class=HTMLResponse, tags=["Pages API"])
+@pages_router.post("/beds/", response_class=JSONResponse, tags=["Pages API"])
 def post_bed_create_form(request: Request,
                          session: Session = Depends(get_session),
                          name: str = Form(...),
@@ -100,12 +100,9 @@ def post_bed_create_form(request: Request,
   session.add(db_bed)
   session.commit()
   session.refresh(db_bed)
-  stmt = select(Bed)
-  db_beds = session.exec(stmt).all()
-  beds_data = jsonable_encoder(db_beds)
-  print(beds_data)
-  context = {"request": request, "beds": beds_data}
-  return templates.TemplateResponse("beds/beds.html", context)
+  headers = {"HX-Trigger": "bedsChanged"}
+  content = {"bed": jsonable_encoder(db_bed)}
+  return JSONResponse(content=content, headers=headers)
 
 
 @pages_router.get("/plantings/add", response_class=HTMLResponse, tags=["Pages API"])

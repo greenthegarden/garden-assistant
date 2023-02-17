@@ -2,6 +2,7 @@
 import logging
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, Response, status
+from fastapi.responses import JSONResponse
 from sqlmodel import Session, select
 from typing import List
 
@@ -110,7 +111,10 @@ def delete_bed(*,
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Bed not found')
   session.delete(db_bed)
   session.commit()
-  return Response(status_code=status.HTTP_200_OK)
+  # return Response(status_code=status.HTTP_200_OK)
+  headers = {"HX-Trigger": "bedsChanged"}
+  content = {}
+  return JSONResponse(content=content, headers=headers)
 
 
 @garden_router.get("/api/beds/soil_types/", response_model=List[SoilType], tags=["Garden Beds API"])

@@ -7,6 +7,7 @@
 * [FastAPI - SQLModel Relationships and Alpine.js integration](https://www.youtube.com/watch?v=qlXJu2U1jc4)
 * <https://www.youtube.com/watch?v=mGU3j51waWA>
 * [Forms and File Uploads with FastAPI and Jinja2](https://www.youtube.com/watch?v=L4WBFRQB7Lk)
+* [Reimagining front-end web development with htmx and hyperscript](https://nomadiq.hashnode.dev/reimagining-front-end-web-development-with-htmx-and-hyperscript)
 
 ## Dependencies
 

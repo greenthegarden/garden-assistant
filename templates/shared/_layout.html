@@ -22,28 +22,25 @@
   {% block additional_css %}{% endblock %}
 </head>
 <body>
+  <div class="flex-row flex-grow">
+    {% include "shared/navbar.html" %}
 
-  <nav>
-    <a class="navbar-brand inline-block" href="/">Garden Assistant <img class="icon" src="/static/img/land-plots.svg" alt="Shovel icon" style="width:24px;height:24px" /></a>
-    <span>
-      <a class="nav-item inline-block" href="/beds">Beds <img src="/static/img/shovel.svg" alt="Shovel icon" style="width:24px;height:24px" /></a>
-      <a class="nav-item inline-block" href="/plantings">Plantings <img src="/static/img/food-apple.svg" alt="Shovel icon" style="width:24px;height:24px" /></a>
-    </span>
-  </nav>
+    <div class="content pb-28">
+      {% block content %}
+      {% endblock %}
+    </div>
 
-  <div class="main_content">
-    {% block main_content %}{% endblock %}
+    {% include "shared/footer.html" %}
   </div>
 
-  <footer>
-    <div class="copyright">
-      <a href="/docs" target="_blank">API</a>
-    </div>
-  </footer>
+  <!-- <script>
+    document.body.addEventListener('htmx:configRequest', (event) => {
+      event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+    })
+  </script> -->
 
-  <!-- <script src="/static/js/htmx.min.js?v=1.5.0"></script> -->
-
-  {% block additional_js %}{% endblock %}
+  {% block additional_js %}
+  {% endblock %}
 
 </body>
 </html>

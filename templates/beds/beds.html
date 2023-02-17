@@ -1,7 +1,7 @@
 {% extends "shared/_layout.html" %}
 
-{% block main_content %}
-  <div id="bed-main-content" class="card items-center pt-8" style="min-height: 24rem">
+{% block content %}
+  <div id="bed-content" class="card items-center pt-8" style="min-height: 24rem">
     <h1 class="text-x1 text-center font-bold">Garden Beds</h1>
     <div class="divider w-1/2 mx-auto"></div>
     <script type="text/hyperscript">
@@ -17,7 +17,7 @@
       role="alert" style="display: none">
       <span class="block inline">Beds updated successfully!</span>
     </div>
-    <div class="flex flex-row w-screen md:w-3/4 xl:w-1/2">
+    <div id="beds-table" class="flex flex-row w-screen md:w-3/4 xl:w-1/2">
       <table class="table table-fixed grow">
         <thead class="w-auto">
           <tr class="text-left flex-1">
@@ -26,14 +26,11 @@
             <th scope="col">Irrigation Zone</th>
           </tr>
         </thead>
-        <tbody id="bed-table-body"
-              hx-trigger="load, bedsChanged from:body"
-              hx-get="/beds/update"
-              hx-target=this
-              _="on htmx:afterOnLoad add .hidden to #spinner">
+        <tbody id="bed-table-body" hx-trigger="load, bedsChanged from:body" hx-get="/beds/update" hx-target=this
+          _="on htmx:afterOnLoad add .hidden to #spinner">
         </tbody>
       </table>
-      <button _="on htmx:afterRequest add .modal-open to #modal" hx-get="/bed/add" hx-select="#modal-box"
+      <button _="on htmx:afterRequest add .modal-open to #modal" hx-get="/bed/form" hx-select="#modal-box"
         hx-target="#modal" class="mx-auto md:ml-2 btn btn-primary btn-square border-none basis-14" value="New">
         New
       </button>
@@ -49,12 +46,12 @@
       </g>
     </svg>
     <div class="divider w-1/2 mx-auto"></div>
-    <div>
+    <!-- <div>
       {% include 'beds/partials/show_add_bed_form.html' %}
-    </div>
+    </div> -->
   </div>
   
   <div id="modal" class="modal">
     {% include 'beds/partials/modal_form.html' %}
   </div>
-{% endblock %}
+{% endblock content %}

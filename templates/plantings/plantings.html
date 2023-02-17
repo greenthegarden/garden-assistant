@@ -1,11 +1,10 @@
 {% extends "shared/_layout.html" %}
-{% block main_content %}
 
-<div class="mx-4">
+{% block content %}
+  <div class="mx-4">
 
-    <h1 class="text-2xl font-bold mb-4">Plantings</h1>
+      <h1 class="text-2xl font-bold mb-4">Plantings</h1>
 
-    {% include 'plantings/partials/plantings_table.html' %}
-</div>
-
-{% endblock %}
+      {% include 'plantings/partials/plantings_table.html' %}
+  </div>
+{% endblock content %}
