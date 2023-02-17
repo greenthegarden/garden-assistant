@@ -77,15 +77,15 @@ app.include_router(router)
 def on_startup():
   print(f"Creating database and tables...")
   create_db_and_tables()
-  print(f"Populating tables...")  
-  create_planting_db()
+  # print(f"Populating tables...")  
+  # create_planting_db()
 
 
 def main():
   print(f"Creating database and tables...")
   create_db_and_tables()
-  print(f"Populating tables...")  
-  create_planting_db()
+  # print(f"Populating tables...")  
+  # create_planting_db()
 
 
 if __name__ == "__main__":

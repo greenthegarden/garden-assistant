@@ -29,7 +29,6 @@ def index(request: Request,
           ):
   stmt = select(Planting)
   db_plantings = session.exec(stmt).all()
-  print(db_plantings)
   context = {"request": request, "plantings": db_plantings}
   return templates.TemplateResponse("index.html", context)
 
@@ -39,7 +38,19 @@ def beds_add(request: Request):
   irrigation_zones = IrrigationZone.list()
   soil_types = SoilType.list()
   context = {"request": request, "irrigation_zones": irrigation_zones, "soil_types": soil_types }
-  return templates.TemplateResponse('beds/partials/add_bed_form.html', context)
+  # return templates.TemplateResponse('beds/partials/add_bed_form.html', context)
+  return templates.TemplateResponse('beds/partials/modal_form.html', context)
+
+
+@pages_router.get("/beds/update", tags=["Pages API"])
+def beds_update(request: Request,
+                session: Session = Depends(get_session),
+                ):
+  stmt = select(Bed)
+  db_beds = session.exec(stmt).all()
+  context = {"request": request, "beds": db_beds }
+  # return templates.TemplateResponse('beds/partials/add_bed_form.html', context)
+  return templates.TemplateResponse('beds/partials/beds_table_body.html', context)
 
 
 @pages_router.get("/beds/cancel_add", tags=["Pages API"])

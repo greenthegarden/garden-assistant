@@ -1,0 +1,12 @@
+{% for bed in beds %}
+  <tr>
+    <td>{{ bed.name }}</td>
+    <td>{{ bed.soil_type }}</td>
+    <td>{{ bed.irrigation_zone }}</td>
+    <td>
+      <button class="btn btn-danger" hx-delete="/api/beds/{{ bed.id }}">
+        Delete
+      </button>
+    </td>
+  </tr>
+{% endfor %}

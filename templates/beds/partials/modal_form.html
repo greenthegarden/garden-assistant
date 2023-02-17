@@ -1,0 +1,36 @@
+<div id="modal-box" class="modal-box p-4 scrollbar-thin" hx-target="this" hx-swap="outerHTML">
+  <button _="on click remove .modal-open from #modal" class="btn btn-sm btn-circle absolute right-2 top-2">
+    ✕
+  </button>
+  <h3 class="font-bold text-lg">New Garden Bed</h3>
+  <p class="pt-2 pb-4">Enter the details of the garden bed</p>
+  <form id="bed-form" hx-post="/beds/" _="on submit toggle @disabled on #submit-button">
+    <div class="grid grid-cols-2 gap-x-4 gap-y-0">
+      <div class="col-span-2">
+        <label for="name">Name</label>
+        <input id="name" type="text" name="name" placeholder="Name" required>
+      </div>
+      <div hx-target="#soil_type_select">
+        <label for="soil_type">Soil Type</label>
+        <select name="soil_type" hx-indicator=".htmx-indicator">
+          {% for soil_type in soil_types %}
+            <option value="{{ soil_type }}">{{ soil_type }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-4">
+        <label for="irrigation_zone">Irrigation Zone</label>
+        <select name="irrigation_zone" hx-indicator=".htmx-indicator">
+          {% for irrigation_zone in irrigation_zones %}
+          <option value="{{ irrigation_zone }}">{{ irrigation_zone }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div>
+      <button id="submit-button" type="submit" class="btn btn-primary border-none">
+        Create
+      </button>
+    </div>
+  </form>
+</div>
