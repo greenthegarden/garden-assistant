@@ -1,7 +1,7 @@
 {% extends "shared/_layout.html" %}
 
 {% block content %}
-  <div id="bed-content" class="card items-center pt-8" style="min-height: 24rem">
+  <div id="beds-content" class="card items-center pt-8" style="min-height: 24rem">
     <h1 class="text-x1 text-center font-bold">Garden Beds</h1>
     <div class="divider w-1/2 mx-auto"></div>
     <script type="text/hyperscript">
@@ -26,7 +26,7 @@
             <th scope="col">Irrigation Zone</th>
           </tr>
         </thead>
-        <tbody id="bed-table-body" hx-trigger="load, bedsChanged from:body" hx-get="/beds/update" hx-target=this
+        <tbody id="beds-table-body" hx-trigger="load, bedsChanged from:body" hx-get="/beds/update" hx-target=this
           _="on htmx:afterOnLoad add .hidden to #spinner">
         </tbody>
       </table>
@@ -46,9 +46,6 @@
       </g>
     </svg>
     <div class="divider w-1/2 mx-auto"></div>
-    <!-- <div>
-      {% include 'beds/partials/show_add_bed_form.html' %}
-    </div> -->
   </div>
   
   <div id="modal" class="modal">

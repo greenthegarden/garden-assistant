@@ -1,10 +1,55 @@
 {% extends "shared/_layout.html" %}
 
 {% block content %}
-  <div class="mx-4">
-
-      <h1 class="text-2xl font-bold mb-4">Plantings</h1>
-
-      {% include 'plantings/partials/plantings_table.html' %}
+  <div id="plantings-content" class="card items-center pt-8" style="min-height: 24rem">
+    <h1 class="text-x1 text-center font-bold">Garden Plantings</h1>
+    <div class="divider w-1/2 mx-auto"></div>
+    <script type="text/hyperscript">
+      on plantingsChanged
+        remove .modal-open from #modal
+        show #alert-success
+        wait 3s
+        hide #alert-success
+      end
+    </script>
+    <div id="alert-success"
+      class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-2 -mt-2 w-auto mx-auto"
+      role="alert" style="display: none">
+      <span class="block inline">Plantings updated successfully!</span>
+    </div>
+    <div id="plantings-table" class="flex flex-row w-screen md:w-3/4 xl:w-1/2">
+      <table class="table table-fixed grow">
+        <thead class="w-auto">
+          <tr class="text-left flex-1">
+            <th scope="col">Plant</th>
+            <th scope="col">Variety</th>
+            <th scope="col">Bed</th>
+            <th scope="col">Notes</th>
+          </tr>
+        </thead>
+        <tbody id="plantings-table-body" hx-trigger="load, plantingsChanged from:body" hx-get="/plantings/update" hx-target=this
+          _="on htmx:afterOnLoad add .hidden to #spinner">
+        </tbody>
+      </table>
+      <button _="on htmx:afterRequest add .modal-open to #modal" hx-get="/planting/form" hx-select="#modal-box"
+        hx-target="#modal" class="mx-auto md:ml-2 btn btn-primary btn-square border-none basis-14" value="New">
+        New
+      </button>
+    </div>
+    <!-- By Sam Herbert (@sherb), for everyone. More @ http://goo.gl/7AJzbL -->
+    <svg id="spinner" class="animate-spin mt-8" width="38" height="38" viewBox="0 0 38 38" stroke="#2962ff">
+      <g fill="none" fill-rule="evenodd">
+        <g transform="translate(1 1)" stroke-width="2">
+          <circle stroke-opacity=".3" cx="18" cy="18" r="18"></circle>
+          <path d="M36 18c0-9.94-8.06-18-18-18">
+          </path>
+        </g>
+      </g>
+    </svg>
+    <div class="divider w-1/2 mx-auto"></div>
+  </div>
+  
+  <div id="modal" class="modal">
+    {% include 'plantings/partials/modal_form.html' %}
   </div>
 {% endblock content %}

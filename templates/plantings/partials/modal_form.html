@@ -1,0 +1,32 @@
+<div id="modal-box" class="modal-box p-4 scrollbar-thin" hx-target="this" hx-swap="outerHTML">
+  <button _="on click remove .modal-open from #modal" class="btn btn-sm btn-circle absolute right-2 top-2">
+    ✕
+  </button>
+  <h3 class="font-bold text-lg">New Garden Planting</h3>
+  <p class="pt-2 pb-4">Enter the details of the garden planting</p>
+  <form id="planting-form" hx-post="/plantings/" _="on submit toggle @disabled on #submit-button">
+    <div class="grid grid-cols-2 gap-x-4 gap-y-0">
+      <div class="col-span-2">
+        <label for="plant">Plant</label>
+        <input id="plant" type="text" name="plant" placeholder="Plant" required>
+      </div>
+      <div class="col-span-2">
+        <label for="variety">Variety</label>
+        <input id="variety" type="text" name="variety" placeholder="Variety" required>
+      </div>
+      <div class="col-span-2">
+        <label for="bed">Bed</label>
+        <input id="bed" type="text" name="bed" placeholder="Bed" required>
+      </div>
+      <div class="col-span-2">
+        <label for="notes">Notes</label>
+        <input id="notes" type="text" name="notes" placeholder="Notes" required>
+      </div>
+    </div>
+    <div>
+      <button id="submit-button" type="submit" class="btn btn-primary border-none">
+        Create
+      </button>
+    </div>
+  </form>
+</div>

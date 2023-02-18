@@ -89,6 +89,20 @@ class Planting(PlantingBase, table=True):
 class PlantingCreate(PlantingBase):
   pass
 
+  @classmethod
+  def as_form(
+    cls,
+    plant: str = Form(...),
+    variety: str = Form(...),
+    bed: str = Form(...),
+    notes: str = Form(...)
+  ):
+    return cls(
+      plant=plant,
+      variety=variety,
+      bed=bed,
+      notes=notes
+    )
 
 class PlantingRead(PlantingBase):
   id: int

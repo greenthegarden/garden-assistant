@@ -2,17 +2,20 @@
 
 ## Project References
 
-* <https://medium.com/gitconnected/building-a-website-starter-with-fastapi-92d077092864>
-* <https://betterprogramming.pub/fastapi-best-practices-1f0deeba4fce>
-* [FastAPI - SQLModel Relationships and Alpine.js integration](https://www.youtube.com/watch?v=qlXJu2U1jc4)
-* <https://www.youtube.com/watch?v=mGU3j51waWA>
-* [Forms and File Uploads with FastAPI and Jinja2](https://www.youtube.com/watch?v=L4WBFRQB7Lk)
-* [Reimagining front-end web development with htmx and hyperscript](https://nomadiq.hashnode.dev/reimagining-front-end-web-development-with-htmx-and-hyperscript)
+| Link | Repository | Influenced |
+| ---- | ---------- | ---------- |
+| <https://medium.com/gitconnected/building-a-website-starter-with-fastapi-92d077092864> | | |
+| <https://betterprogramming.pub/fastapi-best-practices-1f0deeba4fce> | | |
+| [FastAPI - SQLModel Relationships and Alpine.js integration](https://www.youtube.com/watch?v=qlXJu2U1jc4) | | |
+| <https://www.youtube.com/watch?v=mGU3j51waWA> | | |
+| [Forms and File Uploads with FastAPI and Jinja2](https://www.youtube.com/watch?v=L4WBFRQB7Lk)
+| [Reimagining front-end web development with htmx and hyperscript](https://nomadiq.hashnode.dev/reimagining-front-end-web-development-with-htmx-and-hyperscript) | | Frontend using HTMX and Hyperscript |
 
 ## Dependencies
 
 * [FastAPI](https://fastapi.tiangolo.com/) as the web framework
 * [SQLModel](https://sqlmodel.tiangolo.com/) as the SQL database abstraction layer
+* [Alembic](https://alembic.sqlalchemy.org/en/latest/) for database versioning and migration
 
 For production deployment install dependencies using
 
