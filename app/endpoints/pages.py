@@ -56,7 +56,16 @@ def beds_update(request: Request, session: Session = Depends(get_session)):
 
 
 @pages_router.get("/bed/form", response_class=HTMLResponse, tags=["Pages API"])
-def bed_form(request: Request):
+def bed_create_form(request: Request):
+  """Send modal form to create a garden bed"""
+  irrigation_zones = IrrigationZone.list()
+  soil_types = SoilType.list()
+  context = {"request": request, "irrigation_zones": irrigation_zones, "soil_types": soil_types }
+  return templates.TemplateResponse('beds/partials/modal_form.html', context)
+
+
+@pages_router.get("/bed/edit/{bed_id}", response_class=HTMLResponse, tags=["Pages API"])
+def bed_edit_form(request: Request):
   """Send modal form to create a garden bed"""
   irrigation_zones = IrrigationZone.list()
   soil_types = SoilType.list()
