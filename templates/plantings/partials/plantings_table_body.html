@@ -1,8 +1,13 @@
 {% for planting in plantings %}
-<tr>
-  <td class="border">{{ planting.plant }}</td>
-  <td class="border">{{ planting.variety }}</td>
-  <td class="border">{{ planting.bed }}</td>
-  <td class="border">{{ planting.notes }}</td>
-</tr>
+  <tr>
+    <td>{{ planting.plant }}</td>
+    <td>{{ planting.variety }}</td>
+    <td>{{ planting.bed.name }}</td>
+    <td>{{ planting.notes }}</td>
+    <td>
+      <button class="btn btn-danger" hx-delete="/api/plantings/{{ planting.id }}">
+        Delete
+      </button>
+    </td>
+  </tr>
 {% endfor %}

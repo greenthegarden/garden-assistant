@@ -16,7 +16,11 @@
       </div>
       <div class="col-span-2">
         <label for="bed">Bed</label>
-        <input id="bed" type="text" name="bed" placeholder="Bed" required>
+        <select name="bed" hx-indicator=".htmx-indicator">
+          {% for bed in beds %}
+            <option value="{{ bed.name }}">{{ bed.name }}</option>
+          {% endfor %}
+        </select>
       </div>
       <div class="col-span-2">
         <label for="notes">Notes</label>

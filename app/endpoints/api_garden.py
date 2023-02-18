@@ -92,7 +92,9 @@ def update_bed(*,
   session.add(db_bed)
   session.commit()
   session.refresh(db_bed)
-  return db_bed
+  content = {db_bed}
+  headers = {"HX-Trigger": "bedsChanged"}
+  return JSONResponse(content=content, status_code=status.HTTP_201_CREATED, headers=headers)
 
 
 @garden_router.delete("/api/beds/{bed_id}", response_model=None, status_code=status.HTTP_202_ACCEPTED, tags=["Garden Beds API"])
@@ -111,10 +113,9 @@ def delete_bed(*,
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Bed not found')
   session.delete(db_bed)
   session.commit()
-  # return Response(status_code=status.HTTP_200_OK)
-  headers = {"HX-Trigger": "bedsChanged"}
   content = {}
-  return JSONResponse(content=content, headers=headers)
+  headers = {"HX-Trigger": "bedsChanged"}
+  return JSONResponse(content=content, status_code=status.HTTP_200_OK, headers=headers)
 
 
 @garden_router.get("/api/beds/soil_types/", response_model=List[SoilType], tags=["Garden Beds API"])
@@ -180,7 +181,7 @@ def update_planting(*,
   """Update the details of the garden planting with the given ID."""
   db_planting = session.get(Planting, planting_id)
   if not db_planting:
-    raise HTTPException(status_code=404, detail="Planting not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Planting not found")
   # update the planting data
   planting_data = planting.dict(exclude_unset=True)
   for key, val in planting_data.items():
@@ -188,10 +189,12 @@ def update_planting(*,
   session.add(db_planting)
   session.commit()
   session.refresh(db_planting)
-  return db_planting
+  content = {db_planting}
+  headers = {"HX-Trigger": "plantingsChanged"}
+  return JSONResponse(content=content, status_code=status.HTTP_201_CREATED, headers=headers)
 
 
-@garden_router.delete("/api/plantings/{planting_id}", status_code=status.HTTP_202_ACCEPTED, tags=["Garden Plantings API"])
+@garden_router.delete("/api/plantings/{planting_id}", response_model=None, status_code=status.HTTP_202_ACCEPTED, tags=["Garden Plantings API"])
 def delete_planting(*,
                     session: Session = Depends(get_session),
                     planting_id: int,
@@ -199,7 +202,9 @@ def delete_planting(*,
   """Delete the garden planting with the given ID."""
   db_planting = session.get(Planting, planting_id)
   if not db_planting:
-    raise HTTPException(status_code=404, detail="Planting not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Planting not found")
   session.delete(db_planting)
   session.commit()
-  return Response(status_code=status.HTTP_200_OK)
+  content = {}
+  headers = {"HX-Trigger": "plantingsChanged"}
+  return JSONResponse(content=content, status_code=status.HTTP_200_OK, headers=headers)

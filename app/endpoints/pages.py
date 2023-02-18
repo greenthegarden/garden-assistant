@@ -49,9 +49,7 @@ def beds(request: Request):
 
 
 @pages_router.get("/beds/update", response_class=HTMLResponse, tags=["Pages API"])
-def beds_update(request: Request,
-                session: Session = Depends(get_session),
-                ):
+def beds_update(request: Request, session: Session = Depends(get_session)):
   """Update table contents for garden beds"""
   stmt = select(Bed)
   db_beds = session.exec(stmt).all()
@@ -100,9 +98,7 @@ def plantings(request: Request):
 
 
 @pages_router.get("/plantings/update", response_class=HTMLResponse, tags=["Pages API"])
-def plantings_update(request: Request,
-                session: Session = Depends(get_session),
-                ):
+def plantings_update(request: Request, session: Session = Depends(get_session)):
   """Update table contents for garden plantings"""
   stmt = select(Planting)
   db_plantings = session.exec(stmt).all()
@@ -111,9 +107,11 @@ def plantings_update(request: Request,
 
 
 @pages_router.get("/planting/form", response_class=HTMLResponse, tags=["Pages API"])
-def planting_form(request: Request):
+def planting_form(request: Request, session: Session = Depends(get_session)):
   """Send modal form to create a garden planting"""
-  context = {"request": request }
+  stmt = select(Bed)
+  db_beds = session.exec(stmt).all()
+  context = {"request": request, "beds": db_beds }
   return templates.TemplateResponse('plantings/partials/modal_form.html', context)
 
 
