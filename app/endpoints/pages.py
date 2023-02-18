@@ -121,14 +121,14 @@ def planting_create_from_form(request: Request,
                          session: Session = Depends(get_session),
                          plant: str = Form(...),
                          variety: str = Form(...),
-                         bed: str = Form(...),
+                         bed_id: int = Form(...),
                          notes: str = Form(...),
                          form_data: PlantingCreate = Depends(PlantingCreate.as_form)
                          ):
   """Process form contents to create a garden planting"""
   print(f"plant: {plant}")
   print(f"variety: {variety}")
-  print(f"bed: {bed}")
+  print(f"bed_id: {bed_id}")
   print(f"notes: {notes}")
   print(f"Form data: {form_data}")
   # create_bed(bed=form_data)

@@ -94,13 +94,13 @@ class PlantingCreate(PlantingBase):
     cls,
     plant: str = Form(...),
     variety: str = Form(...),
-    bed: str = Form(...),
+    bed_id: int = Form(...),
     notes: str = Form(...)
   ):
     return cls(
       plant=plant,
       variety=variety,
-      bed=bed,
+      bed_id=bed_id,
       notes=notes
     )
 

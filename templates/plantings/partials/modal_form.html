@@ -15,10 +15,10 @@
         <input id="variety" type="text" name="variety" placeholder="Variety" required>
       </div>
       <div class="col-span-2">
-        <label for="bed">Bed</label>
-        <select name="bed" hx-indicator=".htmx-indicator">
+        <label for="bed_id">Bed</label>
+        <select id="bed_id" name="bed_id"" hx-indicator=".htmx-indicator">
           {% for bed in beds %}
-            <option value="{{ bed.name }}">{{ bed.name }}</option>
+            <option value="{{ bed.id }}">{{ bed.name }}</option>
           {% endfor %}
         </select>
       </div>
