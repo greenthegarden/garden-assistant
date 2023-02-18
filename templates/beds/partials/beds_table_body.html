@@ -1,12 +1,18 @@
-{% for bed in beds %}
-  <tr>
-    <td>{{ bed.name }}</td>
-    <td>{{ bed.soil_type }}</td>
-    <td>{{ bed.irrigation_zone }}</td>
-    <td>
-      <button class="btn btn-danger" hx-delete="/api/beds/{{ bed.id }}">
-        Delete
-      </button>
-    </td>
-  </tr>
-{% endfor %}
+{% if not beds %}
+<tr>
+  <td colspan="4" class="text-center italic text-lg text-gray-600">Nothing to see here</td>
+</tr>
+{% else %}
+  {% for bed in beds %}
+    <tr>
+      <td>{{ bed.name }}</td>
+      <td>{{ bed.soil_type }}</td>
+      <td>{{ bed.irrigation_zone }}</td>
+      <td>
+        <button class="btn btn-danger" hx-delete="/api/beds/{{ bed.id }}">
+          Delete
+        </button>
+      </td>
+    </tr>
+  {% endfor %}
+{% endif %}

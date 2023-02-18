@@ -24,9 +24,7 @@ templates = Jinja2Templates(directory="templates")
 
 
 @pages_router.get("/", response_class=HTMLResponse, tags=["Pages API"])
-def index(request: Request,
-          session: Session = Depends(get_session),
-          ):
+def index(request: Request, session: Session = Depends(get_session)):
   statement = select(Bed)
   db_beds = session.exec(statement).all()
   bed_exists = False
@@ -100,8 +98,8 @@ def plantings(request: Request):
 @pages_router.get("/plantings/update", response_class=HTMLResponse, tags=["Pages API"])
 def plantings_update(request: Request, session: Session = Depends(get_session)):
   """Update table contents for garden plantings"""
-  stmt = select(Planting)
-  db_plantings = session.exec(stmt).all()
+  statement = select(Planting)
+  db_plantings = session.exec(statement).all()
   context = {"request": request, "plantings": db_plantings }
   return templates.TemplateResponse('plantings/partials/plantings_table_body.html', context)
 

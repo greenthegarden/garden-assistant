@@ -1,13 +1,30 @@
-{% for planting in plantings %}
+{% if not plantings %}
   <tr>
-    <td>{{ planting.plant }}</td>
-    <td>{{ planting.variety }}</td>
-    <td>{{ planting.bed.name }}</td>
-    <td>{{ planting.notes }}</td>
-    <td>
-      <button class="btn btn-danger" hx-delete="/api/plantings/{{ planting.id }}">
-        Delete
-      </button>
-    </td>
+    <td colspan="5" class="text-center italic text-lg text-gray-600">Nothing to see here</td>
   </tr>
-{% endfor %}
+{% else %}
+  {% for planting in plantings %}
+    <tr class="h-auto">
+      <th class="dropdown dropdown-right dropdown-end mt-1 -mb-1 border-0">
+        <label tabindex="0"><a class="link cursor-pointer">{{ planting.plant }}</a></label>
+        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-24">
+          <li>
+            <a hx-get="/plantings/edit" hx-target="#modal"
+              _="on htmx:afterRequest add .modal-open to modal">
+              Edit
+            </a>
+          </li>
+          <li>
+            <a hx-delete="/api/plantings/{{ planting.id }}"
+              hx-confirm="Are you sure you want to delete the planting '{{ planting.plant }}'?">
+              Delete
+            </a>
+          </li>
+        </ul>
+      </th>
+      <td>{{ planting.variety }}</td>
+      <td>{{ planting.bed.name }}</td>
+      <td>{{ planting.notes }}</td>
+    </tr>
+  {% endfor %}
+{% endif %}
