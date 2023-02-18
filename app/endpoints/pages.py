@@ -27,9 +27,17 @@ templates = Jinja2Templates(directory="templates")
 def index(request: Request,
           session: Session = Depends(get_session),
           ):
-  stmt = select(Planting)
-  db_plantings = session.exec(stmt).all()
-  context = {"request": request, "plantings": db_plantings}
+  statement = select(Bed)
+  db_beds = session.exec(statement).all()
+  bed_exists = False
+  if len(db_beds) > 0:
+    bed_exists = True
+  statement = select(Planting)
+  db_plantings = session.exec(statement).all()
+  planting_exists = False
+  if len(db_plantings) > 0:
+    planting_exists = True
+  context = {"request": request, "bed_exists": bed_exists, "planting_exists": planting_exists}
   return templates.TemplateResponse("index.html", context)
 
 
@@ -40,7 +48,7 @@ def beds(request: Request):
   return templates.TemplateResponse("beds/beds.html", context)
 
 
-@pages_router.get("/beds/update", tags=["Pages API"])
+@pages_router.get("/beds/update", response_class=HTMLResponse, tags=["Pages API"])
 def beds_update(request: Request,
                 session: Session = Depends(get_session),
                 ):
@@ -91,7 +99,7 @@ def plantings(request: Request):
   return templates.TemplateResponse("plantings/plantings.html", context)
 
 
-@pages_router.get("/plantings/update", tags=["Pages API"])
+@pages_router.get("/plantings/update", response_class=HTMLResponse, tags=["Pages API"])
 def plantings_update(request: Request,
                 session: Session = Depends(get_session),
                 ):

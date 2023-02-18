@@ -1,23 +1,9 @@
 {% extends "shared/_layout.html" %}
+
 {% block content %}
-
-<div class="container">
-  <div class="container-center">
-    <h1>Garden Plantings</h1>
-    <div id="content">
-      {% if plantings|length %}
-      {% for planting in plantings %}
-      <p>Name: {{ planting.plant }} Bed: {{ planting.bed_id }}</p>
-      {% endfor %}
-      {% else %}
-      <p>Such empty...</p>
-      {% endif %}
-    </div>
-    <div>
-      {% include 'plantings/partials/show_add_form.html' %}
-    </div>
-  </div>
-
-</div>
-
+  {% if not bed_exists %}
+    {% include 'beds/partials/beds.html' %}
+  {% else %}
+    {% include 'plantings/partials/plantings.html' %}
+  {% endif %}
 {% endblock content %}
