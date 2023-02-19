@@ -68,16 +68,13 @@ def garden_create_form(request: Request):
 
 
 @pages_router.post("/garden/create", response_class=JSONResponse, tags=["Pages API"])
-async def post_garden_create_form(request: Request,
-                         response: Response,
+async def garden_create(request: Request,
                          session: Session = Depends(get_session)):
   """Process form contents to create a garden."""
   errors = []
   try:
     form = await request.form()
-    print(form)
     garden_name: str = str(form.get("name"))
-    print(f'garden_name: {garden_name}')
     garden_type: str = str(form.get("type"))
     garden_zone: str = str(form.get("zone"))
     garden = GardenCreate(name=garden_name, type=garden_type, zone=garden_zone)
@@ -85,8 +82,8 @@ async def post_garden_create_form(request: Request,
     session.add(db_garden)
     session.commit()
     session.refresh(db_garden)
-    headers = {"HX-Trigger": "gardensChanged"}
     content = {"garden": jsonable_encoder(db_garden)}
+    headers = {"HX-Trigger": "gardensChanged"}
     return JSONResponse(content=content, headers=headers)
   except ValueError:
     print("In exception")
@@ -95,7 +92,7 @@ async def post_garden_create_form(request: Request,
     return JSONResponse(content=content)
 
 @pages_router.get("/garden/edit/{garden_id}", response_class=HTMLResponse, tags=["Pages API"])
-def get_garden_edit(request: Request, garden_id: int, session: Session = Depends(get_session)):
+def garden_edit_form(request: Request, garden_id: int, session: Session = Depends(get_session)):
   """Send modal form to edit the garden with the given ID."""
   db_garden = session.get(Garden, garden_id)
   if not db_garden:
@@ -107,15 +104,13 @@ def get_garden_edit(request: Request, garden_id: int, session: Session = Depends
 
 
 @pages_router.post("/garden/edit/{garden_id}", response_class=JSONResponse, tags=["Pages API"])
-async def post_garden_edit(request: Request,
-                         response: Response,
+async def garden_edit(request: Request,
                          garden_id: int,
                          session: Session = Depends(get_session)):
   """Process form contents to edit a garden."""
   errors = []
   try:
     form = await request.form()
-    print(form)
     garden_name: str = str(form.get("name"))
     garden_type: str = str(form.get("type"))
     garden_zone: str = str(form.get("zone"))

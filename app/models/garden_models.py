@@ -16,10 +16,21 @@ class Enum(Enum_):
 class GardenType(str, Enum):
   SUBURBAN = "Suburban"
   ALLOTMENT = "Allotment"
+  VERGE = "Verge"
+  COMMUNITY = "Community"
+  SMALL_HOLDING = "Small Holding"
+  PATIO = "Patio"
+  BALCONY = "Balcony"
+  INDOOR = "Indoor"
+  GREENHOUSE = "Greenhouse"
 
 
 class ClimaticZone(str, Enum):
+  ARID = "Arid"
+  SUBTROPICAL = "Subtropical"
   TROPICAL = "Tropical"
+  TEMPERATE = "Temperate"
+  COOL = "Cool"
   
 class GardenBase(SQLModel):
   name: str = Field(index=True)

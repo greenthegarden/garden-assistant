@@ -2,15 +2,15 @@
   <button _="on click remove .modal-open from #modal" class="btn btn-sm btn-circle absolute right-2 top-2">
     ✕
   </button>
-  <h3 class="font-bold text-lg">Garden</h3>
+  <h3 class="font-bold text-lg">Gardens</h3>
   {% if not garden %}
-    <p class="pt-2 pb-4">Enter the details of the garden</p>
-    <form id="garden-form" hx-post="/garden/create" _="on submit toggle @disabled on #submit-button">
+  <p class="pt-2 pb-4">Enter the details of the garden</p>
+  <form id="garden-form" hx-post="/garden/create" _="on submit toggle @disabled on #submit-button">
   {% else %}
-    <p class="pt-2 pb-4">Edit the details of the garden {{ garden.name }}</p>
-    <form id="garden-form" hx-post="/garden/edit/{{garden.id}}" _="on submit toggle @disabled on #submit-button">
+  <p class="pt-2 pb-4">Edit the details of the garden {{ garden.name }}</p>
+  <form id="garden-form" hx-post="/garden/edit/{{garden.id}}" _="on submit toggle @disabled on #submit-button">
   {% endif %}
-    <div class="grid grid-cols-2 gap-x-4 gap-y-0">
+    <div class="grid grid-cols-2">
       <div class="col-span-2">
         <label for="name">Name</label>
         {% if not garden %}
@@ -19,29 +19,37 @@
           <input id="name" type="text" name="name" placeholder="{{ garden.name }}" required>
         {% endif %}
       </div>
-      <div hx-target="#type_select">
+      <div>
         <label for="type">Type</label>
         <select name="type" hx-indicator=".htmx-indicator">
           {% for type in types %}
-            {% if type == garden.type %}
-              <option selected value="{{ type }}">{{ type }}</option>
+            {% if garden %}
+              {% if type == garden.type %}
+                  <option selected value="{{ type }}">{{ type }}</option>
+              {% endif %}
             {% else %}
               <option value="{{ type }}">{{ type }}</option>
             {% endif %}
           {% endfor %}
         </select>
       </div>
-      <div class="mb-4">
+      <div>
         <label for="zone">Zone</label>
         <select name="zone" hx-indicator=".htmx-indicator">
           {% for zone in zones %}
-          <option value="{{ zone }}">{{ zone }}</option>
+            {% if garden %}
+              {% if zone == garden.zone %}
+                <option selected value="{{ zone }}">{{ zone }}</option>
+              {% endif %}
+            {% else %}
+              <option value="{{ zone }}">{{ zone }}</option>
+            {% endif %}
           {% endfor %}
         </select>
       </div>
     </div>
     <div>
-      <button id="submit-button" type="submit" class="btn btn-primary border-none">
+      <button id="submit-button" type="submit" class="btn">
         Submit
       </button>
     </div>
