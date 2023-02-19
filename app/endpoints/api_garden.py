@@ -70,7 +70,7 @@ def read_garden(*, session: Session = Depends(get_session), garden_id: int):
   return db_garden
 
 
-@garden_router.patch("/api/gardens/{garden_id}", status_code=status.HTTP_201_CREATED, response_model=BedRead, tags=["Garden Beds API"])
+@garden_router.patch("/api/gardens/{garden_id}", status_code=status.HTTP_201_CREATED, response_model=BedRead, tags=["Garden API"])
 def update_garden(*,
                session: Session = Depends(get_session),
                response: Response,
@@ -92,12 +92,12 @@ def update_garden(*,
   session.add(db_garden)
   session.commit()
   session.refresh(db_garden)
-  content = {db_garden}
+  content = {"garden": jsonable_encoder(db_garden)}
   headers = {"HX-Trigger": "gardensChanged"}
   return JSONResponse(content=content, status_code=status.HTTP_201_CREATED, headers=headers)
 
 
-@garden_router.delete("/api/gardens/{garden_id}", response_model=None, status_code=status.HTTP_202_ACCEPTED, tags=["Garden Beds API"])
+@garden_router.delete("/api/gardens/{garden_id}", response_model=None, status_code=status.HTTP_202_ACCEPTED, tags=["Garden API"])
 def delete_garden(*,
                session: Session = Depends(get_session),
                response: Response,

@@ -1,7 +1,7 @@
 # import external modules
 
 import logging
-from fastapi import APIRouter, Depends, HTTPException, Form, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Form, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
@@ -21,7 +21,8 @@ from app.models.garden_models import Planting, PlantingCreate, PlantingRead, Pla
 logger = logging.getLogger(__name__)
 
 
-pages_router = APIRouter(route_class=TimedRoute)
+# pages_router = APIRouter(route_class=TimedRoute)
+pages_router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
 
@@ -57,8 +58,8 @@ def gardens_update(request: Request, session: Session = Depends(get_session)):
   return templates.TemplateResponse('gardens/partials/gardens_table_body.html', context)
 
 
-@pages_router.get("/garden/form", response_class=HTMLResponse, tags=["Pages API"])
-def bed_create_form(request: Request):
+@pages_router.get("/garden/create", response_class=HTMLResponse, tags=["Pages API"])
+def garden_create_form(request: Request):
   """Send modal form to create a garden bed"""
   types = GardenType.list()
   zones = ClimaticZone.list()
@@ -66,6 +67,78 @@ def bed_create_form(request: Request):
   return templates.TemplateResponse('gardens/partials/modal_form.html', context)
 
 
+@pages_router.post("/garden/create", response_class=JSONResponse, tags=["Pages API"])
+async def post_garden_create_form(request: Request,
+                         response: Response,
+                         session: Session = Depends(get_session)):
+  """Process form contents to create a garden."""
+  errors = []
+  try:
+    form = await request.form()
+    print(form)
+    garden_name: str = str(form.get("name"))
+    print(f'garden_name: {garden_name}')
+    garden_type: str = str(form.get("type"))
+    garden_zone: str = str(form.get("zone"))
+    garden = GardenCreate(name=garden_name, type=garden_type, zone=garden_zone)
+    db_garden = Garden.from_orm(garden)
+    session.add(db_garden)
+    session.commit()
+    session.refresh(db_garden)
+    headers = {"HX-Trigger": "gardensChanged"}
+    content = {"garden": jsonable_encoder(db_garden)}
+    return JSONResponse(content=content, headers=headers)
+  except ValueError:
+    print("In exception")
+    errors.append("something went wrong! Ensure that Year and id are integers")
+    content = {"request": request, "errors": errors}
+    return JSONResponse(content=content)
+
+@pages_router.get("/garden/edit/{garden_id}", response_class=HTMLResponse, tags=["Pages API"])
+def get_garden_edit(request: Request, garden_id: int, session: Session = Depends(get_session)):
+  """Send modal form to edit the garden with the given ID."""
+  db_garden = session.get(Garden, garden_id)
+  if not db_garden:
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Garden not found')
+  types = GardenType.list()
+  zones = ClimaticZone.list()
+  context = {"request": request, "garden": db_garden, "types": types, "zones": zones }
+  return templates.TemplateResponse('gardens/partials/modal_form.html', context)
+
+
+@pages_router.post("/garden/edit/{garden_id}", response_class=JSONResponse, tags=["Pages API"])
+async def post_garden_edit(request: Request,
+                         response: Response,
+                         garden_id: int,
+                         session: Session = Depends(get_session)):
+  """Process form contents to edit a garden."""
+  errors = []
+  try:
+    form = await request.form()
+    print(form)
+    garden_name: str = str(form.get("name"))
+    garden_type: str = str(form.get("type"))
+    garden_zone: str = str(form.get("zone"))
+    garden = GardenUpdate(name=garden_name, type=garden_type, zone=garden_zone)
+    db_garden = session.get(Garden, garden_id)
+    if not db_garden:
+      raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Garden with ID {garden_id} not found')
+    garden_data = garden.dict(exclude_unset=True)
+    for key, val in garden_data.items():
+      setattr(db_garden, key, val)
+    session.add(db_garden)
+    session.commit()
+    session.refresh(db_garden)
+    content = {"garden": jsonable_encoder(db_garden)}
+    headers = {"HX-Trigger": "gardensChanged"}
+    return JSONResponse(content=content, headers=headers)
+  except ValueError:
+    print("In exception")
+    errors.append("something went wrong! Ensure that Year and id are integers")
+    content = {"request": request, "errors": errors}
+    return JSONResponse(content=content)
+  
+  
 @pages_router.get("/beds/", response_class=HTMLResponse, tags=["Pages API"])
 def beds(request: Request):
   """Send content for beds page"""
