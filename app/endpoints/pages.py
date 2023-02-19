@@ -68,8 +68,7 @@ def garden_create_form(request: Request):
 
 
 @pages_router.post("/garden/create", response_class=JSONResponse, tags=["Pages API"])
-async def garden_create(request: Request,
-                         session: Session = Depends(get_session)):
+async def garden_create(request: Request, session: Session = Depends(get_session)):
   """Process form contents to create a garden."""
   errors = []
   try:
@@ -91,6 +90,7 @@ async def garden_create(request: Request,
     content = {"request": request, "errors": errors}
     return JSONResponse(content=content)
 
+
 @pages_router.get("/garden/edit/{garden_id}", response_class=HTMLResponse, tags=["Pages API"])
 def garden_edit_form(request: Request, garden_id: int, session: Session = Depends(get_session)):
   """Send modal form to edit the garden with the given ID."""
@@ -105,8 +105,8 @@ def garden_edit_form(request: Request, garden_id: int, session: Session = Depend
 
 @pages_router.post("/garden/edit/{garden_id}", response_class=JSONResponse, tags=["Pages API"])
 async def garden_edit(request: Request,
-                         garden_id: int,
-                         session: Session = Depends(get_session)):
+                      garden_id: int,
+                      session: Session = Depends(get_session)):
   """Process form contents to edit a garden."""
   errors = []
   try:
@@ -136,44 +136,34 @@ async def garden_edit(request: Request,
   
 @pages_router.get("/beds/", response_class=HTMLResponse, tags=["Pages API"])
 def beds(request: Request):
-  """Send content for beds page"""
+  """Send content for beds page."""
   context = {"request": request}
   return templates.TemplateResponse("beds/beds.html", context)
 
 
 @pages_router.get("/beds/update", response_class=HTMLResponse, tags=["Pages API"])
 def beds_update(request: Request, session: Session = Depends(get_session)):
-  """Update table contents for garden beds"""
+  """Update table contents for garden beds."""
   stmt = select(Bed)
   db_beds = session.exec(stmt).all()
   context = {"request": request, "beds": db_beds }
   return templates.TemplateResponse('beds/partials/beds_table_body.html', context)
 
 
-@pages_router.get("/bed/form", response_class=HTMLResponse, tags=["Pages API"])
-def bed_create_form(request: Request):
-  """Send modal form to create a garden bed"""
+@pages_router.get("/bed/create", response_class=HTMLResponse, tags=["Pages API"])
+def bed_create_form(request: Request, session: Session = Depends(get_session)):
+  """Send modal form to create a garden bed."""
+  statement = select(Garden)
+  db_gardens = session.exec(statement).all()
   irrigation_zones = IrrigationZone.list()
   soil_types = SoilType.list()
-  context = {"request": request, "irrigation_zones": irrigation_zones, "soil_types": soil_types }
+  context = {"request": request, "gardens": db_gardens, "irrigation_zones": irrigation_zones, "soil_types": soil_types }
   return templates.TemplateResponse('beds/partials/modal_form.html', context)
 
 
-@pages_router.post("/beds/", response_class=JSONResponse, tags=["Pages API"])
-def post_bed_create_form(request: Request,
-                         session: Session = Depends(get_session),
-                         name: str = Form(...),
-                         soil_type: str = Form(...),
-                         irrigation_zone: str = Form(...),
-                         form_data: BedCreate = Depends(BedCreate.as_form)
-                         ) -> dict:
-  """Process form contents to create a garden bed"""
-  print(f"name: {name}")
-  print(f"soil_type: {soil_type}")
-  print(f"irrigation_zone: {irrigation_zone}")
-  print(f"Form data: {form_data}")
-  # create_bed(bed=form_data)
-  print(request)
+@pages_router.post("/bed/create", response_class=JSONResponse, tags=["Pages API"])
+def bed_create(session: Session = Depends(get_session), form_data: BedCreate = Depends(BedCreate.as_form)):
+  """Process form contents to create a garden bed."""
   db_bed = Bed.from_orm(form_data)
   session.add(db_bed)
   session.commit()
@@ -185,13 +175,15 @@ def post_bed_create_form(request: Request,
 
 @pages_router.get("/bed/edit/{bed_id}", response_class=HTMLResponse, tags=["Pages API"])
 def bed_edit_form(*, request: Request, session: Session = Depends(get_session), bed_id: int):
-  """Send modal form to create a garden bed"""
+  """Send modal form to edit a garden bed with the given ID."""
   db_bed = session.get(Bed, bed_id)
   if not db_bed:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Bed not found')
+  statement = select(Garden)
+  db_gardens = session.exec(statement).all()
   irrigation_zones = IrrigationZone.list()
   soil_types = SoilType.list()
-  context = {"request": request, "bed": db_bed, "irrigation_zones": irrigation_zones, "soil_types": soil_types }
+  context = {"request": request, "bed": db_bed, "gardens": db_gardens, "irrigation_zones": irrigation_zones, "soil_types": soil_types }
   return templates.TemplateResponse('beds/partials/modal_form.html', context)
 
 
@@ -224,47 +216,32 @@ def post_bed_edit_form(request: Request,
 
 @pages_router.get("/plantings/", response_class=HTMLResponse, tags=["Pages API"])
 def plantings(request: Request):
-  """Send content for plantings page"""
+  """Send content for plantings page."""
   context = {"request": request}
   return templates.TemplateResponse("plantings/plantings.html", context)
 
 
 @pages_router.get("/plantings/update", response_class=HTMLResponse, tags=["Pages API"])
 def plantings_update(request: Request, session: Session = Depends(get_session)):
-  """Update table contents for garden plantings"""
+  """Update table contents for garden plantings."""
   statement = select(Planting)
   db_plantings = session.exec(statement).all()
   context = {"request": request, "plantings": db_plantings }
   return templates.TemplateResponse('plantings/partials/plantings_table_body.html', context)
 
 
-@pages_router.get("/planting/form", response_class=HTMLResponse, tags=["Pages API"])
-def planting_form(request: Request, session: Session = Depends(get_session)):
+@pages_router.get("/planting/create", response_class=HTMLResponse, tags=["Pages API"])
+def planting_create_form(request: Request, session: Session = Depends(get_session)):
   """Send modal form to create a garden planting"""
-  stmt = select(Bed)
-  db_beds = session.exec(stmt).all()
+  statement = select(Bed)
+  db_beds = session.exec(statement).all()
   context = {"request": request, "beds": db_beds }
   return templates.TemplateResponse('plantings/partials/modal_form.html', context)
 
 
-# Get a form and process contents to create a garden bed
-@pages_router.post("/plantings/", response_class=JSONResponse, tags=["Pages API"])
-def planting_create_from_form(request: Request,
-                         session: Session = Depends(get_session),
-                         plant: str = Form(...),
-                         variety: str = Form(...),
-                         bed_id: int = Form(...),
-                         notes: str = Form(...),
-                         form_data: PlantingCreate = Depends(PlantingCreate.as_form)
-                         ):
-  """Process form contents to create a garden planting"""
-  print(f"plant: {plant}")
-  print(f"variety: {variety}")
-  print(f"bed_id: {bed_id}")
-  print(f"notes: {notes}")
-  print(f"Form data: {form_data}")
-  # create_bed(bed=form_data)
-  print(request)
+@pages_router.post("/planting/create", response_class=JSONResponse, tags=["Pages API"])
+def planting_create(session: Session = Depends(get_session), form_data: PlantingCreate = Depends(PlantingCreate.as_form)):
+  """Process form contents to create a garden planting."""
   db_planting = Planting.from_orm(form_data)
   session.add(db_planting)
   session.commit()
@@ -272,3 +249,46 @@ def planting_create_from_form(request: Request,
   headers = {"HX-Trigger": "plantingsChanged"}
   content = {"planting": jsonable_encoder(db_planting)}
   return JSONResponse(content=content, headers=headers)
+
+
+@pages_router.get("/planting/edit/{planting_id}", response_class=HTMLResponse, tags=["Pages API"])
+def planting_edit_form(*, request: Request, session: Session = Depends(get_session), planting_id: int):
+  """Send modal form to edit a garden planting with the given ID."""
+  db_planting = session.get(Planting, planting_id)
+  if not db_planting:
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Planting not found')
+  statement = select(Bed)
+  db_beds = session.exec(statement).all()
+  context = {"request": request, "planting": db_planting, "beds": db_beds }
+  return templates.TemplateResponse('plantings/partials/modal_form.html', context)
+
+
+@pages_router.post("/planting/edit/{planting_id}", response_class=JSONResponse, tags=["Pages API"])
+async def planting_edit(request: Request,
+                         planting_id: int,
+                         session: Session = Depends(get_session)):
+  """Process form contents to edit the details of the garden planting with the given ID."""
+  errors = []
+  try:
+    form = await request.form()
+    planting_plant: str = str(form.get("plant"))
+    planting_variety: str = str(form.get("variety"))
+    planting_bed_id: int = int(form.get("bed_id"))
+    planting = PlantingUpdate(plant=planting_plant, variety=planting_variety, bed_id=planting_bed_id)
+    db_planting = session.get(Planting, planting_id)
+    if not db_planting:
+      raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Planting with ID {planting_id} not found')
+    planting_data = planting.dict(exclude_unset=True)
+    for key, val in planting_data.items():
+      setattr(db_planting, key, val)
+    session.add(db_planting)
+    session.commit()
+    session.refresh(db_planting)
+    content = {"planting": jsonable_encoder(db_planting)}
+    headers = {"HX-Trigger": "plantingsChanged"}
+    return JSONResponse(content=content, headers=headers)
+  except ValueError:
+    print("In exception")
+    errors.append("something went wrong! Ensure that Year and id are integers")
+    content = {"request": request, "errors": errors}
+    return JSONResponse(content=content)
