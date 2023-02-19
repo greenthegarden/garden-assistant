@@ -13,6 +13,56 @@ class Enum(Enum_):
     return list(map(lambda c: c.value, cls))
 
 
+class GardenType(str, Enum):
+  SUBURBAN = "Suburban"
+  ALLOTMENT = "Allotment"
+
+
+class ClimaticZone(str, Enum):
+  TROPICAL = "Tropical"
+  
+class GardenBase(SQLModel):
+  name: str = Field(index=True)
+  type: Optional[GardenType] = None
+  location: Optional[str] = None
+  zone: Optional[ClimaticZone] = None
+
+
+class Garden(GardenBase, table=True):
+  id: Optional[int] = Field(default=None, primary_key=True)
+  beds: List["Bed"] = Relationship(back_populates="garden")
+
+
+class GardenCreate(GardenBase):
+  pass
+
+  @classmethod
+  def as_form(
+    cls,
+    name: str = Form(...),
+    type: str = Form(...),
+    location: str = Form(...),
+    zone: str = Form(...)
+  ):
+    return cls(
+      name=name,
+      type=type,
+      location=location,
+      zone=zone
+    )
+
+
+class GardenRead(GardenBase):
+  id: int
+  
+  
+class GardenUpdate(SQLModel):
+  name: Optional[str] = None
+  type: Optional[GardenType] = None
+  location: Optional[str] = None
+  zone: Optional[ClimaticZone] = None
+
+
 class SoilType(str, Enum):
   LOAM = "Loam"
   CLAY = "Clay"
@@ -34,10 +84,12 @@ class BedBase(SQLModel):
   name: str = Field(index=True)
   soil_type: Optional[SoilType] = None
   irrigation_zone: Optional[IrrigationZone] = None
+  garden_id: Optional[int] = Field(default=None, foreign_key="garden.id")
 
 
 class Bed(BedBase, table=True):
   id: Optional[int] = Field(default=None, primary_key=True)
+  garden: Optional[Garden] = Relationship(back_populates="beds")
   plantings: List["Planting"] = Relationship(back_populates="bed")
 
 

@@ -1,0 +1,45 @@
+<div id="modal-box" class="modal-box p-4 scrollbar-thin" hx-target="this" hx-swap="outerHTML">
+  <button _="on click remove .modal-open from #modal" class="btn btn-sm btn-circle absolute right-2 top-2">
+    ✕
+  </button>
+  <h3 class="font-bold text-lg">Garden</h3>
+  {% if not garden %}
+    <p class="pt-2 pb-4">Enter the details of the garden</p>
+    <form id="garden-form" hx-post="/gardens/" _="on submit toggle @disabled on #submit-button">
+  {% else %}
+    <p class="pt-2 pb-4">Edit the details of the garden {{ garden.name }}</p>
+    <form id="garden-form" hx-patch="/gardens/" _="on submit toggle @disabled on #submit-button">
+  {% endif %}
+    <div class="grid grid-cols-2 gap-x-4 gap-y-0">
+      <div class="col-span-2">
+        <label for="name">Name</label>
+        {% if not garden %}
+          <input id="name" type="text" name="name" placeholder="Name" required>
+        {% else %}
+          <input id="name" type="text" name="name" placeholder="{{ garden.name }}" required>
+        {% endif %}
+      </div>
+      <div hx-target="#type_select">
+        <label for="type">Type</label>
+        <select name="type" hx-indicator=".htmx-indicator">
+          {% for type in types %}
+            <option value="{{ type }}">{{ type }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-4">
+        <label for="zone">Zone</label>
+        <select name="zone" hx-indicator=".htmx-indicator">
+          {% for zone in zones %}
+          <option value="{{ zone }}">{{ zone }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div>
+      <button id="submit-button" type="submit" class="btn btn-primary border-none">
+        Submit
+      </button>
+    </div>
+  </form>
+</div>
