@@ -159,14 +159,14 @@ class PlantingCreate(PlantingBase):
     cls,
     plant: str = Form(...),
     variety: str = Form(...),
-    bed_id: int = Form(...),
-    notes: str = Form(...)
+    notes: str = Form(...),
+    bed_id: int = Form(...)
   ):
     return cls(
       plant=plant,
       variety=variety,
-      bed_id=bed_id,
-      notes=notes
+      notes=notes,
+      bed_id=bed_id
     )
 
 class PlantingRead(PlantingBase):
@@ -182,3 +182,18 @@ class PlantingUpdate(SQLModel):
   # date_removed: Optional[datetime]
   notes: Optional[str]
   bed_id: Optional[int]
+  
+  @classmethod
+  def as_form(
+    cls,
+    plant: Optional[str] = Form(...),
+    variety: Optional[str] = Form(...),
+    notes: Optional[str] = Form(...),
+    bed_id: Optional[int] = Form(...)
+  ):
+    return cls(
+      plant=plant,
+      variety=variety,
+      notes=notes,
+      bed_id=bed_id
+    )

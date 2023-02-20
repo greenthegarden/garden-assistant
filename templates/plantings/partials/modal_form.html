@@ -2,34 +2,56 @@
   <button _="on click remove .modal-open from #modal" class="btn btn-sm btn-circle absolute right-2 top-2">
     ✕
   </button>
-  <h3 class="font-bold text-lg">New Garden Planting</h3>
+  <h3 class="font-bold text-lg">Garden Planting</h3>
+  {% if not planting %}
   <p class="pt-2 pb-4">Enter the details of the garden planting</p>
-  <form id="planting-form" hx-post="/planting/create" _="on submit toggle @disabled on #submit-button">
+  <form hx-post="/planting/create" _="on submit toggle @disabled on #submit-button">
+  {% else %}
+  <p class="pt-2 pb-4">Edit the details of the garden planting {{ planting.plant }}</p>
+  <form hx-post="/planting/edit/{{planting.id}}" _="on submit toggle @disabled on #submit-button">
+  {% endif %}
     <div class="grid grid-cols-2 gap-x-4 gap-y-0">
       <div class="col-span-2">
         <label for="plant">Plant</label>
-        <input id="plant" type="text" name="plant" placeholder="Plant" required>
+        {% if not planting %}
+        <input type="text" name="plant" placeholder="Plant" required>
+        {% else %}
+        <input type="text" name="plant" placeholder="{{ planting.plant }}">
+        {% endif %}
       </div>
       <div class="col-span-2">
         <label for="variety">Variety</label>
-        <input id="variety" type="text" name="variety" placeholder="Variety" required>
+        {% if not planting %}
+        <input type="text" name="variety" placeholder="Variety" required>
+        {% else %}
+        <input type="text" name="variety" placeholder="{{ planting.variety}}">
+        {% endif %}
       </div>
       <div class="col-span-2">
         <label for="bed_id">Bed</label>
-        <select id="bed_id" name="bed_id"" hx-indicator=".htmx-indicator">
+        <select name="bed_id"" hx-indicator=".htmx-indicator">
           {% for bed in beds %}
-            <option value="{{ bed.id }}">{{ bed.name }}</option>
+          {% if planting %}
+          {% if bed == planting.bed %}
+          <option selected value="{{ bed.id }}">{{ bed.name }}</option>
+          {% endif %}
+          {% endif %}
+          <option value="{{ bed.id }}">{{ bed.name }}</option>
           {% endfor %}
         </select>
       </div>
       <div class="col-span-2">
         <label for="notes">Notes</label>
-        <input id="notes" type="text" name="notes" placeholder="Notes" required>
+        {% if not planting %}
+        <input type="text" name="notes" placeholder="Notes" required>
+        {% else %}
+        <input type="text" name="notes" placeholder="{{ planting.notes }}">
+        {% endif %}
       </div>
     </div>
     <div>
       <button id="submit-button" type="submit" class="btn btn-primary border-none">
-        Create
+        Submit
       </button>
     </div>
   </form>

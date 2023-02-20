@@ -14,37 +14,35 @@
       <div class="col-span-2">
         <label for="name">Name</label>
         {% if not garden %}
-          <input id="name" type="text" name="name" placeholder="Name" required>
+        <input id="name" type="text" name="name" placeholder="Name" required>
         {% else %}
-          <input id="name" type="text" name="name" placeholder="{{ garden.name }}" required>
+        <input id="name" type="text" name="name" placeholder="{{ garden.name }}">
         {% endif %}
       </div>
       <div>
         <label for="type">Type</label>
         <select name="type" hx-indicator=".htmx-indicator">
-          {% for type in types %}
-            {% if garden %}
-              {% if type == garden.type %}
-                  <option selected value="{{ type }}">{{ type }}</option>
-              {% endif %}
-            {% else %}
-              <option value="{{ type }}">{{ type }}</option>
-            {% endif %}
-          {% endfor %}
+        {% for type in types %}
+        {% if garden %}
+        {% if type == garden.type %}
+        <option selected value="{{ type }}">{{ type }}</option>
+        {% endif %}
+        {% endif %}
+        <option value="{{ type }}">{{ type }}</option>
+        {% endfor %}
         </select>
       </div>
       <div>
         <label for="zone">Zone</label>
         <select name="zone" hx-indicator=".htmx-indicator">
-          {% for zone in zones %}
-            {% if garden %}
-              {% if zone == garden.zone %}
-                <option selected value="{{ zone }}">{{ zone }}</option>
-              {% endif %}
-            {% else %}
-              <option value="{{ zone }}">{{ zone }}</option>
-            {% endif %}
-          {% endfor %}
+        {% for zone in zones %}
+        {% if garden %}
+        {% if zone == garden.zone %}
+        <option selected value="{{ zone }}">{{ zone }}</option>
+        {% endif %}
+        {% endif %}
+        <option value="{{ zone }}">{{ zone }}</option>
+        {% endfor %}
         </select>
       </div>
     </div>

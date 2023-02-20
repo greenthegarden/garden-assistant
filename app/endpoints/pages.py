@@ -232,7 +232,7 @@ def plantings_update(request: Request, session: Session = Depends(get_session)):
 
 @pages_router.get("/planting/create", response_class=HTMLResponse, tags=["Pages API"])
 def planting_create_form(request: Request, session: Session = Depends(get_session)):
-  """Send modal form to create a garden planting"""
+  """Send modal form to create a garden planting."""
   statement = select(Bed)
   db_beds = session.exec(statement).all()
   context = {"request": request, "beds": db_beds }
@@ -292,3 +292,19 @@ async def planting_edit(request: Request,
     errors.append("something went wrong! Ensure that Year and id are integers")
     content = {"request": request, "errors": errors}
     return JSONResponse(content=content)
+
+# @pages_router.post("/planting/edit/{planting_id}", response_class=JSONResponse, tags=["Pages API"])
+# def planting_edit(planting_id: int, session: Session = Depends(get_session), form_data: PlantingUpdate = Depends(PlantingUpdate.as_form)):
+#   """Process form contents to create a garden planting."""
+#   db_planting = session.get(Planting, planting_id)
+#   if not db_planting:
+#     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Planting not found')
+#   planting_data = form_data.dict(exclude_unset=True)
+#   for key, val in planting_data.items():
+#     setattr(db_planting, key, val)
+#   session.add(db_planting)
+#   session.commit()
+#   session.refresh(db_planting)
+#   headers = {"HX-Trigger": "plantingsChanged"}
+#   content = {"planting": jsonable_encoder(db_planting)}
+#   return JSONResponse(content=content, headers=headers)

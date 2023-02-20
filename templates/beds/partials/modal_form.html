@@ -4,25 +4,30 @@
   </button>
   <h3 class="font-bold text-lg">Garden Bed</h3>
   {% if not bed %}
-    <p class="pt-2 pb-4">Enter the details of the garden bed</p>
-    <form hx-post="/bed/create" _="on submit toggle @disabled on #submit-button">
+  <p class="pt-2 pb-4">Enter the details of the garden bed</p>
+  <form hx-post="/bed/create" _="on submit toggle @disabled on #submit-button">
   {% else %}
-    <p class="pt-2 pb-4">Edit the details of the garden bed {{ bed.name }}</p>
-    <form hx-patch="/bed/edit/{{bed.id}}" _="on submit toggle @disabled on #submit-button">
+  <p class="pt-2 pb-4">Edit the details of the garden bed {{ bed.name }}</p>
+  <form hx-patch="/bed/edit/{{bed.id}}" _="on submit toggle @disabled on #submit-button">
   {% endif %}
     <div class="grid grid-cols-2 gap-x-4 gap-y-0">
       <div class="col-span-2">
         <label for="name">Name</label>
         {% if not bed %}
-          <input type="text" name="name" placeholder="Name" required>
+        <input type="text" name="name" placeholder="Name" required>
         {% else %}
-          <input type="text" name="name" placeholder="{{ bed.name }}" required>
+        <input type="text" name="name" placeholder="{{ bed.name }}">
         {% endif %}
       </div>
       <div class="col-span-2">
         <label for="garden_id">Garden</label>
         <select name="garden_id"" hx-indicator=".htmx-indicator">
           {% for garden in gardens %}
+          {% if bed %}
+          {% if garden == bed.garden %}
+          <option selected value="{{ garden.id }}">{{ garden.name }}</option>
+          {% endif %}
+          {% endif %}
           <option value="{{ garden.id }}">{{ garden.name }}</option>
           {% endfor %}
         </select>
@@ -31,7 +36,12 @@
         <label for="soil_type">Soil Type</label>
         <select name="soil_type" hx-indicator=".htmx-indicator">
           {% for soil_type in soil_types %}
-            <option value="{{ soil_type }}">{{ soil_type }}</option>
+          {% if bed %}
+          {% if soil_type == bed.soil_type %}
+          <option selected value="{{ soil_type }}">{{ soil_type }}</option>
+          {% endif %}
+          {% endif %}
+          <option value="{{ soil_type }}">{{ soil_type }}</option>
           {% endfor %}
         </select>
       </div>
@@ -39,6 +49,11 @@
         <label for="irrigation_zone">Irrigation Zone</label>
         <select name="irrigation_zone" hx-indicator=".htmx-indicator">
           {% for irrigation_zone in irrigation_zones %}
+          {% if bed %}
+          {% if irrigation_zone == bed.irrigation_zone %}
+          <option selected value="{{ irrigation_zone }}">{{ irrigation_zone }}</option>
+          {% endif %}
+          {% endif %}
           <option value="{{ irrigation_zone }}">{{ irrigation_zone }}</option>
           {% endfor %}
         </select>
