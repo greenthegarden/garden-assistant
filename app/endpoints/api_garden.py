@@ -1,4 +1,5 @@
 # import external modules
+
 import logging
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, Response, status
@@ -114,7 +115,7 @@ def delete_garden(*,
   session.delete(db_garden)
   session.commit()
   content = {}
-  headers = {"HX-Trigger": "bedsChanged"}
+  headers = {"HX-Trigger": "gardensChanged"}
   return JSONResponse(content=content, status_code=status.HTTP_200_OK, headers=headers)
 
 

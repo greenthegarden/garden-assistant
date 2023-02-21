@@ -5,6 +5,8 @@ from sqlalchemy import Column, DateTime, func
 from sqlmodel import Field, Relationship, SQLModel
 from typing import List, Optional
 
+from app.library.form import as_form
+
 
 # Class to return list of enum values
 class Enum(Enum_):
@@ -44,23 +46,9 @@ class Garden(GardenBase, table=True):
   beds: List["Bed"] = Relationship(back_populates="garden")
 
 
+@as_form
 class GardenCreate(GardenBase):
   pass
-
-  @classmethod
-  def as_form(
-    cls,
-    name: str = Form(...),
-    type: str = Form(...),
-    location: str = Form(...),
-    zone: str = Form(...)
-  ):
-    return cls(
-      name=name,
-      type=type,
-      location=location,
-      zone=zone
-    )
 
 
 class GardenRead(GardenBase):
@@ -104,23 +92,9 @@ class Bed(BedBase, table=True):
   plantings: List["Planting"] = Relationship(back_populates="bed")
 
 
+@as_form
 class BedCreate(BedBase):
   pass
-
-  @classmethod
-  def as_form(
-    cls,
-    name: str = Form(...),
-    garden_id: int = Form(...),
-    soil_type: str = Form(...),
-    irrigation_zone: str = Form(...)
-  ):
-    return cls(
-      name=name,
-      garden_id=garden_id,
-      soil_type=soil_type,
-      irrigation_zone=irrigation_zone
-    )
 
 
 class BedRead(BedBase):
@@ -151,23 +125,10 @@ class Planting(PlantingBase, table=True):
   bed: Optional[Bed] = Relationship(back_populates="plantings")
 
 
+@as_form
 class PlantingCreate(PlantingBase):
   pass
 
-  @classmethod
-  def as_form(
-    cls,
-    plant: str = Form(...),
-    variety: str = Form(...),
-    notes: str = Form(...),
-    bed_id: int = Form(...)
-  ):
-    return cls(
-      plant=plant,
-      variety=variety,
-      notes=notes,
-      bed_id=bed_id
-    )
 
 class PlantingRead(PlantingBase):
   id: int
