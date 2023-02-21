@@ -5,10 +5,10 @@
   <h3 class="font-bold text-lg">Gardens</h3>
   {% if not garden %}
   <p class="pt-2 pb-4">Enter the details of the garden</p>
-  <form id="garden-form" hx-post="/garden/create" _="on submit toggle @disabled on #submit-button">
+  <form hx-post="/garden/create" _="on submit toggle @disabled on #submit-button">
   {% else %}
   <p class="pt-2 pb-4">Edit the details of the garden {{ garden.name }}</p>
-  <form id="garden-form" hx-post="/garden/edit/{{garden.id}}" _="on submit toggle @disabled on #submit-button">
+  <form hx-post="/garden/edit/{{garden.id}}" _="on submit toggle @disabled on #submit-button">
   {% endif %}
     <div class="grid grid-cols-2">
       <div class="col-span-2">

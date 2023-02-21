@@ -78,9 +78,10 @@ async def garden_create(session: Session = Depends(get_session), form_data: Gard
   content = {"planting": jsonable_encoder(db_garden)}
   return JSONResponse(content=content, headers=headers)
 
+
 @pages_router.get("/garden/edit/{garden_id}", response_class=HTMLResponse, tags=["Pages API"])
 def garden_edit_form(request: Request, garden_id: int, session: Session = Depends(get_session)):
-  """Send modal form to edit the garden with the given ID."""
+  """Send modal form to update the garden with the given ID."""
   db_garden = session.get(Garden, garden_id)
   if not db_garden:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Garden not found')
@@ -91,34 +92,21 @@ def garden_edit_form(request: Request, garden_id: int, session: Session = Depend
 
 
 @pages_router.post("/garden/edit/{garden_id}", response_class=JSONResponse, tags=["Pages API"])
-async def garden_edit(request: Request,
-                      garden_id: int,
-                      session: Session = Depends(get_session)):
-  """Process form contents to edit a garden."""
-  errors = []
-  try:
-    form = await request.form()
-    garden_name: str = str(form.get("name"))
-    garden_type: str = str(form.get("type"))
-    garden_zone: str = str(form.get("zone"))
-    garden = GardenUpdate(name=garden_name, type=garden_type, zone=garden_zone)
-    db_garden = session.get(Garden, garden_id)
-    if not db_garden:
-      raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Garden with ID {garden_id} not found')
-    garden_data = garden.dict(exclude_unset=True)
-    for key, val in garden_data.items():
+async def garden_edit(request: Request, garden_id: int, session: Session = Depends(get_session)):
+  """Process form contents to update the details of the garden with the given ID."""
+  form = await request.form()
+  db_garden = session.get(Garden, garden_id)
+  if not db_garden:
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Garden with ID {garden_id} not found')
+  for key, val in form.items():
+    if val != '':
       setattr(db_garden, key, val)
-    session.add(db_garden)
-    session.commit()
-    session.refresh(db_garden)
-    content = {"garden": jsonable_encoder(db_garden)}
-    headers = {"HX-Trigger": "gardensChanged"}
-    return JSONResponse(content=content, headers=headers)
-  except ValueError:
-    print("In exception")
-    errors.append("something went wrong! Ensure that Year and id are integers")
-    content = {"request": request, "errors": errors}
-    return JSONResponse(content=content)
+  session.add(db_garden)
+  session.commit()
+  session.refresh(db_garden)
+  content = {"garden": jsonable_encoder(db_garden)}
+  headers = {"HX-Trigger": "gardensChanged"}
+  return JSONResponse(content=content, headers=headers)
   
   
 @pages_router.get("/beds/", response_class=HTMLResponse, tags=["Pages API"])
@@ -175,30 +163,21 @@ def bed_edit_form(*, request: Request, session: Session = Depends(get_session), 
 
 
 @pages_router.post("/bed/edit/{bed_id}", response_class=JSONResponse, tags=["Pages API"])
-def post_bed_edit_form(request: Request,
-                         bed_id: int,
-                         session: Session = Depends(get_session),
-                         name: str = Form(...),
-                         soil_type: str = Form(...),
-                         irrigation_zone: str = Form(...),
-                         ) -> dict:
+async def bed_edit(request: Request, bed_id: int, session: Session = Depends(get_session)):
   """Process form contents to update the details of the garden bed with the given ID."""
-  print(f"name: {name}")
-  print(f"soil_type: {soil_type}")
-  print(f"irrigation_zone: {irrigation_zone}")
+  form = await request.form()
   db_bed = session.get(Bed, bed_id)
   if not db_bed:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Bed with ID {bed_id} not found")
-  # update the bed data
-  bed_data = bed.dict(exclude_unset=True)
-  for key, val in planting_data.items():
-    setattr(db_planting, key, val)
-  session.add(db_planting)
+  for key, val in form.items():
+    if val != '':
+      setattr(db_bed, key, val)
+  session.add(db_bed)
   session.commit()
-  session.refresh(db_planting)
-  content = {db_planting}
-  headers = {"HX-Trigger": "plantingsChanged"}
-  return JSONResponse(content=content, status_code=status.HTTP_201_CREATED, headers=headers)
+  session.refresh(db_bed)
+  content = {"bed": jsonable_encoder(db_bed)}
+  headers = {"HX-Trigger": "bedssChanged"}
+  return JSONResponse(content=content, headers=headers)
 
 
 @pages_router.get("/plantings/", response_class=HTMLResponse, tags=["Pages API"])
@@ -240,7 +219,7 @@ def planting_create(session: Session = Depends(get_session), form_data: Planting
 
 @pages_router.get("/planting/edit/{planting_id}", response_class=HTMLResponse, tags=["Pages API"])
 def planting_edit_form(*, request: Request, session: Session = Depends(get_session), planting_id: int):
-  """Send modal form to edit a garden planting with the given ID."""
+  """Send modal form to update a garden planting with the given ID."""
   db_planting = session.get(Planting, planting_id)
   if not db_planting:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Planting not found')
@@ -252,46 +231,17 @@ def planting_edit_form(*, request: Request, session: Session = Depends(get_sessi
 
 @pages_router.post("/planting/edit/{planting_id}", response_class=JSONResponse, tags=["Pages API"])
 async def planting_edit(request: Request, planting_id: int, session: Session = Depends(get_session)):
-  """Process form contents to edit the details of the garden planting with the given ID."""
-  errors = []
-  try:
-    form = await request.form()
-    print(form)
-    
-    planting_plant: str = str(form.get("plant"))
-    planting_variety: str = str(form.get("variety"))
-    planting_bed_id: int = int(form.get("bed_id"))
-    planting = PlantingUpdate(plant=planting_plant, variety=planting_variety, bed_id=planting_bed_id)
-    db_planting = session.get(Planting, planting_id)
-    if not db_planting:
-      raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Planting with ID {planting_id} not found')
-    planting_data = planting.dict(exclude_unset=True)
-    for key, val in planting_data.items():
+  """Process form contents to update the details of the garden planting with the given ID."""
+  form = await request.form()
+  db_planting = session.get(Planting, planting_id)
+  if not db_planting:
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Planting with ID {planting_id} not found')
+  for key, val in form.items():
+    if val != '':
       setattr(db_planting, key, val)
-    session.add(db_planting)
-    session.commit()
-    session.refresh(db_planting)
-    content = {"planting": jsonable_encoder(db_planting)}
-    headers = {"HX-Trigger": "plantingsChanged"}
-    return JSONResponse(content=content, headers=headers)
-  except ValueError:
-    print("In exception")
-    errors.append("something went wrong! Ensure that Year and id are integers")
-    content = {"request": request, "errors": errors}
-    return JSONResponse(content=content)
-
-# @pages_router.post("/planting/edit/{planting_id}", response_class=JSONResponse, tags=["Pages API"])
-# def planting_edit(planting_id: int, session: Session = Depends(get_session), form_data: PlantingUpdate = Depends(PlantingUpdate.as_form)):
-#   """Process form contents to create a garden planting."""
-#   db_planting = session.get(Planting, planting_id)
-#   if not db_planting:
-#     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Planting not found')
-#   planting_data = form_data.dict(exclude_unset=True)
-#   for key, val in planting_data.items():
-#     setattr(db_planting, key, val)
-#   session.add(db_planting)
-#   session.commit()
-#   session.refresh(db_planting)
-#   headers = {"HX-Trigger": "plantingsChanged"}
-#   content = {"planting": jsonable_encoder(db_planting)}
-#   return JSONResponse(content=content, headers=headers)
+  session.add(db_planting)
+  session.commit()
+  session.refresh(db_planting)
+  content = {"planting": jsonable_encoder(db_planting)}
+  headers = {"HX-Trigger": "plantingsChanged"}
+  return JSONResponse(content=content, headers=headers)

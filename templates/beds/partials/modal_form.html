@@ -8,7 +8,7 @@
   <form hx-post="/bed/create" _="on submit toggle @disabled on #submit-button">
   {% else %}
   <p class="pt-2 pb-4">Edit the details of the garden bed {{ bed.name }}</p>
-  <form hx-patch="/bed/edit/{{bed.id}}" _="on submit toggle @disabled on #submit-button">
+  <form hx-post="/bed/edit/{{bed.id}}" _="on submit toggle @disabled on #submit-button">
   {% endif %}
     <div class="grid grid-cols-2 gap-x-4 gap-y-0">
       <div class="col-span-2">
