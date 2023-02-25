@@ -5,7 +5,9 @@ from sqlalchemy import Column, DateTime, func
 from sqlmodel import Field, Relationship, SQLModel
 from typing import List, Optional
 
+from app.models.plant import Plant
 from app.library.form import as_form
+
 
 
 # Class to return list of enum values
@@ -123,7 +125,7 @@ class Planting(PlantingBase, table=True):
   #   sa_column=Column(DateTime(timezone=True), server_default=func.now())
   #   )
   bed: Optional[Bed] = Relationship(back_populates="plantings")
-
+  plants: List["Plant"] = Relationship(back_populates="planting")
 
 @as_form
 class PlantingCreate(PlantingBase):
@@ -136,13 +138,13 @@ class PlantingRead(PlantingBase):
 
   
 class PlantingUpdate(SQLModel):
-  plant: Optional[str]
-  variety: Optional[str]
+  plant: Optional[str] = None
+  variety: Optional[str] = None
   # date_planted: Optional[datetime]
   # date_first_harvested: Optional[datetime]
   # date_removed: Optional[datetime]
-  notes: Optional[str]
-  bed_id: Optional[int]
+  notes: Optional[str] = None
+  bed_id: Optional[int] = None
   
   @classmethod
   def as_form(

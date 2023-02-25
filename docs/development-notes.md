@@ -10,6 +10,7 @@
 | <https://www.youtube.com/watch?v=mGU3j51waWA> | | |
 | [Forms and File Uploads with FastAPI and Jinja2](https://www.youtube.com/watch?v=L4WBFRQB7Lk)
 | [Reimagining front-end web development with htmx and hyperscript](https://nomadiq.hashnode.dev/reimagining-front-end-web-development-with-htmx-and-hyperscript) | | Frontend using HTMX and Hyperscript |
+| [HTMX_FastAPI_Login](https://github.com/eddyizm/HTMX_FastAPI_Login) | https://github.com/eddyizm/HTMX_FastAPI_Login | User authentication |
 
 ## Dependencies
 

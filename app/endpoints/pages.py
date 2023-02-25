@@ -229,16 +229,34 @@ def planting_edit_form(*, request: Request, session: Session = Depends(get_sessi
   return templates.TemplateResponse('plantings/partials/modal_form.html', context)
 
 
+# @pages_router.post("/planting/edit/{planting_id}", response_class=JSONResponse, tags=["Pages API"])
+# async def planting_edit(request: Request, planting_id: int, session: Session = Depends(get_session)):
+#   """Process form contents to update the details of the garden planting with the given ID."""
+#   form = await request.form()
+#   db_planting = session.get(Planting, planting_id)
+#   if not db_planting:
+#     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Planting with ID {planting_id} not found')
+#   for key, val in form.items():
+#     if val != '':
+#       setattr(db_planting, key, val)
+#   session.add(db_planting)
+#   session.commit()
+#   session.refresh(db_planting)
+#   content = {"planting": jsonable_encoder(db_planting)}
+#   headers = {"HX-Trigger": "plantingsChanged"}
+#   return JSONResponse(content=content, headers=headers)
+
 @pages_router.post("/planting/edit/{planting_id}", response_class=JSONResponse, tags=["Pages API"])
-async def planting_edit(request: Request, planting_id: int, session: Session = Depends(get_session)):
+async def planting_edit(request: Request, planting_id: int, form_data: PlantingUpdate = Depends(PlantingUpdate.as_form), session: Session = Depends(get_session)):
   """Process form contents to update the details of the garden planting with the given ID."""
-  form = await request.form()
   db_planting = session.get(Planting, planting_id)
   if not db_planting:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Planting with ID {planting_id} not found')
-  for key, val in form.items():
-    if val != '':
-      setattr(db_planting, key, val)
+  print(form_data)
+  planting_data = form_data.dict(exclude_unset=True)
+  print(planting_data)
+  for key, val in planting_data.items():
+    setattr(db_planting, key, val)
   session.add(db_planting)
   session.commit()
   session.refresh(db_planting)

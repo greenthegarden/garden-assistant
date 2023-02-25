@@ -3,6 +3,7 @@
 import logging
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, Response, status
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from sqlmodel import Session, select
 from typing import List
@@ -42,7 +43,7 @@ def create_garden(*,
   statement = select(Garden)
   db_gardens = session.exec(statement).all()
   if any(x.name == garden.name for x in db_gardens):
-    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Garden with name {bed.name} already exists")
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Garden with name {garden.name} already exists")
   db_garden = Bed.from_orm(garden)
   session.add(db_garden)
   session.commit()
@@ -71,7 +72,7 @@ def read_garden(*, session: Session = Depends(get_session), garden_id: int):
   return db_garden
 
 
-@garden_router.patch("/api/gardens/{garden_id}", status_code=status.HTTP_201_CREATED, response_model=BedRead, tags=["Garden API"])
+@garden_router.patch("/api/gardens/{garden_id}", status_code=status.HTTP_201_CREATED, response_model=GardenRead, tags=["Garden API"])
 def update_garden(*,
                session: Session = Depends(get_session),
                response: Response,
@@ -267,7 +268,7 @@ def read_planting(*,
   return db_planting
 
 
-@garden_router.patch("/api/plantings/{planting_id}", response_model=PlantingRead, status_code=status.HTTP_201_CREATED, tags=["Garden Plantings API"])
+@garden_router.patch("/api/plantings/{planting_id}", response_model=None, status_code=status.HTTP_201_CREATED, tags=["Garden Plantings API"])
 def update_planting(*,
                     session: Session = Depends(get_session),
                     planting_id: int,
@@ -278,13 +279,15 @@ def update_planting(*,
   if not db_planting:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Planting not found")
   # update the planting data
+  print(planting)
   planting_data = planting.dict(exclude_unset=True)
+  print(planting_data)
   for key, val in planting_data.items():
     setattr(db_planting, key, val)
   session.add(db_planting)
   session.commit()
   session.refresh(db_planting)
-  content = {db_planting}
+  content = {"planting": jsonable_encoder(db_planting)}
   headers = {"HX-Trigger": "plantingsChanged"}
   return JSONResponse(content=content, status_code=status.HTTP_201_CREATED, headers=headers)
 
