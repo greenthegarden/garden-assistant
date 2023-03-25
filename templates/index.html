@@ -1,7 +1,9 @@
 {% extends "shared/_layout.html" %}
 
 {% block content %}
-  {% if not bed_exists %}
+  {% if not garden_exists %}
+    {% include 'gardens/partials/gardens.html' %}
+  {% elif not bed_exists %}
     {% include 'beds/partials/beds.html' %}
   {% else %}
     {% include 'plantings/partials/plantings.html' %}

@@ -17,10 +17,12 @@ import uvicorn
 from app.config import Settings
 from app.database.database import create_db_and_tables
 from app.library.routers import TimedRoute
-from app.endpoints.api_garden import garden_router
-from app.endpoints.api_user import user_router
+from app.endpoints.garden import garden_router
+from app.endpoints.bed import bed_router
+from app.endpoints.planting import planting_router
 from app.endpoints.plant import plant_router
 from app.endpoints.pages import pages_router
+from app.endpoints.api_user import user_router
 from app.populate import create_planting_db
 
 
@@ -38,6 +40,8 @@ app = FastAPI()
 router = APIRouter(route_class=TimedRoute)
 
 app.include_router(garden_router)
+app.include_router(bed_router)
+app.include_router(planting_router)
 app.include_router(plant_router)
 app.include_router(user_router)
 app.include_router(pages_router)
