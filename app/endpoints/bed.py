@@ -2,9 +2,10 @@
 
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException, Path, Query, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select
 from typing import List
 
@@ -14,9 +15,8 @@ from app.database.session import get_session
 from app.library.helpers import *
 from app.library.routers import TimedRoute
 from app.models.garden_models import IrrigationZone, SoilType
-from app.models.garden_models import Garden, GardenCreate, GardenRead, GardenUpdate
+from app.models.garden_models import Garden
 from app.models.garden_models import Bed, BedCreate, BedRead, BedUpdate
-from app.models.garden_models import Planting, PlantingCreate, PlantingRead, PlantingUpdate
 from app.models.user_models import User
 from app.endpoints.api_user import auth_handler
 
@@ -25,6 +25,7 @@ logger = logging.getLogger(__name__)
 
                                       
 bed_router = APIRouter(route_class=TimedRoute)
+templates = Jinja2Templates(directory="templates")
 
 
 # CRUD API methods for Garden Beds
@@ -135,3 +136,74 @@ def read_irrigation_zones():
   irrigation_zones = IrrigationZone.list()
   print(irrigation_zones)
   return irrigation_zones
+
+
+@bed_router.get("/beds/", response_class=HTMLResponse, tags=["Pages API"])
+def beds(request: Request):
+  """Send content for beds page."""
+  context = {"request": request}
+  return templates.TemplateResponse("beds/beds.html", context)
+
+
+@bed_router.get("/beds/update", response_class=HTMLResponse, tags=["Pages API"])
+def beds_update(request: Request, session: Session = Depends(get_session)):
+  """Update table contents for garden beds."""
+  stmt = select(Bed)
+  db_beds = session.exec(stmt).all()
+  context = {"request": request, "beds": db_beds }
+  return templates.TemplateResponse('beds/partials/beds_table_body.html', context)
+
+
+@bed_router.get("/bed/create", response_class=HTMLResponse, tags=["Pages API"])
+def bed_create_form(request: Request, session: Session = Depends(get_session)):
+  """Send modal form to create a garden bed."""
+  statement = select(Garden)
+  db_gardens = session.exec(statement).all()
+  irrigation_zones = IrrigationZone.list()
+  soil_types = SoilType.list()
+  context = {"request": request, "gardens": db_gardens, "irrigation_zones": irrigation_zones, "soil_types": soil_types }
+  return templates.TemplateResponse('beds/partials/modal_form.html', context)
+
+
+@bed_router.post("/bed/create", response_class=JSONResponse, tags=["Pages API"])
+def bed_create(session: Session = Depends(get_session), form_data: BedCreate = Depends(BedCreate.as_form)):
+  """Process form contents to create a garden bed."""
+  db_bed = Bed.from_orm(form_data)
+  session.add(db_bed)
+  session.commit()
+  session.refresh(db_bed)
+  headers = {"HX-Trigger": "bedsChanged"}
+  content = {"bed": jsonable_encoder(db_bed)}
+  return JSONResponse(content=content, headers=headers)
+
+
+@bed_router.get("/bed/edit/{bed_id}", response_class=HTMLResponse, tags=["Pages API"])
+def bed_edit_form(*, request: Request, session: Session = Depends(get_session), bed_id: int):
+  """Send modal form to edit a garden bed with the given ID."""
+  db_bed = session.get(Bed, bed_id)
+  if not db_bed:
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Bed not found')
+  statement = select(Garden)
+  db_gardens = session.exec(statement).all()
+  irrigation_zones = IrrigationZone.list()
+  soil_types = SoilType.list()
+  context = {"request": request, "bed": db_bed, "gardens": db_gardens, "irrigation_zones": irrigation_zones, "soil_types": soil_types }
+  return templates.TemplateResponse('beds/partials/modal_form.html', context)
+
+
+@bed_router.post("/bed/edit/{bed_id}", response_class=JSONResponse, tags=["Pages API"])
+async def bed_edit(request: Request, bed_id: int, session: Session = Depends(get_session)):
+  """Process form contents to update the details of the garden bed with the given ID."""
+  form = await request.form()
+  db_bed = session.get(Bed, bed_id)
+  if not db_bed:
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Bed with ID {bed_id} not found")
+  for key, val in form.items():
+    if val != '':
+      setattr(db_bed, key, val)
+  session.add(db_bed)
+  session.commit()
+  session.refresh(db_bed)
+  content = {"bed": jsonable_encoder(db_bed)}
+  headers = {"HX-Trigger": "bedssChanged"}
+  return JSONResponse(content=content, headers=headers)

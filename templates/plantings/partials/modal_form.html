@@ -22,7 +22,7 @@
       <div class="col-span-2">
         <label for="variety">Variety</label>
         {% if not planting %}
-        <input type="text" name="variety" placeholder="Variety" required>
+        <input type="text" name="variety" placeholder="Variety">
         {% else %}
         <input type="text" name="variety" placeholder="{{ planting.variety}}">
         {% endif %}
@@ -43,7 +43,7 @@
       <div class="col-span-2">
         <label for="notes">Notes</label>
         {% if not planting %}
-        <input type="text" name="notes" placeholder="Notes" required>
+        <input type="text" name="notes" placeholder="Notes">
         {% else %}
         <input type="text" name="notes" placeholder="{{ planting.notes }}">
         {% endif %}
