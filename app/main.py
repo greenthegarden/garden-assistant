@@ -3,12 +3,11 @@
 import logging
 
 from functools import lru_cache
-import random
-import string
-import time
 
 from fastapi import APIRouter, Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
+
+from fastapi_pagination import Page, paginate, add_pagination
 
 import uvicorn
 
@@ -35,7 +34,8 @@ logger = logging.getLogger(__name__)  # the __name__ resolve to "main" since we 
                                       # This will get the root logger since no logger in the configuration has this name.
                                       
 # instantiate the FastAPI app
-app = FastAPI()
+app = FastAPI(title="Garden Assistant", debug=True)
+add_pagination(app)
 
 router = APIRouter(route_class=TimedRoute)
 

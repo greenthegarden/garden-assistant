@@ -2,9 +2,10 @@
 
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi_pagination import Page, paginate
 from jinja2 import Template
 from sqlmodel import Session, select
 from typing import List
@@ -60,7 +61,7 @@ def create_plant(*,
   return db_plant
 
 
-@plant_router.get("/api/plants/", response_model=List[PlantRead], tags=["Plant API"])
+@plant_router.get("/api/plants/", response_model=Page[PlantRead], tags=["Plant API"])
 def read_plants(*,
               session: Session = Depends(get_session),
               offset: int = 0,
@@ -69,7 +70,7 @@ def read_plants(*,
   """Get the list of defined plants."""
   statement = select(Plant).offset(offset).limit(limit)
   db_plants = session.exec(statement).all()
-  return db_plants
+  return paginate(db_plants)
 
 
 @plant_router.get("/api/plants/{plant_id}", response_model=PlantRead, tags=["Plant API"])

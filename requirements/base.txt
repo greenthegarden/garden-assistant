@@ -1,6 +1,7 @@
 alembic
 bcrypt
 fastapi
+fastapi-pagination
 Jinja2
 markdown
 passlib

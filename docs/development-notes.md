@@ -11,6 +11,7 @@
 | [Forms and File Uploads with FastAPI and Jinja2](https://www.youtube.com/watch?v=L4WBFRQB7Lk)
 | [Reimagining front-end web development with htmx and hyperscript](https://nomadiq.hashnode.dev/reimagining-front-end-web-development-with-htmx-and-hyperscript) | | Frontend using HTMX and Hyperscript |
 | [HTMX_FastAPI_Login](https://github.com/eddyizm/HTMX_FastAPI_Login) | https://github.com/eddyizm/HTMX_FastAPI_Login | User authentication |
+| [How to Implement Pagination Using FastAPI in Python](https://medium.com/python-in-plain-english/how-to-implement-pagination-using-fastapi-in-python-6d57be902fd5) | Pagination |
 
 ## Dependencies
 
@@ -21,13 +22,13 @@
 For production deployment install dependencies using
 
 ```sh
-pip install -r requirements/prod.txt
+python -m pip install -r requirements/prod.txt
 ```
 
 For development, to support running tests, install dependencies using
 
 ```sh
-pip install -r requirements/dev.txt
+python -m pip install -r requirements/dev.txt
 ```
 
 ## Project structure
