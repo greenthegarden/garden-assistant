@@ -66,7 +66,6 @@ Run the server using
 uvicorn app.main:app --reload
 ```
 
-
 ## Database Migrations
 
 [Alembic](https://alembic.sqlalchemy.org/en/latest/) is utilised to enable database migration.
@@ -85,4 +84,18 @@ To create the first migration use
 
 ```sh
 alembic revision --autogenerate -m "initial migration"
+```
+
+## Docker Container Images
+
+Create image
+
+```sh
+docker build -t garden-assistant .
+```
+
+Run container
+
+```sh
+docker run -d --name garden-assistant -p 80:80 garden-assistant
 ```

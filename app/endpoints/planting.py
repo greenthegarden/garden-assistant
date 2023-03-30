@@ -57,7 +57,8 @@ def read_plantings(*,
 @planting_router.get("/api/plantings/{planting_id}", response_model=PlantingRead, tags=["Garden Plantings API"])
 def read_planting(*,
                   session: Session = Depends(get_session),
-                  planting_id: int = Path(None, description="The ID of the planting  to return")):
+                  planting_id: int, #= Path(None, description="The ID of the planting  to return")
+                  ):
   """Get the garden planting with the given ID, or None if it does not exist."""
   db_planting = session.get(Planting, planting_id)
   if not db_planting:
