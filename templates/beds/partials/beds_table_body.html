@@ -1,0 +1,30 @@
+{% if not beds %}
+<tr>
+  <td colspan="4" class="text-center italic text-lg text-gray-600">Nothing to see here</td>
+</tr>
+{% else %}
+  {% for bed in beds %}
+    <tr class="h-auto">
+      <th class="dropdown dropdown-right dropdown-end mt-1 -mb-1 border-0">
+        <label tabindex="0"><a class="link cursor-pointer">{{ bed.name }}</a></label>
+        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-24">
+          <li>
+            <a hx-get="/bed/edit/{{ bed.id }}" hx-target="#modal"
+              _="on htmx:afterRequest add .modal-open to modal">
+              Edit
+            </a>
+          </li>
+          <li>
+            <a hx-delete="/api/beds/{{ bed.id }}"
+              hx-confirm="Are you sure you want to delete the bed '{{ bed.name }}'?">
+              Delete
+            </a>
+          </li>
+        </ul>
+      </th>
+      <td>{{ bed.garden.name }}</td>
+      <td>{{ bed.soil_type }}</td>
+      <td>{{ bed.irrigation_zone }}</td>
+    </tr>
+  {% endfor %}
+{% endif %}

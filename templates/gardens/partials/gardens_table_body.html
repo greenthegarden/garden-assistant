@@ -1,0 +1,29 @@
+{% if not gardens %}
+<tr>
+  <td colspan="4" class="text-center italic text-lg text-gray-600">Nothing to see here</td>
+</tr>
+{% else %}
+  {% for garden in gardens %}
+    <tr class="h-auto">
+      <th class="dropdown dropdown-right dropdown-end mt-1 -mb-1 border-0">
+        <label tabindex="0"><a class="link cursor-pointer">{{ garden.name }}</a></label>
+        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-24">
+          <li>
+            <a hx-get="/garden/edit/{{ garden.id }}" hx-target="#modal"
+              _="on htmx:afterRequest add .modal-open to modal">
+              Edit
+            </a>
+          </li>
+          <li>
+            <a hx-delete="/api/gardens/{{ garden.id }}"
+              hx-confirm="Are you sure you want to delete the garden '{{ garden.name }}'?">
+              Delete
+            </a>
+          </li>
+        </ul>
+      </th>
+      <td>{{ garden.type }}</td>
+      <td>{{ garden.zone }}</td>
+    </tr>
+  {% endfor %}
+{% endif %}
