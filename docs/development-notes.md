@@ -97,5 +97,5 @@ docker build -t garden-assistant .
 Run container
 
 ```sh
-docker run -d --name garden-assistant -p 80:80 garden-assistant
+docker run -it --name garden-assistant -p 80:80 garden-assistant
 ```

@@ -8,6 +8,10 @@ from fastapi import APIRouter, Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 
 from fastapi_pagination import Page, paginate, add_pagination
+from fastapi_sqlalchemy import DBSessionMiddleware, db
+
+import os
+from dotenv import load_dotenv
 
 import uvicorn
 
@@ -32,7 +36,11 @@ logging.config.fileConfig('logging.conf', disable_existing_loggers=False)
 # get root logger
 logger = logging.getLogger(__name__)  # the __name__ resolve to "main" since we are at the root of the project. 
                                       # This will get the root logger since no logger in the configuration has this name.
-                                      
+
+
+load_dotenv('.env')
+
+
 # instantiate the FastAPI app
 app = FastAPI(title="Garden Assistant", debug=True)
 add_pagination(app)
@@ -47,6 +55,11 @@ app.include_router(user_router)
 app.include_router(pages_router)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+# https://www.educative.io/answers/how-to-use-postgresql-database-in-fastapi
+# to avoid csrftokenError
+app.add_middleware(DBSessionMiddleware, db_url=os.environ['DATABASE_URL'])
 
 
 # @app.middleware("http")
@@ -94,6 +107,6 @@ def main():
   # create_planting_db()
 
 
+# To run locally
 if __name__ == "__main__":
-  # main()
   uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
