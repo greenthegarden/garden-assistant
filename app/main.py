@@ -13,21 +13,6 @@ from fastapi_sqlalchemy import DBSessionMiddleware, db
 import os
 from dotenv import load_dotenv
 
-import uvicorn
-
-# import local modules
-
-from app.config import Settings
-from app.database.database import create_db_and_tables
-from app.library.routers import TimedRoute
-from app.endpoints.garden import garden_router
-from app.endpoints.bed import bed_router
-from app.endpoints.planting import planting_router
-from app.endpoints.plant import plant_router
-from app.endpoints.pages import pages_router
-from app.endpoints.api_user import user_router
-from app.populate import create_planting_db
-
 
 # Logging setup based on https://philstories.medium.com/fastapi-logging-f6237b84ea64
 # setup loggers
@@ -37,8 +22,27 @@ logging.config.fileConfig('logging.conf', disable_existing_loggers=False)
 logger = logging.getLogger(__name__)  # the __name__ resolve to "main" since we are at the root of the project. 
                                       # This will get the root logger since no logger in the configuration has this name.
 
+# Ensure environment is defined
+from app.config import Settings
 
 load_dotenv('.env')
+
+# Load configuration
+from app.configurator import config
+
+import uvicorn
+
+# import local modules
+
+# from app.database.database import create_db_and_tables
+from app.library.routers import TimedRoute
+from app.endpoints.garden import garden_router
+from app.endpoints.bed import bed_router
+from app.endpoints.planting import planting_router
+from app.endpoints.plant import plant_router
+from app.endpoints.pages import pages_router
+from app.endpoints.api_user import user_router
+# from app.populate import create_planting_db
 
 
 # instantiate the FastAPI app
@@ -77,17 +81,16 @@ app.add_middleware(DBSessionMiddleware, db_url=os.environ['DATABASE_URL'])
 #     return response
 
 
-@lru_cache()
-def get_settings():
-    return Settings()
+# @lru_cache()
+# def get_settings():
+#     return Settings()
 
 
 @router.get("/info")
-async def info(settings: Settings = Depends(get_settings)):
+async def info(config: Settings = Depends(config)):
     return {
-        "app_name": settings.app_name,
-        "admin_email": settings.admin_email,
-        "items_per_user": settings.items_per_user,
+        "app_name": config.app_name,
+        "items_per_user": config.items_per_user,
     }
 
 app.include_router(router)
@@ -109,4 +112,5 @@ def main():
 
 # To run locally
 if __name__ == "__main__":
+  
   uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

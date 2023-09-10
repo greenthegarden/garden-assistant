@@ -2,13 +2,15 @@ alembic
 bcrypt
 fastapi
 fastapi-pagination
+fastapi-sqlalchemy
 Jinja2
 markdown
 passlib
-pydantic[dotenv, email]
+pydantic[email]
+pydantic-settings
 pyJWT
 python-multipart
-sqlmodel
+# sqlmodel
 types-Markdown
 types-passlib
 uvicorn
