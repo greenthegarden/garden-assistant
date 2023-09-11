@@ -13,6 +13,25 @@
 | [HTMX_FastAPI_Login](https://github.com/eddyizm/HTMX_FastAPI_Login) | https://github.com/eddyizm/HTMX_FastAPI_Login | User authentication |
 | [How to Implement Pagination Using FastAPI in Python](https://medium.com/python-in-plain-english/how-to-implement-pagination-using-fastapi-in-python-6d57be902fd5) | Pagination |
 
+## Project structure
+
+Code structure updated to conform with <https://sqlmodel.tiangolo.com/tutorial/code-structure/>
+
+## Creating venv
+
+Information based on <https://docs.python.org/3/library/venv.html> and <https://python.land/virtual-environments/virtualenv>
+
+```powershell
+python3 -m venv C:\Users\cutle\Development\garden-assistant --upgrade-deps
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+.\Scripts\Activate.ps1
+```
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
 ## Dependencies
 
 * [FastAPI](https://fastapi.tiangolo.com/) as the web framework
@@ -29,20 +48,6 @@ For development, to support running tests, install dependencies using
 
 ```sh
 python -m pip install -r requirements/dev.txt
-```
-
-## Project structure
-
-Code structure updated to conform with <https://sqlmodel.tiangolo.com/tutorial/code-structure/>
-
-## Creating venv
-
-Information based on <https://docs.python.org/3/library/venv.html>
-
-```powershell
-python3 -m venv C:\Users\cutle\Development\garden-assistant --upgrade-deps
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-.\Scripts\Activate.ps1
 ```
 
 ## VSCode

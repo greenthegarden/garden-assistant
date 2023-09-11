@@ -66,11 +66,25 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @lru_cache()
 def get_settings():
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """    
     return Settings()
 
 
 @router.get("/info")
 async def info(settings: Settings = Depends(get_settings)):
+    """Return settings defined in .env file
+
+    Args:
+        settings (Settings, optional): Get settings defined within .env file. \
+            Defaults to Depends(get_settings).
+
+    Returns:
+        dict: parameters defined in .env
+    """
     return {
         "app_name": settings.app_name,
         "admin_email": settings.admin_email,
@@ -81,19 +95,13 @@ app.include_router(router)
 
 @app.on_event("startup")
 def on_startup():
-  print(f"Creating database and tables...")
-  create_db_and_tables()
-  # print(f"Populating tables...")  
-  # create_planting_db()
-
-
-def main():
-  print(f"Creating database and tables...")
-  create_db_and_tables()
-  # print(f"Populating tables...")  
-  # create_planting_db()
+    """Tasks run on application startup.
+    """
+    print("Creating database and tables...")
+    create_db_and_tables()
+    # print(f"Populating tables...")
+    # create_planting_db()
 
 
 if __name__ == "__main__":
-  # main()
-  uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
