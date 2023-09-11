@@ -3,5 +3,18 @@
     "fastapi",
     "sqlmodel"
   ],
-  "python.formatting.provider": "black"
+  "workbench.tree.indent": 20,
+  "editor.minimap.autohide": true,
+  "editor.minimap.renderCharacters": false,
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  "editor.rulers": [88, 120],
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll": true,
+      "source.organizeImports": true
+    },
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+  }
 }
