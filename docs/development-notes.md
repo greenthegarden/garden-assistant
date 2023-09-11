@@ -32,6 +32,18 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
+## Poetry
+
+Install Poetry using instructions from https://python-poetry.org/docs/#installation.
+
+```powershell
+(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
+```
+
+```bash
+pipx install poetry
+```
+
 ## Dependencies
 
 * [FastAPI](https://fastapi.tiangolo.com/) as the web framework
@@ -48,6 +60,12 @@ For development, to support running tests, install dependencies using
 
 ```sh
 python -m pip install -r requirements/dev.txt
+```
+
+For poetry
+
+```sh
+poetry install
 ```
 
 ## VSCode
@@ -69,6 +87,12 @@ Run the server using
 
 ```sh
 uvicorn app.main:app --reload
+```
+
+Using poetry
+
+```sh
+poetry run start
 ```
 
 ## Database Migrations

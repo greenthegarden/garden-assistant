@@ -1,0 +1,46 @@
+[tool.poetry]
+name = "garden-assistant"
+version = "0.1.0"
+description = "Garden planning and scheduling application"
+authors = ["Philip Cutler <greenthegarden@gmail.com>"]
+packages = [
+    { include="app" }
+]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+alembic = "^1.12.0"
+bcrypt = "^4.0.1"
+fastapi = "^0.103.1"
+fastapi-pagination = "^0.12.9"
+Jinja2 = "^3.1.2"
+Markdown = "^3.4.4"
+passlib = "^1.7.4"
+pydantic = {version = "^1.10.0", extras = ["email","dotenv"]}
+PyJWT = "^2.8.0"
+python-multipart = "^0.0.6"
+sqlmodel = "^0.0.8"
+types-Markdown = "^3.4.2.10"
+types-passlib = "^1.7.7.13"
+uvicorn = "^0.23.2"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.9.0"
+isort = "^5.12.0"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+mkdocs = "*"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.2"
+
+[tool.poetry.scripts]
+start = "app.server.main:run"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
