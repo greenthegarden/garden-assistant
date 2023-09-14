@@ -1,24 +1,21 @@
 {
-  "cSpell.words": [
-    "fastapi",
-    "pipx",
-    "sqlmodel",
-    "uvicorn",
-    "venv"
-  ],
-  "workbench.tree.indent": 20,
+  "cSpell.words": ["fastapi", "jsonable", "pipx", "sqlmodel", "uvicorn", "venv"],
+  "editor.cursorSmoothCaretAnimation": "on",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
   "editor.minimap.autohide": true,
   "editor.minimap.renderCharacters": false,
   "editor.rulers": [88, 120],
   "editor.tabSize": 4,
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 1000,
+  "workbench.tree.indent": 20,
   "[python]": {
     "editor.codeActionsOnSave": {
       "source.fixAll": true,
       "source.organizeImports": true
     },
-    "editor.defaultFormatter": "ms-python.black-formatter",
-    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ms-python.black-formatter"
   }
 }
+

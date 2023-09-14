@@ -9,19 +9,17 @@ from fastapi.staticfiles import StaticFiles
 
 from fastapi_pagination import Page, paginate, add_pagination
 
-import uvicorn
-
 # import local modules
 
 from app.config import Settings
 from app.database.database import create_db_and_tables
 from app.library.routers import TimedRoute
-from app.endpoints.garden import garden_router
-from app.endpoints.bed import bed_router
-from app.endpoints.planting import planting_router
-from app.endpoints.plant import plant_router
-from app.endpoints.pages import pages_router
-from app.endpoints.api_user import user_router
+from app.routers.garden import garden_router
+from app.routers.bed import bed_router
+from app.routers.planting import planting_router
+from app.routers.plant import plant_router
+from app.routers.pages import pages_router
+from app.routers.api_user import user_router
 from app.populate import create_planting_db
 
 
@@ -30,9 +28,11 @@ from app.populate import create_planting_db
 logging.config.fileConfig('logging.conf', disable_existing_loggers=False)
 
 # get root logger
-logger = logging.getLogger(__name__)  # the __name__ resolve to "main" since we are at the root of the project. 
-                                      # This will get the root logger since no logger in the configuration has this name.
-                                      
+# the __name__ resolve to "main" since we are at the root of the project.
+# This will get the root logger since no logger in the configuration has this name.
+logger = logging.getLogger(__name__)   
+
+
 # instantiate the FastAPI app
 app = FastAPI(title="Garden Assistant", debug=True)
 add_pagination(app)
@@ -70,7 +70,7 @@ def get_settings():
 
     Returns:
         _type_: _description_
-    """    
+    """
     return Settings()
 
 
@@ -101,11 +101,3 @@ def on_startup():
     create_db_and_tables()
     # print(f"Populating tables...")
     # create_planting_db()
-
-
-# def start():
-#     """Launched with `poetry run start` at root level"""
-#     uvicorn.run("my_package.main:app", host="0.0.0.0", port=8000, reload=True)
-
-# if __name__ == "__main__":
-#     server.run()
