@@ -6,7 +6,7 @@ from app.library.form import as_form
 # from app.models.garden_models import Planting
 
 if TYPE_CHECKING:
-    from app.models.garden_models import Planting
+    from app.models.planting import Planting
 
 # Model based on https://www.abc.net.au/gardening/plant-finder
 class PlantBase(SQLModel):

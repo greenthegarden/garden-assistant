@@ -37,6 +37,7 @@ mkdocs = "*"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.2"
+httpx = "^0.25.0"
 
 [tool.poetry.scripts]
 start = "app.server.main:run"

@@ -1,7 +1,7 @@
 from sqlmodel import Session, select
 
 from app.database.database import engine
-from app.models.user_models import User
+from app.models.user import User
 
 
 def select_all_users():

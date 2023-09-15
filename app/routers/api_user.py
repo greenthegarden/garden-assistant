@@ -4,7 +4,7 @@ from sqlmodel import Session, select
 
 from app.auth.auth import AuthHandler
 from app.database.session import get_session
-from app.models.user_models import User, UserInput, UserLogin
+from app.models.user import User, UserInput, UserLogin
 
 
 user_router = APIRouter()

@@ -12,16 +12,10 @@ from sqlmodel import Session, select
 from app.database.session import get_session
 from app.library.helpers import *
 from app.library.routers import TimedRoute
-from app.models.garden_models import (
-    Bed,
-    BedCreate,
-    BedRead,
-    BedUpdate,
-    Garden,
-    IrrigationZone,
-    SoilType,
-)
-from app.models.user_models import User
+from app.models.bed import IrrigationZone, SoilType
+from app.models.bed import Bed, BedCreate, BedRead, BedUpdate
+from app.models.garden import Garden
+from app.models.user import User
 from app.routers.api_user import auth_handler
 
 # import local modules

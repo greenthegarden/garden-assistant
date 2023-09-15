@@ -1,6 +1,7 @@
 # import external modules
 
 import logging
+import logging.config
 from functools import lru_cache
 
 from fastapi import APIRouter, Depends, FastAPI

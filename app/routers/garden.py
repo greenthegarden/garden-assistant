@@ -14,10 +14,10 @@ from typing import List
 from app.database.session import get_session
 from app.library.helpers import *
 from app.library.routers import TimedRoute
-from app.models.garden_models import ClimaticZone, GardenType
-from app.models.garden_models import Garden, GardenCreate, GardenRead, GardenUpdate
-from app.models.garden_models import Bed
-from app.models.user_models import User
+from app.models.bed import Bed
+from app.models.garden import ClimaticZone, GardenType
+from app.models.garden import Garden, GardenCreate, GardenRead, GardenUpdate
+from app.models.user import User
 from app.routers.api_user import auth_handler
 
 
