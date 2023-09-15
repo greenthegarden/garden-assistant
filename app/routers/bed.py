@@ -41,13 +41,13 @@ def create_bed(
     *,
     session: Session = Depends(get_session),
     response: Response,
-    user: User = Depends(auth_handler.get_current_user),
+    # user: User = Depends(auth_handler.get_current_user),
     bed: BedCreate,
 ):
     """Create a garden bed."""
-    if not user.gardener:
-        response.status_code = status.HTTP_401_UNAUTHORIZED
-        return {}
+    # if not user.gardener:
+    #     response.status_code = status.HTTP_401_UNAUTHORIZED
+    #     return {}
     statement = select(Bed)
     db_beds = session.exec(statement).all()
     if any(x.name == bed.name for x in db_beds):
