@@ -17,8 +17,8 @@ from app.library.helpers import *
 from app.library.routers import TimedRoute
 from app.models.plant import Plant, PlantRead, PlantCreate, PlantUpdate
 from app.models.user_models import User
-from app.endpoints.api_user import auth_handler
-from app.endpoints.pages import templates
+from app.routers.api_user import auth_handler
+from app.routers.pages import templates
 
 
 logger = logging.getLogger(__name__)

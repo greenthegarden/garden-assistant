@@ -18,7 +18,7 @@ from app.models.garden_models import ClimaticZone, GardenType
 from app.models.garden_models import Garden, GardenCreate, GardenRead, GardenUpdate
 from app.models.garden_models import Bed
 from app.models.user_models import User
-from app.endpoints.api_user import auth_handler
+from app.routers.api_user import auth_handler
 
 
 logger = logging.getLogger(__name__)

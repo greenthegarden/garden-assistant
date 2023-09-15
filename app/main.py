@@ -1,27 +1,22 @@
 # import external modules
 
 import logging
-
 from functools import lru_cache
 
-from fastapi import APIRouter, Depends, FastAPI, Request
+from fastapi import APIRouter, Depends, FastAPI
 from fastapi.staticfiles import StaticFiles
-
-from fastapi_pagination import Page, paginate, add_pagination
+from fastapi_pagination import add_pagination
 
 # import local modules
-
-from app.config import Settings
+from app.config import AppConfig, config
 from app.database.database import create_db_and_tables
 from app.library.routers import TimedRoute
-from app.routers.garden import garden_router
-from app.routers.bed import bed_router
-from app.routers.planting import planting_router
-from app.routers.plant import plant_router
-from app.routers.pages import pages_router
 from app.routers.api_user import user_router
-from app.populate import create_planting_db
-
+from app.routers.bed import bed_router
+from app.routers.garden import garden_router
+from app.routers.pages import pages_router
+from app.routers.plant import plant_router
+from app.routers.planting import planting_router
 
 # Logging setup based on https://philstories.medium.com/fastapi-logging-f6237b84ea64
 # setup loggers
@@ -65,17 +60,17 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @lru_cache()
-def get_settings():
+def get_config():
     """_summary_
 
     Returns:
         _type_: _description_
     """
-    return Settings()
+    return config
 
 
 @router.get("/info")
-async def info(settings: Settings = Depends(get_settings)):
+async def info(_config: AppConfig = Depends(get_config)):
     """Return settings defined in .env file
 
     Args:
@@ -86,9 +81,9 @@ async def info(settings: Settings = Depends(get_settings)):
         dict: parameters defined in .env
     """
     return {
-        "app_name": settings.app_name,
-        "admin_email": settings.admin_email,
-        "items_per_user": settings.items_per_user,
+        "app_name": _config.app_name,
+        "admin_email": _config.admin_email,
+        "items_per_user": _config.items_per_user,
     }
 
 app.include_router(router)

@@ -22,7 +22,7 @@ class UserInput(SQLModel):
     gardener: bool = True
 
     @validator("password2")
-    def password_match(self, v, values, **kwargs):
+    def password_match(cls, v, values, **kwargs):
         if "password" in values and v != values["password"]:
             raise ValueError("Passwords don't match")
         return v
