@@ -37,7 +37,7 @@ class ClimaticZone(str, Enum):
 
 class GardenBase(SQLModel):
     name: str = Field(index=True)
-    garden_type: Optional[GardenType] = None
+    type: Optional[GardenType] = None
     location: Optional[str] = None
     zone: Optional[ClimaticZone] = None
 
@@ -58,6 +58,6 @@ class GardenRead(GardenBase):
 
 class GardenUpdate(SQLModel):
     name: Optional[str] = None
-    garden_type: Optional[GardenType] = None
+    type: Optional[GardenType] = None
     location: Optional[str] = None
     zone: Optional[ClimaticZone] = None

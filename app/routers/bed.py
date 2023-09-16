@@ -1,5 +1,3 @@
-# import external modules
-
 import logging
 from typing import List
 
@@ -18,8 +16,6 @@ from app.models.garden import Garden
 from app.models.user import User
 from app.routers.api_user import auth_handler
 
-# import local modules
-
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +25,6 @@ templates = Jinja2Templates(directory="templates")
 
 
 # CRUD API methods for Garden Beds
-
 
 @bed_router.post(
     "/api/beds/",

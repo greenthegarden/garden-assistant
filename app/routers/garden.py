@@ -1,15 +1,11 @@
-# import external modules
-
 import logging
+from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select
-from typing import List
-
-# import local modules
 
 from app.database.session import get_session
 from app.library.helpers import *
@@ -24,19 +20,25 @@ from app.routers.api_user import auth_handler
 logger = logging.getLogger(__name__)
 
 
-garden_router = APIRouter()
+garden_router = APIRouter(route_class=TimedRoute)
 templates = Jinja2Templates(directory="templates")
 
 
-# CRUD API methods for Garden Beds
+# CRUD API methods for Garden
 
-@garden_router.post("/api/gardens/", status_code=status.HTTP_201_CREATED, response_model=GardenRead, tags=["Garden API"])
-def create_garden(*,
-               session: Session = Depends(get_session),
-               response: Response,
-               # user: User = Depends(auth_handler.get_current_user),
-               garden: GardenCreate
-               ):
+@garden_router.post(
+    "/api/gardens/",
+    status_code=status.HTTP_201_CREATED,
+    response_model=GardenRead,
+    tags=["Garden API"]
+)
+def create_garden(
+    *,
+    session: Session = Depends(get_session),
+    response: Response,
+    # user: User = Depends(auth_handler.get_current_user),
+    garden: GardenCreate,
+):
     """Create a garden."""
     # if not user.gardener:
     #   response.status_code = status.HTTP_401_UNAUTHORIZED
@@ -44,8 +46,11 @@ def create_garden(*,
     statement = select(Garden)
     db_gardens = session.exec(statement).all()
     if any(x.name == garden.name for x in db_gardens):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Garden with name {garden.name} already exists")
-    db_garden = Bed.from_orm(garden)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Garden with name {garden.name} already exists"
+        )
+    db_garden = Garden.from_orm(garden)
     session.add(db_garden)
     session.commit()
     session.refresh(db_garden)
