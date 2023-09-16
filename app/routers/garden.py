@@ -58,11 +58,12 @@ def create_garden(
 
 
 @garden_router.get("/api/gardens/", response_model=List[GardenRead], tags=["Garden API"])
-def read_gardens(*,
-              session: Session = Depends(get_session),
-              offset: int = 0,
-              limit: int = Query(default=100, lte=100)
-              ):
+def read_gardens(
+    *,
+    session: Session = Depends(get_session),
+    offset: int = 0,
+    limit: int = Query(default=100, lte=100)
+):
     """Get the list of defined gardens."""
     statement = select(Garden).offset(offset).limit(limit)
     db_gardens = session.exec(statement).all()
@@ -79,13 +80,14 @@ def read_garden(*, session: Session = Depends(get_session), garden_id: int):
 
 
 @garden_router.patch("/api/gardens/{garden_id}", status_code=status.HTTP_201_CREATED, response_model=GardenRead, tags=["Garden API"])
-def update_garden(*,
-               session: Session = Depends(get_session),
-               response: Response,
-              #  user: User = Depends(auth_handler.get_current_user),
-               garden_id: int,
-               garden: GardenUpdate,
-               ):
+def update_garden(
+    *,
+    session: Session = Depends(get_session),
+    response: Response,
+    #  user: User = Depends(auth_handler.get_current_user),
+    garden_id: int,
+    garden: GardenUpdate,
+):
     """Update the details of the garden bed with the given ID."""
     # if not user.gardener:
     #     response.status_code = status.HTTP_401_UNAUTHORIZED
@@ -93,7 +95,6 @@ def update_garden(*,
     db_garden = session.get(Garden, garden_id)
     if not db_garden:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Garden with ID {garden_id} not found')
-    # update the planting data
     garden_data = garden.dict(exclude_unset=True)
     for key, val in garden_data.items():
         setattr(db_garden, key, val)

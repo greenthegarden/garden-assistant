@@ -92,20 +92,19 @@ def update_bed(
     *,
     session: Session = Depends(get_session),
     response: Response,
-    user: User = Depends(auth_handler.get_current_user),
+    # user: User = Depends(auth_handler.get_current_user),
     bed_id: int,
     bed: BedUpdate,
 ):
     """Update the details of the garden bed with the given ID."""
-    if not user.gardener:
-        response.status_code = status.HTTP_401_UNAUTHORIZED
-        return {}
+    # if not user.gardener:
+    #     response.status_code = status.HTTP_401_UNAUTHORIZED
+    #     return {}
     db_bed = session.get(Bed, bed_id)
     if not db_bed:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Bed not found"
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Bed not found"
         )
-    # update the planting data
     bed_data = bed.dict(exclude_unset=True)
     for key, val in bed_data.items():
         setattr(db_bed, key, val)

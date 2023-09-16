@@ -23,7 +23,7 @@ from app.routers.pages import templates
 
 logger = logging.getLogger(__name__)
 
-                                      
+
 plant_router = APIRouter(route_class=TimedRoute)
 
 plant_data = [
@@ -39,21 +39,30 @@ plant_data = [
 
 # CRUD API methods for Plants
 
-@plant_router.post("/api/plants/", status_code=status.HTTP_201_CREATED, response_model=PlantRead, tags=["Plant API"])
-def create_plant(*,
-               session: Session = Depends(get_session),
-               response: Response,
-               user: User = Depends(auth_handler.get_current_user),
-               plant: PlantCreate
-               ):
+@plant_router.post(
+    "/api/plants/",
+    status_code=status.HTTP_201_CREATED,
+    response_model=PlantRead,
+    tags=["Plant API"]
+)
+def create_plant(
+    *,
+    session: Session = Depends(get_session),
+    response: Response,
+    # user: User = Depends(auth_handler.get_current_user),
+    plant: PlantCreate
+):
     """Create a plant."""
     # if not user.gardener:
     #   response.status_code = status.HTTP_401_UNAUTHORIZED
     #   return {}
-    statement = select(plant)
+    statement = select(Plant)
     db_plants = session.exec(statement).all()
     if any(x.name == plant.name for x in db_plants):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Plant with name {plant.name} already exists")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Plant with name {plant.name} already exists"
+        )
     db_plant = Plant.from_orm(plant)
     session.add(db_plant)
     session.commit()
@@ -62,11 +71,12 @@ def create_plant(*,
 
 
 @plant_router.get("/api/plants/", response_model=Page[PlantRead], tags=["Plant API"])
-def read_plants(*,
-              session: Session = Depends(get_session),
-              offset: int = 0,
-              limit: int = Query(default=100, lte=100)
-              ):
+def read_plants(
+    *,
+    session: Session = Depends(get_session),
+    offset: int = 0,
+    limit: int = Query(default=100, lte=100)
+):
     """Get the list of defined plants."""
     statement = select(Plant).offset(offset).limit(limit)
     db_plants = session.exec(statement).all()
@@ -83,12 +93,13 @@ def read_plant(*, session: Session = Depends(get_session), plant_id: int):
 
 
 @plant_router.patch("/api/plants/{plant_id}", status_code=status.HTTP_201_CREATED, response_model=PlantRead, tags=["Plant API"])
-def update_plant(*,
-               session: Session = Depends(get_session),
-               user: User = Depends(auth_handler.get_current_user),
-               plant_id: int,
-               plant: PlantUpdate,
-               ):
+def update_plant(
+    *,
+    session: Session = Depends(get_session),
+    # user: User = Depends(auth_handler.get_current_user),
+    plant_id: int,
+    plant: PlantUpdate,
+    ):
     """Update the details of the plant bed with the given ID."""
     # if not user.planter:
     #   response.status_code = status.HTTP_401_UNAUTHORIZED

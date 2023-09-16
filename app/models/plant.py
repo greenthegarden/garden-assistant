@@ -3,7 +3,6 @@ from typing import List, Optional, TYPE_CHECKING
 from sqlmodel import Field, Relationship, SQLModel
 
 from app.library.form import as_form
-# from app.models.garden_models import Planting
 
 if TYPE_CHECKING:
     from app.models.planting import Planting
@@ -11,7 +10,7 @@ if TYPE_CHECKING:
 # Model based on https://www.abc.net.au/gardening/plant-finder
 class PlantBase(SQLModel):
     name_common: str = Field(index=True)
-    name_botanical: str
+    name_botanical: Optional[str]
     family_group: Optional[str]
     harvest: Optional[str]
     hints: Optional[str] = None
