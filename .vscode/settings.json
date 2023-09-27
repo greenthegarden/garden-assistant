@@ -1,7 +1,18 @@
 {
-  "cSpell.words": ["fastapi", "jsonable", "pipx", "pydantic", "sqlmodel", "templating", "uvicorn", "venv"],
+  "cSpell.language": "en-GB",
+  "cSpell.words": [
+    "fastapi",
+    "jsonable",
+    "pipx",
+    "pydantic",
+    "sqlmodel",
+    "templating",
+    "uvicorn",
+    "venv"
+  ],
   "editor.cursorSmoothCaretAnimation": "on",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.detectIndentation": false,
   "editor.formatOnSave": true,
   "editor.minimap.autohide": true,
   "editor.minimap.renderCharacters": false,
@@ -18,4 +29,3 @@
     "editor.defaultFormatter": "ms-python.black-formatter"
   }
 }
-

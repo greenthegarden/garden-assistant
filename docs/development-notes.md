@@ -17,21 +17,6 @@
 
 Code structure updated to conform with <https://sqlmodel.tiangolo.com/tutorial/code-structure/>
 
-## Creating venv
-
-Information based on <https://docs.python.org/3/library/venv.html> and <https://python.land/virtual-environments/virtualenv>
-
-```powershell
-python3 -m venv C:\Users\cutle\Development\garden-assistant --upgrade-deps
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-.\Scripts\Activate.ps1
-```
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
 ## Poetry
 
 Install Poetry using instructions from https://python-poetry.org/docs/#installation.
@@ -50,18 +35,6 @@ pipx install poetry
 * [SQLModel](https://sqlmodel.tiangolo.com/) as the SQL database abstraction layer
 * [Alembic](https://alembic.sqlalchemy.org/en/latest/) for database versioning and migration
 
-For production deployment install dependencies using
-
-```sh
-python -m pip install -r requirements/prod.txt
-```
-
-For development, to support running tests, install dependencies using
-
-```sh
-python -m pip install -r requirements/dev.txt
-```
-
 For poetry
 
 ```sh
@@ -78,16 +51,10 @@ To ensure Pylance extension finds the correct modules, ensure the Python interpr
 To run tests use
 
 ```sh
-pytest tests/test_main.py
+poetry run pytest
 ```
 
 ## Server
-
-Run the server using
-
-```sh
-uvicorn app.main:app --reload
-```
 
 Using poetry
 
