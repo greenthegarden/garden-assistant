@@ -23,7 +23,9 @@ fake_secret_token = "coneofsilence"
 @pytest.fixture(name="session")
 def session_fixture():
     engine = create_engine(
-        "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool
     )
     SQLModel.metadata.create_all(engine)
     with Session(engine) as session:
@@ -84,12 +86,21 @@ def test_create_bed_incomplete(client: TestClient):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_read_beds(session: Session, client: TestClient):
+def test_read_beds(
+        session: Session,
+        client: TestClient
+):
     irrigation_zone=random.choice(IrrigationZone.list())
     soil_type=random.choice(SoilType.list())
-    bed_1 = Bed(name="Vegetable Plot", irrigation_zone=irrigation_zone)
-    bed_2 = Bed(name="Seedlings", soil_type=soil_type)
+    bed_1 = Bed(
+        name="Vegetable Plot",
+        irrigation_zone=irrigation_zone
+    )
     session.add(bed_1)
+    bed_2 = Bed(
+        name="Seedlings",
+        soil_type=soil_type
+    )
     session.add(bed_2)
     session.commit()
 

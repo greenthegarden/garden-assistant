@@ -1,7 +1,8 @@
 import logging
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
+from fastapi import (APIRouter, Depends, HTTPException, Query, Request,
+                     Response, status)
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
@@ -10,12 +11,9 @@ from sqlmodel import Session, select
 from app.database.session import get_session
 from app.library.helpers import *
 from app.library.routers import TimedRoute
-from app.models.bed import IrrigationZone, SoilType
-from app.models.bed import Bed, BedCreate, BedRead, BedUpdate
+from app.models.bed import (Bed, BedCreate, BedRead, BedUpdate, IrrigationZone,
+                            SoilType)
 from app.models.garden import Garden
-from app.models.user import User
-from app.routers.api_user import auth_handler
-
 
 logger = logging.getLogger(__name__)
 
@@ -89,8 +87,8 @@ def read_bed(
     db_bed = session.get(Bed, bed_id)
     if not db_bed:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Bed not found"
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Bed with ID {bed_id} not found"
         )
     return db_bed
 
@@ -117,7 +115,7 @@ def update_bed(
     if not db_bed:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Bed not found"
+            detail=f"Bed with ID {bed_id} not found"
         )
     bed_data = bed.dict(exclude_unset=True)
     for key, val in bed_data.items():
@@ -155,7 +153,7 @@ def delete_bed(
     if not db_bed:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Bed not found"
+            detail=f"Bed with ID {bed_id} not found"
         )
     session.delete(db_bed)
     session.commit()
@@ -215,7 +213,10 @@ def beds_update(
     """Update table contents for garden beds."""
     stmt = select(Bed)
     db_beds = session.exec(stmt).all()
-    context = {"request": request, "beds": db_beds}
+    context = {
+        "request": request,
+        "beds": db_beds
+    }
     return templates.TemplateResponse(
         "beds/partials/beds_table_body.html",
         context
@@ -270,16 +271,23 @@ def bed_create(
     )
 
 
-@bed_router.get("/bed/edit/{bed_id}", response_class=HTMLResponse, tags=["Pages API"])
+@bed_router.get(
+    "/bed/edit/{bed_id}",
+    response_class=HTMLResponse,
+    tags=["Pages API"]
+)
 def bed_edit_form(
-    *, request: Request, session: Session = Depends(get_session), bed_id: int
+    *,
+    request: Request,
+    session: Session = Depends(get_session),
+    bed_id: int
 ):
     """Send modal form to edit a garden bed with the given ID."""
     db_bed = session.get(Bed, bed_id)
     if not db_bed:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Bed not found"
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Bed with ID {bed_id} not found"
         )
     statement = select(Garden)
     db_gardens = session.exec(statement).all()
@@ -314,8 +322,8 @@ async def bed_edit(
     db_bed = session.get(Bed, bed_id)
     if not db_bed:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Bed with ID {bed_id} not found",
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Bed with ID {bed_id} not found"
         )
     for key, val in form.items():
         if val != "":
