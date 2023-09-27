@@ -31,7 +31,6 @@ logger = logging.getLogger(__name__)
 
 # instantiate the FastAPI app
 app = FastAPI(title="Garden Assistant", debug=True)
-add_pagination(app)
 
 router = APIRouter(route_class=TimedRoute)
 
@@ -41,6 +40,8 @@ app.include_router(planting_router)
 app.include_router(plant_router)
 app.include_router(user_router)
 app.include_router(pages_router)
+
+add_pagination(app)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 

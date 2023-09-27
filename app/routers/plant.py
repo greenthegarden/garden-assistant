@@ -10,6 +10,10 @@ from jinja2 import Template
 from sqlmodel import Session, select
 from typing import List
 
+
+from fastapi_pagination import LimitOffsetPage, Page
+from fastapi_pagination.ext.sqlmodel import paginate
+
 # import local modules
 
 from app.database.session import get_session
@@ -70,7 +74,11 @@ def create_plant(
     return db_plant
 
 
-@plant_router.get("/api/plants/", response_model=Page[PlantRead], tags=["Plant API"])
+@plant_router.get(
+        "/api/plants/",
+        response_model=Page[PlantRead],
+        tags=["Plant API"]
+)
 def read_plants(
     *,
     session: Session = Depends(get_session),
@@ -79,27 +87,43 @@ def read_plants(
 ):
     """Get the list of defined plants."""
     statement = select(Plant).offset(offset).limit(limit)
-    db_plants = session.exec(statement).all()
-    return paginate(db_plants)
+    # db_plants = session.exec(statement).all()
+    return paginate(session, statement)
 
 
-@plant_router.get("/api/plants/{plant_id}", response_model=PlantRead, tags=["Plant API"])
-def read_plant(*, session: Session = Depends(get_session), plant_id: int):
+@plant_router.get(
+        "/api/plants/{plant_id}",
+        response_model=PlantRead,
+        tags=["Plant API"]
+)
+def read_plant(
+    *,
+    session: Session = Depends(get_session),
+    plant_id: int
+):
     """Get the plant with the given ID, or None if it does not exist."""
     db_plant = session.get(Plant, plant_id)
     if not db_plant:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Plant with ID {plant_id} not found')
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Plant with ID {plant_id} not found"
+        )
     return db_plant
 
 
-@plant_router.patch("/api/plants/{plant_id}", status_code=status.HTTP_201_CREATED, response_model=PlantRead, tags=["Plant API"])
+@plant_router.patch(
+        "/api/plants/{plant_id}",
+        status_code=status.HTTP_201_CREATED,
+        response_model=PlantRead,
+        tags=["Plant API"]
+)
 def update_plant(
     *,
     session: Session = Depends(get_session),
     # user: User = Depends(auth_handler.get_current_user),
     plant_id: int,
     plant: PlantUpdate,
-    ):
+):
     """Update the details of the plant bed with the given ID."""
     # if not user.planter:
     #   response.status_code = status.HTTP_401_UNAUTHORIZED

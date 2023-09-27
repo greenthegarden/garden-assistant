@@ -132,11 +132,13 @@ def test_read_gardens(
         climatic_zone=climatic_zone
     )
     session.add(garden_1)
+
     garden_2 = Garden(
         name="Test Garden 2",
         garden_type=garden_type
     )
     session.add(garden_2)
+
     session.commit()
 
     response = client.get("/api/gardens/")
@@ -146,11 +148,13 @@ def test_read_gardens(
     data = response.json()
 
     assert len(data) == 2
+
     assert data[0]["name"] == garden_1.name
     assert data[0]["type"] == garden_1.type
     assert data[0]["location"] == garden_1.location
     assert data[0]["zone"] == garden_1.zone
     assert data[0]["id"] == garden_1.id
+
     assert data[1]["name"] == garden_2.name
     assert data[1]["type"] == garden_2.type
     assert data[1]["location"] == garden_2.location

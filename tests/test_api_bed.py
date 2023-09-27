@@ -78,7 +78,7 @@ def test_create_bed(client: TestClient):
 
 
 def test_create_bed_incomplete(client: TestClient):
-    # attempt to create a bed with no name
+    """Attempt to create a bed without required name"""
     response = client.post(
         "/api/beds",
         json={"soil_type": SoilType.LOAM, "irrigation_zone": IrrigationZone.VEGETABLES}
@@ -90,15 +90,16 @@ def test_read_beds(
         session: Session,
         client: TestClient
 ):
+    """Test creation and retrieving multiple garden beds"""
     irrigation_zone=random.choice(IrrigationZone.list())
-    soil_type=random.choice(SoilType.list())
     bed_1 = Bed(
-        name="Vegetable Plot",
+        name="Test Garden Bed 1",
         irrigation_zone=irrigation_zone
     )
     session.add(bed_1)
+    soil_type=random.choice(SoilType.list())
     bed_2 = Bed(
-        name="Seedlings",
+        name="Test Garden Bed 2",
         soil_type=soil_type
     )
     session.add(bed_2)

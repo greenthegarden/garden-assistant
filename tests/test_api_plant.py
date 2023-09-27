@@ -22,7 +22,9 @@ fake_secret_token = "coneofsilence"
 @pytest.fixture(name="session")
 def session_fixture():
     engine = create_engine(
-        "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool
     )
     SQLModel.metadata.create_all(engine)
     with Session(engine) as session:
@@ -46,7 +48,9 @@ def client_fixture(session: Session):
 def test_create_plant(client: TestClient):
     response = client.post(
         "/api/plants/",
-        json={"name_common": "cucumber"},
+        json={
+            "name_common": "cucumber"
+        },
     )
     assert response.status_code == status.HTTP_201_CREATED
 
@@ -62,36 +66,52 @@ def test_create_plant(client: TestClient):
     assert data["id"] is not None
 
 
-# def test_create_plant_incomplete(client: TestClient):
-#     # attempt to create a plant with no plant
-#     response = client.post(
-#         "/api/plants",
-#         json={"notes": "test"}
-#     )
-#     assert response.status_code == 422
+def test_create_plant_incomplete(client: TestClient):
+    """Attempt to create a plant without required name_common"""
+    response = client.post(
+        "/api/plants",
+        json={
+            "hints": "test"
+        }
+    )
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-# def test_read_plants(session: Session, client: TestClient):
-#     plant_1 = plant(plant="apple", notes="test")
-#     plant_2 = plant(plant="corn")
-#     session.add(plant_1)
-#     session.add(plant_2)
-#     session.commit()
+def test_read_plants(
+        session: Session,
+        client: TestClient
+):
+    """Test creation and retrieving multiple plants"""
+    plant_1 = Plant(
+        name_common="apple",
+        hints="test"
+    )
+    session.add(plant_1)
 
-#     response = client.get("/api/plants/")
-#     data = response.json()
+    plant_2 = Plant(
+        name_common="corn"
+    )
+    session.add(plant_2)
 
-#     assert response.status_code == status.HTTP_200_OK
+    session.commit()
 
-#     assert len(data) == 2
-#     assert data[0]["plant"] == plant_1.plant
-#     assert data[0]["variety"] == plant_1.variety
-#     assert data[0]["notes"] == plant_1.notes
-#     assert data[0]["id"] == plant_1.id
-#     assert data[1]["plant"] == plant_2.plant
-#     assert data[1]["variety"] == plant_2.variety
-#     assert data[1]["notes"] == plant_2.notes
-#     assert data[1]["id"] == plant_2.id
+    response = client.get("/api/plants/")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json().get("items")
+
+    assert len(data) == 2
+
+    assert data[0]["name_common"] == plant_1.name_common
+    assert data[0]["family_group"] == plant_1.family_group
+    assert data[0]["hints"] == plant_1.hints
+    assert data[0]["id"] == plant_1.id
+
+    assert data[1]["name_common"] == plant_2.name_common
+    assert data[1]["family_group"] == plant_2.family_group
+    assert data[1]["hints"] == plant_2.hints
+    assert data[1]["id"] == plant_2.id
 
 
 # # def test_read_plant(session: Session, client: TestClient):
