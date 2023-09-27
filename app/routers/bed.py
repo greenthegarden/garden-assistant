@@ -58,7 +58,11 @@ def create_bed(
     return db_bed
 
 
-@bed_router.get("/api/beds/", response_model=List[BedRead], tags=["Garden Beds API"])
+@bed_router.get(
+    "/api/beds/",
+    response_model=List[BedRead],
+    tags=["Garden Beds API"]
+)
 def read_beds(
     *,
     session: Session = Depends(get_session),
@@ -66,18 +70,27 @@ def read_beds(
     limit: int = Query(default=100, lte=100),
 ):
     """Get the list of defined garden beds."""
-    stmt = select(Bed).offset(offset).limit(limit)
-    db_beds = session.exec(stmt).all()
+    statement = select(Bed).offset(offset).limit(limit)
+    db_beds = session.exec(statement).all()
     return db_beds
 
 
-@bed_router.get("/api/beds/{bed_id}", response_model=BedRead, tags=["Garden Beds API"])
-def read_bed(*, session: Session = Depends(get_session), bed_id: int):
+@bed_router.get(
+    "/api/beds/{bed_id}",
+    response_model=BedRead,
+    tags=["Garden Beds API"]
+)
+def read_bed(
+    *,
+    session: Session = Depends(get_session),
+    bed_id: int
+):
     """Get the garden bed with the given ID, or None if it does not exist."""
     db_bed = session.get(Bed, bed_id)
     if not db_bed:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Bed not found"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Bed not found"
         )
     return db_bed
 
@@ -103,7 +116,8 @@ def update_bed(
     db_bed = session.get(Bed, bed_id)
     if not db_bed:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Bed not found"
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Bed not found"
         )
     bed_data = bed.dict(exclude_unset=True)
     for key, val in bed_data.items():
@@ -111,10 +125,12 @@ def update_bed(
     session.add(db_bed)
     session.commit()
     session.refresh(db_bed)
-    content = {db_bed}
+    content = {"bed": jsonable_encoder(db_bed)}
     headers = {"HX-Trigger": "bedsChanged"}
     return JSONResponse(
-        content=content, status_code=status.HTTP_201_CREATED, headers=headers
+        content=content,
+        status_code=status.HTTP_201_CREATED,
+        headers=headers
     )
 
 
@@ -138,19 +154,24 @@ def delete_bed(
     db_bed = session.get(Bed, bed_id)
     if not db_bed:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Bed not found"
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Bed not found"
         )
     session.delete(db_bed)
     session.commit()
     content = {}
     headers = {"HX-Trigger": "bedsChanged"}
     return JSONResponse(
-        content=content, status_code=status.HTTP_200_OK, headers=headers
+        content=content,
+        status_code=status.HTTP_200_OK,
+        headers=headers
     )
 
 
 @bed_router.get(
-    "/api/beds/soil_types/", response_model=List[SoilType], tags=["Garden Beds API"]
+    "/api/beds/soil_types/",
+    response_model=List[SoilType],
+    tags=["Garden Beds API"]
 )
 def read_soil_types():
     """Get the list of defined soil types."""
@@ -171,25 +192,46 @@ def read_irrigation_zones():
     return irrigation_zones
 
 
-@bed_router.get("/beds/", response_class=HTMLResponse, tags=["Pages API"])
+@bed_router.get(
+    "/beds/",
+    response_class=HTMLResponse,
+    tags=["Pages API"]
+)
 def beds(request: Request):
     """Send content for beds page."""
     context = {"request": request}
     return templates.TemplateResponse("beds/beds.html", context)
 
 
-@bed_router.get("/beds/update", response_class=HTMLResponse, tags=["Pages API"])
-def beds_update(request: Request, session: Session = Depends(get_session)):
+@bed_router.get(
+    "/beds/update",
+    response_class=HTMLResponse,
+    tags=["Pages API"]
+)
+def beds_update(
+    request: Request,
+    session: Session = Depends(get_session)
+):
     """Update table contents for garden beds."""
     stmt = select(Bed)
     db_beds = session.exec(stmt).all()
     context = {"request": request, "beds": db_beds}
-    return templates.TemplateResponse("beds/partials/beds_table_body.html", context)
+    return templates.TemplateResponse(
+        "beds/partials/beds_table_body.html",
+        context
+    )
 
 
-@bed_router.get("/bed/create", response_class=HTMLResponse, tags=["Pages API"])
-def bed_create_form(request: Request, session: Session = Depends(get_session)):
-    """Send modal form to create a garden bed."""
+@bed_router.get(
+    "/bed/create",
+    response_class=HTMLResponse,
+    tags=["Pages API"]
+)
+def bed_create_form(
+    request: Request,
+    session: Session = Depends(get_session)
+):
+    """Send model form to create a garden bed."""
     statement = select(Garden)
     db_gardens = session.exec(statement).all()
     irrigation_zones = IrrigationZone.list()
@@ -200,10 +242,17 @@ def bed_create_form(request: Request, session: Session = Depends(get_session)):
         "irrigation_zones": irrigation_zones,
         "soil_types": soil_types,
     }
-    return templates.TemplateResponse("beds/partials/modal_form.html", context)
+    return templates.TemplateResponse(
+        "beds/partials/modal_form.html",
+        context
+    )
 
 
-@bed_router.post("/bed/create", response_class=JSONResponse, tags=["Pages API"])
+@bed_router.post(
+    "/bed/create",
+    response_class=JSONResponse,
+    tags=["Pages API"]
+)
 def bed_create(
     session: Session = Depends(get_session),
     form_data: BedCreate = Depends(BedCreate.as_form),
@@ -215,7 +264,10 @@ def bed_create(
     session.refresh(db_bed)
     headers = {"HX-Trigger": "bedsChanged"}
     content = {"bed": jsonable_encoder(db_bed)}
-    return JSONResponse(content=content, headers=headers)
+    return JSONResponse(
+        content=content,
+        headers=headers
+    )
 
 
 @bed_router.get("/bed/edit/{bed_id}", response_class=HTMLResponse, tags=["Pages API"])
@@ -226,7 +278,8 @@ def bed_edit_form(
     db_bed = session.get(Bed, bed_id)
     if not db_bed:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Bed not found"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Bed not found"
         )
     statement = select(Garden)
     db_gardens = session.exec(statement).all()
@@ -239,15 +292,24 @@ def bed_edit_form(
         "irrigation_zones": irrigation_zones,
         "soil_types": soil_types,
     }
-    return templates.TemplateResponse("beds/partials/modal_form.html", context)
+    return templates.TemplateResponse(
+        "beds/partials/modal_form.html",
+        context
+    )
 
 
-@bed_router.post("/bed/edit/{bed_id}", response_class=JSONResponse, tags=["Pages API"])
+@bed_router.post(
+    "/bed/edit/{bed_id}",
+    response_class=JSONResponse,
+    tags=["Pages API"]
+)
 async def bed_edit(
-    request: Request, bed_id: int, session: Session = Depends(get_session)
+    request: Request,
+    bed_id: int,
+    session: Session = Depends(get_session)
 ):
     """Process form contents to update the details of the\
-      garden bed with the given ID."""
+        garden bed with the given ID."""
     form = await request.form()
     db_bed = session.get(Bed, bed_id)
     if not db_bed:
@@ -263,4 +325,7 @@ async def bed_edit(
     session.refresh(db_bed)
     content = {"bed": jsonable_encoder(db_bed)}
     headers = {"HX-Trigger": "bedsChanged"}
-    return JSONResponse(content=content, headers=headers)
+    return JSONResponse(
+        content=content,
+        headers=headers
+    )

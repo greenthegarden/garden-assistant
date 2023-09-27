@@ -127,36 +127,36 @@ def test_read_bed(session: Session, client: TestClient):
     assert data["id"] == bed_1.id
 
 
-# def test_update_bed(session: Session, client: TestClient):
-#     bed_1 = Bed(name="Vegetable Plot", irrigation_zone=IrrigationZone.VEGETABLES)
-#     session.add(bed_1)
-#     session.commit()
+def test_update_bed(session: Session, client: TestClient):
+    bed_1 = Bed(name="Vegetable Plot", irrigation_zone=IrrigationZone.VEGETABLES)
+    session.add(bed_1)
+    session.commit()
 
-#     response = client.get(f"/api/beds/{bed_1.id}")
+    response = client.get(f"/api/beds/{bed_1.id}")
 
-#     assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_200_OK
     
-#     data = response.json()
+    data = response.json()
 
-#     assert isinstance(data, dict)
-#     assert data["name"] == bed_1.name
-#     assert data["soil_type"] is None
-#     assert data["id"] is not None
+    assert isinstance(data, dict)
+    assert data["name"] == bed_1.name
+    assert data["soil_type"] is None
+    assert data["id"] is not None
 
-#     response = client.patch(
-#         f"/api/beds/{bed_1.id}",
-#         json = {"name": "Updated Bed"},
-#         # json = {"soil_type": SoilType.CLAY}
-#     )
+    response = client.patch(
+        f"/api/beds/{bed_1.id}",
+        json = {"name": "Updated Bed"},
+        # json = {"soil_type": SoilType.CLAY}
+    )
 
-#     assert response.status_code == status.HTTP_201_CREATED
+    assert response.status_code == status.HTTP_201_CREATED
 
-#     data = response.json()
+    # data = response.json()
 
-#     assert data["name"] == bed_1.name
-#     assert data["soil_type"] == "Clay"
-#     assert data["irrigation_zone"] == bed_1.irrigation_zone
-#     assert data["id"] == bed_1.id
+    # assert data["name"] == bed_1.name
+    # assert data["soil_type"] == "Clay"
+    # assert data["irrigation_zone"] == bed_1.irrigation_zone
+    # assert data["id"] == bed_1.id
 
 
 def test_delete_bed(session: Session, client: TestClient):
