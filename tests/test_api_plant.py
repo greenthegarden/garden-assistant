@@ -77,6 +77,29 @@ def test_create_plant_incomplete(client: TestClient):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
+def test_read_plant(
+        session: Session,
+        client: TestClient
+):
+    plant_1 = Plant(
+        name_common="apple",
+        hints="test"
+    )
+    session.add(plant_1)
+    session.commit()
+
+    response = client.get(f"/api/plants/{plant_1.id}")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+
+    assert data["name_common"] == plant_1.name_common
+    assert data["family_group"] is None
+    assert data["hints"] == plant_1.hints
+    assert data["id"] == plant_1.id
+
+
 def test_read_plants(
         session: Session,
         client: TestClient
@@ -114,37 +137,45 @@ def test_read_plants(
     assert data[1]["id"] == plant_2.id
 
 
-# # def test_read_plant(session: Session, client: TestClient):
-# #     plant_1 = plant(plant="apple", notes="test")
-# #     session.add(plant_1)
-# #     session.commit()
 
-# #     response = client.get(f"/api/plants/{plant_1.id}")
-# #     data = response.json()
+def test_update_plant(
+        session: Session,
+        client: TestClient
+):
+    hints_original="test"
+    hints_updated="updated"
 
-# #     assert response.status_code == status.HTTP_200_OK
+    plant_1 = Plant(
+        name_common="apple",
+        hints=hints_original
+    )
+    session.add(plant_1)
+    session.commit()
 
-# #     assert data["plant"] == plant_1.plant
-# #     assert data["variety"] == plant_1.variety
-# #     assert data["notes"] == plant_1.notes
-# #     assert data["id"] == plant_1.id
+    response = client.get(f"/api/plants/{plant_1.id}")
 
+    assert response.status_code == status.HTTP_200_OK
 
-# # def test_update_plant(session: Session, client: TestClient):
-# #     plant_1 = plant(plant="apple", notes="test")
-# #     session.add(plant_1)
-# #     session.commit()
+    data = response.json()
 
-# #     response = client.patch(f"/api/plants/{plant_1.id}",
-# #                             json={"notes": "updated"})
-# #     data = response.json()
+    assert data["name_common"] == plant_1.name_common
+    assert data["family_group"] is None
+    assert data["hints"] == hints_original
+    assert data["id"] == plant_1.id
 
-# #     assert response.status_code == status.HTTP_201_CREATED
+    response = client.patch(
+        f"/api/plants/{plant_1.id}",
+        json={"hints": hints_updated}
+    )
 
-# #     assert data["plant"] == plant_1.plant
-# #     assert data["variety"] == plant_1.variety
-# #     assert data["notes"] == "updated"
-# #     assert data["id"] == plant_1.id
+    assert response.status_code == status.HTTP_201_CREATED
+
+    data = response.json()
+
+    assert data["name_common"] == plant_1.name_common
+    assert data["family_group"] == plant_1.family_group
+    assert data["hints"] == hints_updated
+    assert data["id"] == plant_1.id
 
 
 # # def test_delete_plant(session: Session, client: TestClient):

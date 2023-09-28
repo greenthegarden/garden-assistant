@@ -30,16 +30,16 @@ logger = logging.getLogger(__name__)
 
 plant_router = APIRouter(route_class=TimedRoute)
 
-plant_data = [
-    {"name_common": "Amaranth",
-    "name_botanical": "Amaranthus sp.",
-    "family_group": "Amaranthaceae",
-    "harvest": "12 to 16 weeks from seed.",
-    "hints": "To make planting easier, mix tiny seeds with compost or sand before sowing.",
-    "watch_for": "Can become weedy if let go to seed. Low germination rates are common.",
-    "proven_varieties": "Golden"
-    }
-]
+# plant_data = [
+#     {"name_common": "Amaranth",
+#     "name_botanical": "Amaranthus sp.",
+#     "family_group": "Amaranthaceae",
+#     "harvest": "12 to 16 weeks from seed.",
+#     "hints": "To make planting easier, mix tiny seeds with compost or sand before sowing.",
+#     "watch_for": "Can become weedy if let go to seed. Low germination rates are common.",
+#     "proven_varieties": "Golden"
+#     }
+# ]
 
 # CRUD API methods for Plants
 
@@ -105,7 +105,7 @@ def read_plant(
     db_plant = session.get(Plant, plant_id)
     if not db_plant:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Plant with ID {plant_id} not found"
         )
     return db_plant
@@ -130,16 +130,24 @@ def update_plant(
     #   return {}
     db_plant = session.get(Plant, plant_id)
     if not db_plant:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Plant with ID {plant_id} not found')
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Plant with ID {plant_id} not found"
+        )
     plant_data = plant.dict(exclude_unset=True)
     for key, val in plant_data.items():
         setattr(db_plant, key, val)
     session.add(db_plant)
     session.commit()
     session.refresh(db_plant)
-    content = {"plant": jsonable_encoder(db_plant)}
+    content = jsonable_encoder(db_plant)
+    # content = {"plant": jsonable_encoder(db_plant)}
     headers = {"HX-Trigger": "plantsChanged"}
-    return JSONResponse(content=content, status_code=status.HTTP_201_CREATED, headers=headers)
+    return JSONResponse(
+        content=content,
+        status_code=status.HTTP_201_CREATED,
+        headers=headers
+    )
 
 
 @plant_router.delete("/api/plants/{plant_id}", response_model=None, status_code=status.HTTP_202_ACCEPTED, tags=["Plant API"])
@@ -151,39 +159,60 @@ def delete_plant(*, session: Session = Depends(get_session), plant_id: int):
     #   return {}
     db_plant = session.get(Plant, plant_id)
     if not db_plant:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Plant with ID {plant_id} not found')
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Plant with ID {plant_id} not found")
     session.delete(db_plant)
     session.commit()
     content = {}
     headers = {"HX-Trigger": "plantsChanged"}
-    return JSONResponse(content=content, status_code=status.HTTP_200_OK, headers=headers)
+    return JSONResponse(
+        content=content,
+        status_code=status.HTTP_200_OK,
+        headers=headers
+    )
 
 
 @plant_router.get("/plants/", response_class=HTMLResponse, tags=["Plant API"])
 def plants(request: Request):
     """Send content for plants page."""
     context = {"request": request}
-    return templates.TemplateResponse("plants/plants.html", context)
+    return templates.TemplateResponse(
+        "plants/plants.html",
+        context
+    )
 
 
 @plant_router.get("/plants/update", response_class=HTMLResponse, tags=["Plant API"])
-def plants_update(request: Request, session: Session = Depends(get_session)):
+def plants_update(
+    request: Request,
+    session: Session = Depends(get_session)
+):
     """Update table contents for plants."""
     statement = select(Plant)
     db_plants = session.exec(statement).all()
     context = {"request": request, "plants": db_plants }
-    return templates.TemplateResponse('plants/partials/plants_table_body.html', context)
+    return templates.TemplateResponse(
+        'plants/partials/plants_table_body.html',
+        context
+    )
 
 
 @plant_router.get("/plant/create", response_class=HTMLResponse, tags=["Plant API"])
 def plant_create_form(request: Request):
     """Send modal form to create a plant bed"""
     context = {"request": request }
-    return templates.TemplateResponse('plants/partials/modal_form.html', context)
+    return templates.TemplateResponse(
+        'plants/partials/modal_form.html',
+        context
+    )
 
 
 @plant_router.post("/plant/create", response_class=JSONResponse, tags=["Plant API"])
-async def plant_create(session: Session = Depends(get_session), form_data: PlantCreate = Depends(PlantCreate.as_form)):
+async def plant_create(
+    session: Session = Depends(get_session),
+    form_data: PlantCreate = Depends(PlantCreate.as_form)
+):
     """Process form contents to create a plant."""
     db_plant = Plant.from_orm(form_data)
     session.add(db_plant)
@@ -191,11 +220,21 @@ async def plant_create(session: Session = Depends(get_session), form_data: Plant
     session.refresh(db_plant)
     headers = {"HX-Trigger": "plantsChanged"}
     content = {"planting": jsonable_encoder(db_plant)}
-    return JSONResponse(content=content, headers=headers)
+    return JSONResponse(
+        content=content,
+        headers=headers
+    )
 
 
-@plant_router.get("/plant/edit/{plant_id}", response_class=HTMLResponse, tags=["Plant API"])
-def plant_edit_form(request: Request, plant_id: int, session: Session = Depends(get_session)):
+@plant_router.get(
+        "/plant/edit/{plant_id}",
+        response_class=HTMLResponse, tags=["Plant API"]
+)
+def plant_edit_form(
+    request: Request,
+    plant_id: int,
+    session: Session = Depends(get_session)
+):
     """Send modal form to update the plant with the given ID."""
     db_plant = session.get(Plant, plant_id)
     if not db_plant:
@@ -204,13 +243,24 @@ def plant_edit_form(request: Request, plant_id: int, session: Session = Depends(
     return templates.TemplateResponse('plants/partials/modal_form.html', context)
 
 
-@plant_router.post("/plant/edit/{plant_id}", response_class=JSONResponse, tags=["Plant API"])
-async def plant_edit(request: Request, plant_id: int, session: Session = Depends(get_session)):
+@plant_router.post(
+        "/plant/edit/{plant_id}",
+        response_class=JSONResponse,
+        tags=["Plant API"]
+)
+async def plant_edit(
+    request: Request,
+    plant_id: int,
+    session: Session = Depends(get_session)
+):
     """Process form contents to update the details of the plant with the given ID."""
     form = await request.form()
     db_plant = session.get(Plant, plant_id)
     if not db_plant:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'plant with ID {plant_id} not found')
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Plant with ID {plant_id} not found"
+        )
     for key, val in form.items():
         if val != '':
             setattr(db_plant, key, val)
@@ -219,4 +269,7 @@ async def plant_edit(request: Request, plant_id: int, session: Session = Depends
     session.refresh(db_plant)
     content = {"plant": jsonable_encoder(db_plant)}
     headers = {"HX-Trigger": "plantsChanged"}
-    return JSONResponse(content=content, headers=headers)
+    return JSONResponse(
+        content=content,
+        headers=headers
+    )
