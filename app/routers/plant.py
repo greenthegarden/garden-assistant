@@ -150,8 +150,17 @@ def update_plant(
     )
 
 
-@plant_router.delete("/api/plants/{plant_id}", response_model=None, status_code=status.HTTP_202_ACCEPTED, tags=["Plant API"])
-def delete_plant(*, session: Session = Depends(get_session), plant_id: int):
+@plant_router.delete(
+        "/api/plants/{plant_id}",
+        response_model=None,
+        status_code=status.HTTP_202_ACCEPTED,
+        tags=["Plant API"]
+)
+def delete_plant(
+    *,
+    session: Session = Depends(get_session),
+    plant_id: int
+):
     """Delete the plant with the given ID."""
     #  user: User = Depends(auth_handler.get_current_user),
     # if not user.planter:
@@ -173,7 +182,11 @@ def delete_plant(*, session: Session = Depends(get_session), plant_id: int):
     )
 
 
-@plant_router.get("/plants/", response_class=HTMLResponse, tags=["Plant API"])
+@plant_router.get(
+        "/plants/",
+        response_class=HTMLResponse,
+        tags=["Plant API"]
+)
 def plants(request: Request):
     """Send content for plants page."""
     context = {"request": request}
@@ -183,7 +196,11 @@ def plants(request: Request):
     )
 
 
-@plant_router.get("/plants/update", response_class=HTMLResponse, tags=["Plant API"])
+@plant_router.get(
+        "/plants/update",
+        response_class=HTMLResponse,
+        tags=["Plant API"]
+)
 def plants_update(
     request: Request,
     session: Session = Depends(get_session)
@@ -191,14 +208,18 @@ def plants_update(
     """Update table contents for plants."""
     statement = select(Plant)
     db_plants = session.exec(statement).all()
-    context = {"request": request, "plants": db_plants }
+    context = {"request": request, "plants": db_plants}
     return templates.TemplateResponse(
         'plants/partials/plants_table_body.html',
         context
     )
 
 
-@plant_router.get("/plant/create", response_class=HTMLResponse, tags=["Plant API"])
+@plant_router.get(
+        "/plant/create",
+        response_class=HTMLResponse,
+        tags=["Plant API"]
+)
 def plant_create_form(request: Request):
     """Send modal form to create a plant bed"""
     context = {"request": request }
@@ -208,7 +229,11 @@ def plant_create_form(request: Request):
     )
 
 
-@plant_router.post("/plant/create", response_class=JSONResponse, tags=["Plant API"])
+@plant_router.post(
+        "/plant/create",
+        response_class=JSONResponse,
+        tags=["Plant API"]
+)
 async def plant_create(
     session: Session = Depends(get_session),
     form_data: PlantCreate = Depends(PlantCreate.as_form)
@@ -219,7 +244,7 @@ async def plant_create(
     session.commit()
     session.refresh(db_plant)
     headers = {"HX-Trigger": "plantsChanged"}
-    content = {"planting": jsonable_encoder(db_plant)}
+    content = jsonable_encoder(db_plant)
     return JSONResponse(
         content=content,
         headers=headers
@@ -238,9 +263,15 @@ def plant_edit_form(
     """Send modal form to update the plant with the given ID."""
     db_plant = session.get(Plant, plant_id)
     if not db_plant:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='plant not found')
-    context = {"request": request, "plant": db_plant }
-    return templates.TemplateResponse('plants/partials/modal_form.html', context)
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='plant not found'
+        )
+    context = {"request": request, "plant": db_plant}
+    return templates.TemplateResponse(
+        'plants/partials/modal_form.html',
+        context
+    )
 
 
 @plant_router.post(

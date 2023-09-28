@@ -10,9 +10,9 @@ if TYPE_CHECKING:
 # Model based on https://www.abc.net.au/gardening/plant-finder
 class PlantBase(SQLModel):
     name_common: str = Field(index=True)
-    name_botanical: Optional[str]
-    family_group: Optional[str]
-    harvest: Optional[str]
+    name_botanical: Optional[str] = None
+    family_group: Optional[str] = None
+    harvest: Optional[str]= None
     hints: Optional[str] = None
     watch_for: Optional[str] = None
     proven_varieties: Optional[str] = None
