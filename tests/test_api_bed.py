@@ -92,17 +92,20 @@ def test_read_beds(
 ):
     """Test creation and retrieving multiple garden beds"""
     irrigation_zone=random.choice(IrrigationZone.list())
+    soil_type=random.choice(SoilType.list())
+
     bed_1 = Bed(
         name="Test Garden Bed 1",
         irrigation_zone=irrigation_zone
     )
     session.add(bed_1)
-    soil_type=random.choice(SoilType.list())
+
     bed_2 = Bed(
         name="Test Garden Bed 2",
         soil_type=soil_type
     )
     session.add(bed_2)
+
     session.commit()
 
     response = client.get("/api/beds/")
@@ -147,7 +150,7 @@ def test_update_bed(session: Session, client: TestClient):
     response = client.get(f"/api/beds/{bed_1.id}")
 
     assert response.status_code == status.HTTP_200_OK
-    
+
     data = response.json()
 
     assert isinstance(data, dict)
@@ -171,9 +174,13 @@ def test_update_bed(session: Session, client: TestClient):
     # assert data["id"] == bed_1.id
 
 
-def test_delete_bed(session: Session, client: TestClient):
+def test_delete_bed(
+        session: Session,
+        client: TestClient
+):
     bed_1 = Bed(name="Vegetable Plot", irrigation_zone=IrrigationZone.VEGETABLES)
     session.add(bed_1)
+
     session.commit()
 
     response = client.delete(f"/api/beds/{bed_1.id}")

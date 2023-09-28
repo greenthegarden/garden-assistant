@@ -22,7 +22,7 @@ from app.routers.api_user import auth_handler
 
 logger = logging.getLogger(__name__)
 
-                                      
+
 planting_router = APIRouter(route_class=TimedRoute)
 templates = Jinja2Templates(directory="templates")
 
@@ -110,7 +110,7 @@ def update_planting(
     session.add(db_planting)
     session.commit()
     session.refresh(db_planting)
-    content = {"planting": jsonable_encoder(db_planting)}
+    content = jsonable_encoder(db_planting)
     headers = {"HX-Trigger": "plantingsChanged"}
     return JSONResponse(
         content=content,

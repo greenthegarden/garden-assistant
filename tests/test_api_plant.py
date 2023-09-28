@@ -47,9 +47,7 @@ def client_fixture(session: Session):
 # Garden Plant API tests
 
 
-def test_create_plant(
-        client: TestClient
-):
+def test_create_plant(client: TestClient):
     response = client.post(
         "/api/plants/",
         json={"name_common": "cucumber"},
@@ -83,6 +81,7 @@ def test_read_plant(
 ):
     plant_1 = Plant(name_common="apple", hints="test")
     session.add(plant_1)
+
     session.commit()
 
     response = client.get(f"/api/plants/{plant_1.id}")
@@ -151,7 +150,10 @@ def test_update_plant(
     assert data["hints"] == hints_original
     assert data["id"] == plant_1.id
 
-    response = client.patch(f"/api/plants/{plant_1.id}", json={"hints": hints_updated})
+    response = client.patch(
+        f"/api/plants/{plant_1.id}",
+        json={"hints": hints_updated}
+    )
 
     assert response.status_code == status.HTTP_201_CREATED
 

@@ -1,5 +1,3 @@
-# import external modules
-
 import logging
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
@@ -14,7 +12,6 @@ from typing import List
 from fastapi_pagination import LimitOffsetPage, Page
 from fastapi_pagination.ext.sqlmodel import paginate
 
-# import local modules
 
 from app.database.session import get_session
 from app.library.helpers import *

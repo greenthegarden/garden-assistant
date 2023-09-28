@@ -1,6 +1,4 @@
 import pytest
-import random
-
 from fastapi import status
 from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
@@ -9,7 +7,6 @@ from sqlmodel.pool import StaticPool
 from app.database.session import get_session
 from app.main import app
 from app.models.planting import Planting
-
 
 # Based on
 # https://fastapi.tiangolo.com/tutorial/testing/
@@ -45,14 +42,12 @@ def client_fixture(session: Session):
 
 # Garden Planting API tests
 
-def test_create_planting(client: TestClient):
-    response = client.post(
-        "/api/plantings/",
-        json={"plant": "test plant"}
-    )
-    data = response.json()
 
+def test_create_planting(client: TestClient):
+    response = client.post("/api/plantings/", json={"plant": "test plant"})
     assert response.status_code == status.HTTP_201_CREATED
+
+    data = response.json()
 
     assert data["plant"] == "test plant"
     assert data["variety"] is None
@@ -63,11 +58,29 @@ def test_create_planting(client: TestClient):
 
 def test_create_planting_incomplete(client: TestClient):
     # attempt to create a planting with no plant
-    response = client.post(
-        "/api/plantings",
-        json={"notes": "test"}
-    )
+    response = client.post("/api/plantings", json={"notes": "test"})
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+def test_read_planting(
+        session: Session,
+        client: TestClient
+):
+    planting_1 = Planting(plant="apple", notes="test")
+    session.add(planting_1)
+
+    session.commit()
+
+    response = client.get(f"/api/plantings/{planting_1.id}")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+
+    assert data["plant"] == planting_1.plant
+    assert data["variety"] == planting_1.variety
+    assert data["notes"] == planting_1.notes
+    assert data["id"] == planting_1.id
 
 
 def test_read_plantings(
@@ -89,61 +102,72 @@ def test_read_plantings(
     data = response.json()
 
     assert len(data) == 2
+
     assert data[0]["plant"] == planting_1.plant
     assert data[0]["variety"] == planting_1.variety
     assert data[0]["notes"] == planting_1.notes
     assert data[0]["id"] == planting_1.id
+
     assert data[1]["plant"] == planting_2.plant
     assert data[1]["variety"] == planting_2.variety
     assert data[1]["notes"] == planting_2.notes
     assert data[1]["id"] == planting_2.id
 
 
-# # def test_read_planting(session: Session, client: TestClient):
-# #     planting_1 = Planting(plant="apple", notes="test")
-# #     session.add(planting_1)
-# #     session.commit()
+def test_update_planting(
+        session: Session,
+        client: TestClient
+):
+    notes_original = "test"
+    notes_updated = "updated"
 
-# #     response = client.get(f"/api/plantings/{planting_1.id}")
-# #     data = response.json()
+    planting_1 = Planting(plant="apple", notes=notes_original)
+    session.add(planting_1)
 
-# #     assert response.status_code == status.HTTP_200_OK
+    session.commit()
 
-# #     assert data["plant"] == planting_1.plant
-# #     assert data["variety"] == planting_1.variety
-# #     assert data["notes"] == planting_1.notes
-# #     assert data["id"] == planting_1.id
+    response = client.get(f"/api/plantings/{planting_1.id}")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+
+    assert data["plant"] == planting_1.plant
+    assert data["variety"] is None
+    assert data["notes"] == notes_original
+    assert data["id"] == planting_1.id
+
+    response = client.patch(
+        f"/api/plantings/{planting_1.id}",
+        json={"variety": "test variety", "notes": notes_updated},
+    )
+    assert response.status_code == status.HTTP_201_CREATED
+
+    data = response.json()
+
+    assert data["plant"] == planting_1.plant
+    assert data["variety"] is not None
+    assert data["variety"] == "test variety"
+    assert data["notes"] == notes_updated
+    assert data["id"] == planting_1.id
 
 
-# # def test_update_planting(session: Session, client: TestClient):
-# #     planting_1 = Planting(plant="apple", notes="test")
-# #     session.add(planting_1)
-# #     session.commit()
+def test_delete_planting(
+        session: Session,
+        client: TestClient
+):
+    planting_1 = Planting(plant="apple", notes="test")
+    session.add(planting_1)
 
-# #     response = client.patch(f"/api/plantings/{planting_1.id}",
-# #                             json={"notes": "updated"})
-# #     data = response.json()
+    session.commit()
 
-# #     assert response.status_code == status.HTTP_201_CREATED
+    response = client.delete(f"/api/plantings/{planting_1.id}")
 
-# #     assert data["plant"] == planting_1.plant
-# #     assert data["variety"] == planting_1.variety
-# #     assert data["notes"] == "updated"
-# #     assert data["id"] == planting_1.id
+    assert response.status_code == status.HTTP_200_OK
 
+    dp_planting = session.get(Planting, planting_1.id)
 
-# # def test_delete_planting(session: Session, client: TestClient):
-# #     planting_1 = Planting(plant="apple", notes="test")
-# #     session.add(planting_1)
-# #     session.commit()
-
-# #     response = client.delete(f"/api/plantings/{planting_1.id}")
-
-# #     dp_planting = session.get(Planting, planting_1.id)
-
-# #     assert response.status_code == status.HTTP_200_OK
-
-# #     assert dp_planting is None
+    assert dp_planting is None
 
 
 # # def test_read_planting_with_bed(session: Session, client: TestClient):

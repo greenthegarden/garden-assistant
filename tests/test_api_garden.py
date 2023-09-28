@@ -85,6 +85,7 @@ def test_create_garden_with_type(client: TestClient):
     assert data["zone"] is None
     assert data["id"] is not None
 
+
 def test_create_garden_with_location(client: TestClient):
     response = client.post(
         "/api/gardens/",
@@ -102,6 +103,7 @@ def test_create_garden_with_location(client: TestClient):
     assert data["location"] == "home"
     assert data["zone"] is None
     assert data["id"] is not None
+
 
 def test_create_garden_with_zone(client: TestClient):
     response = client.post(
@@ -121,12 +123,14 @@ def test_create_garden_with_zone(client: TestClient):
     assert data["zone"] == "Tropical"
     assert data["id"] is not None
 
+
 def test_read_gardens(
         session: Session,
         client: TestClient
 ):
     climatic_zone=random.choice(ClimaticZone.list())
     garden_type=random.choice(GardenType.list())
+
     garden_1 = Garden(
         name="Test Garden 1",
         climatic_zone=climatic_zone
