@@ -4,8 +4,8 @@ from sqlmodel import Field, Relationship, SQLModel
 
 from app.library.form import as_form
 
-if TYPE_CHECKING:
-    from app.models.planting import Planting
+# if TYPE_CHECKING:
+#     from app.models.planting import Planting
 
 # Model based on https://www.abc.net.au/gardening/plant-finder
 class PlantBase(SQLModel):
@@ -16,12 +16,12 @@ class PlantBase(SQLModel):
     hints: Optional[str] = None
     watch_for: Optional[str] = None
     proven_varieties: Optional[str] = None
-    planting_id: Optional[int] = Field(default=None, foreign_key="planting.id")
+    # planting_id: Optional[int] = Field(default=None, foreign_key="planting.id")
 
 
 class Plant(PlantBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    planting: List["Planting"] = Relationship(back_populates="plants")
+    # planting: List["Planting"] = Relationship(back_populates="plants")
 
 
 @as_form

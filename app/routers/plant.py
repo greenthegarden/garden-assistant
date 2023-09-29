@@ -295,7 +295,7 @@ async def plant_edit(
     session.add(db_plant)
     session.commit()
     session.refresh(db_plant)
-    content = {"plant": jsonable_encoder(db_plant)}
+    content = jsonable_encoder(db_plant)
     headers = {"HX-Trigger": "plantsChanged"}
     return JSONResponse(
         content=content,

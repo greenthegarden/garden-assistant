@@ -115,10 +115,12 @@ def test_read_beds(
     data = response.json()
 
     assert len(data) == 2
+
     assert data[0]["name"] == bed_1.name
     assert data[0]["soil_type"] == bed_1.soil_type
     assert data[0]["irrigation_zone"] == bed_1.irrigation_zone
     assert data[0]["id"] == bed_1.id
+
     assert data[1]["name"] == bed_2.name
     assert data[1]["soil_type"] == bed_2.soil_type
     assert data[1]["irrigation_zone"] == bed_2.irrigation_zone
@@ -142,7 +144,10 @@ def test_read_bed(session: Session, client: TestClient):
     assert data["id"] == bed_1.id
 
 
-def test_update_bed(session: Session, client: TestClient):
+def test_update_bed(
+        session: Session,
+        client: TestClient
+):
     bed_1 = Bed(name="Vegetable Plot", irrigation_zone=IrrigationZone.VEGETABLES)
     session.add(bed_1)
     session.commit()
