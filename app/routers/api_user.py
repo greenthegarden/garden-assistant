@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from sqlmodel import Session, select
 
-from app.auth.auth import AuthHandler
-from app.database.session import get_session
-from app.models.user import User, UserInput, UserLogin
+from ..auth.auth import AuthHandler
+from ..database.session import get_session
+from ..models.user import User, UserInput, UserLogin
 
 
 user_router = APIRouter()

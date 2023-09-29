@@ -1,24 +1,27 @@
 from sqlmodel import Session
 
-from app.database.database import engine
-from app.models.garden_models import IrrigationZone, SoilType
-from app.models.garden_models import Bed, Planting
+from .database.database import engine
+from .models.bed import IrrigationZone, SoilType
+from .models.bed import Bed
+from .models.planting import Planting
 
 
 def create_bed():
-    bed = Bed(name="Vegetable Plot",
-              soil_type=SoilType.LOAM,
-              irrigation_zone=IrrigationZone.VEGETABLES
-              )
+    bed = Bed(
+        name="Vegetable Plot",
+        soil_type=SoilType.LOAM,
+        irrigation_zone=IrrigationZone.VEGETABLES
+    )
     return bed
 
 
 def create_planting(bed: Bed):
-    planting = Planting(plant="Tomato",
-                        variety="Cherry",
-                        notes="",
-                        bed_id=bed.id
-                        )
+    planting = Planting(
+        plant="Tomato",
+        variety="Cherry",
+        notes="",
+        bed_id=bed.id
+    )
     return planting
 
 

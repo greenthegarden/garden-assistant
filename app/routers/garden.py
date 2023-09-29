@@ -8,13 +8,13 @@ from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select
 
 from app.database.session import get_session
-from app.library.helpers import *
-from app.library.routers import TimedRoute
-from app.models.bed import Bed
-from app.models.garden import ClimaticZone, GardenType
-from app.models.garden import Garden, GardenCreate, GardenRead, GardenUpdate
-from app.models.user import User
-from app.routers.api_user import auth_handler
+# from app.library.helpers import *
+from ..library.routers import TimedRoute
+from ..models.bed import Bed
+from ..models.garden import ClimaticZone, GardenType
+from ..models.garden import Garden, GardenCreate, GardenRead, GardenUpdate
+from ..models.user import User
+from .api_user import auth_handler
 
 
 logger = logging.getLogger(__name__)

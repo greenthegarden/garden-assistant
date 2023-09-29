@@ -3,10 +3,10 @@ from typing import List, Optional, TYPE_CHECKING
 from fastapi import Form
 from sqlmodel import Field, Relationship, SQLModel
 
-from app.library.form import as_form
-from app.models.bed import Bed
+from ..library.form import as_form
+from .bed import Bed
 if TYPE_CHECKING:
-    from app.models.plant import Plant
+    from .plant import Plant
 
 
 class PlantingBase(SQLModel):

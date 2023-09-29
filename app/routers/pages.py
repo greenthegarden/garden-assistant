@@ -8,10 +8,10 @@ from sqlmodel import Session, select
 
 # import local modules
 
-from app.database.session import get_session
-from app.models.bed import Bed
-from app.models.garden import Garden
-from app.models.planting import Planting
+from ..database.session import get_session
+from ..models.bed import Bed
+from ..models.garden import Garden
+from ..models.planting import Planting
 
 
 logger = logging.getLogger(__name__)

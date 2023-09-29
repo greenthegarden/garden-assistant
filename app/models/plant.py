@@ -2,7 +2,7 @@ from typing import List, Optional, TYPE_CHECKING
 
 from sqlmodel import Field, Relationship, SQLModel
 
-from app.library.form import as_form
+from ..library.form import as_form
 
 # if TYPE_CHECKING:
 #     from app.models.planting import Planting

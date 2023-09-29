@@ -5,7 +5,7 @@ from sqlmodel import Field, Relationship, SQLModel
 
 from ..library.form import as_form
 if TYPE_CHECKING:
-    from ..models.bed import Bed
+    from .bed import Bed
 
 
 # Class to return list of enum values

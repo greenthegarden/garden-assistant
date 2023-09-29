@@ -1,5 +1,3 @@
-# import external modules
-
 import logging
 import logging.config
 from functools import lru_cache
@@ -8,16 +6,15 @@ from fastapi import APIRouter, Depends, FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi_pagination import add_pagination
 
-# import local modules
-from app.config import AppConfig, config
-from app.database.database import create_db_and_tables
-from app.library.routers import TimedRoute
-from app.routers.api_user import user_router
-from app.routers.bed import bed_router
-from app.routers.garden import garden_router
-from app.routers.pages import pages_router
-from app.routers.plant import plant_router
-from app.routers.planting import planting_router
+from .config import AppConfig, config
+from .database.database import create_db_and_tables
+from .library.routers import TimedRoute
+from .routers.api_user import user_router
+from .routers.bed import bed_router
+from .routers.garden import garden_router
+from .routers.pages import pages_router
+from .routers.plant import plant_router
+from .routers.planting import planting_router
 
 # Logging setup based on https://philstories.medium.com/fastapi-logging-f6237b84ea64
 # setup loggers

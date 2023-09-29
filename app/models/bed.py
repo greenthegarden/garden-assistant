@@ -3,10 +3,10 @@ from typing import List, Optional, TYPE_CHECKING
 
 from sqlmodel import Field, Relationship, SQLModel
 
-from app.library.form import as_form
-from app.models.garden import Garden
+from ..library.form import as_form
+from .garden import Garden
 if TYPE_CHECKING:
-    from app.models.planting import Planting
+    from .planting import Planting
 
 
 # Class to return list of enum values
