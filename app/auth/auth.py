@@ -6,7 +6,7 @@ from passlib.context import CryptContext
 import jwt
 from starlette import status
 
-from app.library.users import find_user
+from ..library.users import find_user
 
 
 class AuthHandler:

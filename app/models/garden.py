@@ -3,9 +3,9 @@ from typing import List, Optional, TYPE_CHECKING
 
 from sqlmodel import Field, Relationship, SQLModel
 
-from app.library.form import as_form
+from ..library.form import as_form
 if TYPE_CHECKING:
-    from app.models.bed import Bed
+    from ..models.bed import Bed
 
 
 # Class to return list of enum values

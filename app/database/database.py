@@ -1,4 +1,5 @@
 import os.path
+
 from sqlmodel import SQLModel, create_engine
 
 # There should be one engine for the entire application
@@ -6,8 +7,14 @@ SQLITE_FILENAME = 'db.sqlite3'
 sqlite_file = os.path.join("./", SQLITE_FILENAME)
 sqlite_url = f"sqlite:///{sqlite_file}"
 
+# The following line is only needed only for SQLite
 connect_args = {'check_same_thread': False}
-engine = create_engine(sqlite_url, echo=True, connect_args=connect_args)
+
+engine = create_engine(
+    sqlite_url,
+    echo=True,
+    connect_args=connect_args
+)
 
 def create_db_and_tables():
     """Create the tables registered with SQLModel.metadata\

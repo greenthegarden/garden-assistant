@@ -1,5 +1,6 @@
 from sqlmodel import Session
-from app.database.database import engine
+
+from .database import engine
 
 # See https://sqlmodel.tiangolo.com/tutorial/fastapi/session-with-dependency/
 

@@ -38,7 +38,7 @@ def create_garden(
     response: Response,
     # user: User = Depends(auth_handler.get_current_user),
     garden: GardenCreate,
-):
+) -> GardenRead:
     """Create a garden."""
     # if not user.gardener:
     #   response.status_code = status.HTTP_401_UNAUTHORIZED
