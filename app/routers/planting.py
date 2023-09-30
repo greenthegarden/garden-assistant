@@ -13,6 +13,7 @@ from ..database.session import get_session
 from ..library.routers import TimedRoute
 from ..models.bed import Bed
 from ..models.planting import Planting, PlantingCreate, PlantingRead, PlantingUpdate
+from ..models.relationships import PlantingReadWithBed
 from ..models.user import User
 from .api_user import auth_handler
 
@@ -64,7 +65,7 @@ def read_plantings(
 
 @planting_router.get(
         "/api/plantings/{planting_id}",
-        response_model=PlantingRead,
+        response_model=PlantingReadWithBed,
         tags=["Garden Plantings API"]
 )
 def read_planting(

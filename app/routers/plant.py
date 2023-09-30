@@ -16,7 +16,8 @@ from fastapi_pagination.ext.sqlmodel import paginate
 from ..database.session import get_session
 # from app.library.helpers import *
 from ..library.routers import TimedRoute
-from ..models.plant import Plant, PlantRead, PlantCreate, PlantUpdate
+from ..models.plant import Plant, PlantCreate, PlantRead, PlantUpdate
+from ..models.relationships import PlantReadWithPlanting
 from ..models.user import User
 from .api_user import auth_handler
 from .pages import templates
@@ -90,7 +91,7 @@ def read_plants(
 
 @plant_router.get(
         "/api/plants/{plant_id}",
-        response_model=PlantRead,
+        response_model=PlantReadWithPlanting,
         tags=["Plant API"]
 )
 def read_plant(

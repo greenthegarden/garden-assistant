@@ -37,7 +37,7 @@ class IrrigationZone(str, Enum):
 
 
 class BedBase(SQLModel):
-    """Based model for a garden bed"""
+    """Base model for a garden bed"""
     name: str = Field(index=True)
     soil_type: Optional[SoilType] = None
     irrigation_zone: Optional[IrrigationZone] = None
@@ -60,18 +60,12 @@ class BedCreate(BedBase):
 
 
 class BedRead(BedBase):
-    """Garden bed model used to get an instance of a garden bed."""
+    """Garden bed model used to get instances of garden beds."""
     id: int
 
 
-# class BedReadWithGarden(BedRead):
-#     """Garden bed model used to get an instance of a garden bed\
-#         with associated garden."""
-#     garden: Optional[GardenRead] = None
-
-
 class BedUpdate(SQLModel):
-    """Garden bed model used to update an instance of a garden bed."""
+    """Garden bed model used to update instances of garden beds."""
     name: Optional[str] = None
     soil_type: Optional[SoilType] = None
     irrigation_zone: Optional[IrrigationZone] = None
