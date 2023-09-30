@@ -49,14 +49,13 @@ def client_fixture(session: Session):
 def test_create_planting(client: TestClient):
     response = client.post(
         "/api/plantings/",
-        json={"plant": "test plant"}
+        json={"name": "Test Planting 1"}
     )
     assert response.status_code == status.HTTP_201_CREATED
 
     data = response.json()
 
-    assert data["plant"] == "test plant"
-    # assert data["variety"] is None
+    assert data["name"] == "Test Planting 1"
     assert data["notes"] is None
     assert data["bed_id"] is None
     assert data["id"] is not None
@@ -64,7 +63,7 @@ def test_create_planting(client: TestClient):
 
 def test_create_planting_incomplete(client: TestClient):
     # attempt to create a planting with no plant
-    response = client.post("/api/plantings", json={"notes": "test"})
+    response = client.post("/api/plantings", json={"notes": "Test note"})
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
@@ -72,7 +71,7 @@ def test_read_planting(
         session: Session,
         client: TestClient
 ):
-    planting_1 = Planting(plant="apple", notes="test")
+    planting_1 = Planting(name="Test Planting 1", notes="Test note")
     session.add(planting_1)
 
     session.commit()
@@ -83,8 +82,7 @@ def test_read_planting(
 
     data = response.json()
 
-    assert data["plant"] == planting_1.plant
-    # assert data["variety"] == planting_1.variety
+    assert data["name"] == planting_1.name
     assert data["notes"] == planting_1.notes
     assert data["id"] == planting_1.id
 
@@ -93,10 +91,10 @@ def test_read_plantings(
         session: Session,
         client: TestClient
 ):
-    planting_1 = Planting(plant="Test Plant 1", notes="Test Notes")
+    planting_1 = Planting(name="Test Planting 1", notes="Test note")
     session.add(planting_1)
 
-    planting_2 = Planting(plant="Test Plant 2")
+    planting_2 = Planting(name="Test Planting 2")
     session.add(planting_2)
 
     session.commit()
@@ -109,13 +107,11 @@ def test_read_plantings(
 
     assert len(data) == 2
 
-    assert data[0]["plant"] == planting_1.plant
-    # assert data[0]["variety"] == planting_1.variety
+    assert data[0]["name"] == planting_1.name
     assert data[0]["notes"] == planting_1.notes
     assert data[0]["id"] == planting_1.id
 
-    assert data[1]["plant"] == planting_2.plant
-    # assert data[1]["variety"] == planting_2.variety
+    assert data[1]["name"] == planting_2.name
     assert data[1]["notes"] == planting_2.notes
     assert data[1]["id"] == planting_2.id
 
@@ -124,10 +120,10 @@ def test_update_planting(
         session: Session,
         client: TestClient
 ):
-    notes_original = "test"
-    notes_updated = "updated"
+    notes_original = "Test note"
+    notes_updated = "Updated note"
 
-    planting_1 = Planting(plant="apple", notes=notes_original)
+    planting_1 = Planting(name="Test Planting 1", notes=notes_original)
     session.add(planting_1)
 
     session.commit()
@@ -138,8 +134,7 @@ def test_update_planting(
 
     data = response.json()
 
-    assert data["plant"] == planting_1.plant
-    # assert data["variety"] is None
+    assert data["name"] == planting_1.name
     assert data["notes"] == notes_original
     assert data["id"] == planting_1.id
 
@@ -151,9 +146,7 @@ def test_update_planting(
 
     data = response.json()
 
-    assert data["plant"] == planting_1.plant
-    # assert data["variety"] is not None
-    # assert data["variety"] == "test variety"
+    assert data["name"] == planting_1.name
     assert data["notes"] == notes_updated
     assert data["id"] == planting_1.id
 
@@ -162,7 +155,7 @@ def test_delete_planting(
         session: Session,
         client: TestClient
 ):
-    planting_1 = Planting(plant="apple", notes="test")
+    planting_1 = Planting(name="Test Planting 1", notes="Test note")
     session.add(planting_1)
 
     session.commit()
@@ -185,22 +178,10 @@ def test_read_planting_with_bed(
     bed_1 = Bed(name="Test Bed", irrigation_zone=irrigation_zone)
     session.add(bed_1)
 
-    planting_1 = Planting(plant="Test Planting", bed_id=bed_1.id)
+    planting_1 = Planting(name="Test Planting", bed=bed_1)
     session.add(planting_1)
 
     session.commit()
-
-    response = client.get(f"/api/plantings/{planting_1.id}")
-
-    assert response.status_code == status.HTTP_200_OK
-
-    data = response.json()
-
-    assert data["plant"] == planting_1.plant
-    # assert data["variety"] == planting_1.variety
-    assert data["notes"] == planting_1.notes
-    assert data["bed_id"] == planting_1.bed_id
-    assert data["id"] == planting_1.id
 
     response = client.get(f"/api/beds/{bed_1.id}")
 
@@ -209,3 +190,15 @@ def test_read_planting_with_bed(
     data = response.json()
 
     assert data["name"] == bed_1.name
+
+    response = client.get(f"/api/plantings/{planting_1.id}")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+
+    assert data["name"] == planting_1.name
+    assert data["notes"] == planting_1.notes
+    assert data["bed_id"] == planting_1.bed_id
+    assert data["id"] == planting_1.id
+    assert data["bed"]["test"] == bed_1.name
