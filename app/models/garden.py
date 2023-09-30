@@ -44,6 +44,7 @@ class GardenBase(SQLModel):
 
 class Garden(GardenBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
+
     beds: List["Bed"] = Relationship(back_populates="garden")
 
 
@@ -54,6 +55,10 @@ class GardenCreate(GardenBase):
 
 class GardenRead(GardenBase):
     id: int
+
+
+# class GardenReadWithBeds(GardenRead):
+#     beds: List["BedRead"] = []
 
 
 class GardenUpdate(SQLModel):

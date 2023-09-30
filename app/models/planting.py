@@ -10,22 +10,19 @@ if TYPE_CHECKING:
 
 
 class PlantingBase(SQLModel):
-    # name: str = Field(index=True)
-    plant: str
-    # variety: Optional[str] = None
+    name: str = Field(index=True)
     # date_first_harvested: Optional[datetime]
     # date_removed: Optional[datetime]
     notes: Optional[str] = None
+
     bed_id: Optional[int] = Field(default=None, foreign_key="bed.id")
 
 
 class Planting(PlantingBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    # date_planted: Optional[datetime] = Field(
-    #   sa_column=Column(DateTime(timezone=True), server_default=func.now())
-    #   )
+
     bed: Optional[Bed] = Relationship(back_populates="plantings")
-    # plants: List["Plant"] = Relationship(back_populates="planting")
+    plants: List["Plant"] = Relationship(back_populates="planting")
 
 
 @as_form
@@ -39,8 +36,7 @@ class PlantingRead(PlantingBase):
 
 
 class PlantingUpdate(SQLModel):
-    plant: Optional[str] = None
-    variety: Optional[str] = None
+    name: Optional[str] = None
     # date_planted: Optional[datetime]
     # date_first_harvested: Optional[datetime]
     # date_removed: Optional[datetime]

@@ -14,6 +14,7 @@ from ..library.routers import TimedRoute
 from ..models.bed import Bed, BedCreate, BedRead, BedUpdate
 from ..models.bed import IrrigationZone, SoilType
 from ..models.garden import Garden
+from ..models.relationships import BedReadWithGarden
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +76,7 @@ def read_beds(
 
 @bed_router.get(
     "/api/beds/{bed_id}",
-    response_model=BedRead,
+    response_model=BedReadWithGarden,
     tags=["Garden Beds API"]
 )
 def read_bed(

@@ -50,13 +50,14 @@ def client_fixture(session: Session):
 def test_create_plant(client: TestClient):
     response = client.post(
         "/api/plants/",
-        json={"name_common": "cucumber"},
+        json={"name_common": "test plant"},
     )
     assert response.status_code == status.HTTP_201_CREATED
 
     data = response.json()
 
-    assert data["name_common"] == "cucumber"
+    assert data["name_common"] == "test plant"
+    assert data["variety"] is None
     assert data["name_botanical"] is None
     assert data["family_group"] is None
     assert data["harvest"] is None
@@ -79,7 +80,7 @@ def test_read_plant(
         session: Session,
         client: TestClient
 ):
-    plant_1 = Plant(name_common="apple", hints="test")
+    plant_1 = Plant(name_common="test plant", hints="test")
     session.add(plant_1)
 
     session.commit()
@@ -91,6 +92,7 @@ def test_read_plant(
     data = response.json()
 
     assert data["name_common"] == plant_1.name_common
+    assert data["variety"] is None
     assert data["family_group"] is None
     assert data["hints"] == plant_1.hints
     assert data["id"] == plant_1.id
@@ -101,10 +103,10 @@ def test_read_plants(
         client: TestClient
 ):
     """Test creation and retrieving multiple plants"""
-    plant_1 = Plant(name_common="apple", hints="test")
+    plant_1 = Plant(name_common="test plant 1", hints="test")
     session.add(plant_1)
 
-    plant_2 = Plant(name_common="corn")
+    plant_2 = Plant(name_common="test plant 2")
     session.add(plant_2)
 
     session.commit()
@@ -135,7 +137,7 @@ def test_update_plant(
     hints_original = "test"
     hints_updated = "updated"
 
-    plant_1 = Plant(name_common="apple", hints=hints_original)
+    plant_1 = Plant(name_common="test plant", hints=hints_original)
     session.add(plant_1)
     session.commit()
 
@@ -187,6 +189,7 @@ def test_delete_plant(
 
     assert data[0]["name_common"] == plant_1.name_common
     assert data[0]["id"] == plant_1.id
+
     assert data[1]["name_common"] == plant_2.name_common
     assert data[1]["id"] == plant_2.id
 

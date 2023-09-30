@@ -13,6 +13,7 @@ from ..library.routers import TimedRoute
 from ..models.bed import Bed
 from ..models.garden import ClimaticZone, GardenType
 from ..models.garden import Garden, GardenCreate, GardenRead, GardenUpdate
+from ..models.relationships import GardenReadWithBeds
 from ..models.user import User
 from .api_user import auth_handler
 
@@ -75,7 +76,7 @@ def read_gardens(
 
 @garden_router.get(
     "/api/gardens/{garden_id}",
-    response_model=GardenRead,
+    response_model=GardenReadWithBeds,
     tags=["Garden API"]
 )
 def read_garden(

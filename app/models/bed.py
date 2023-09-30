@@ -9,14 +9,16 @@ if TYPE_CHECKING:
     from .planting import Planting
 
 
-# Class to return list of enum values
 class Enum(Enum_):
+    """Helper class to return list of enum values."""
     @classmethod
     def list(cls):
+        """Returns list of enum values for the given class"""
         return list(map(lambda c: c.value, cls))
 
 
 class SoilType(str, Enum):
+    """Definition of a set of soil types"""
     LOAM = "Loam"
     CLAY = "Clay"
     SILT = "Silt"
@@ -27,6 +29,7 @@ class SoilType(str, Enum):
 
 
 class IrrigationZone(str, Enum):
+    """Definition of a set of irrigation zones"""
     GRASS = "Grass"
     TREES = "Trees"
     SHRUBS = "Shrubs"
@@ -34,28 +37,41 @@ class IrrigationZone(str, Enum):
 
 
 class BedBase(SQLModel):
+    """Based model for a garden bed"""
     name: str = Field(index=True)
     soil_type: Optional[SoilType] = None
     irrigation_zone: Optional[IrrigationZone] = None
+
     garden_id: Optional[int] = Field(default=None, foreign_key="garden.id")
 
 
 class Bed(BedBase, table=True):
+    """Garden bed model with relationship to associated garden and plantings."""
     id: Optional[int] = Field(default=None, primary_key=True)
+
     garden: Optional[Garden] = Relationship(back_populates="beds")
     plantings: List["Planting"] = Relationship(back_populates="bed")
 
 
 @as_form
 class BedCreate(BedBase):
+    """Garden bed model used to create instances of garden beds."""
     pass
 
 
 class BedRead(BedBase):
+    """Garden bed model used to get an instance of a garden bed."""
     id: int
 
 
+# class BedReadWithGarden(BedRead):
+#     """Garden bed model used to get an instance of a garden bed\
+#         with associated garden."""
+#     garden: Optional[GardenRead] = None
+
+
 class BedUpdate(SQLModel):
+    """Garden bed model used to update an instance of a garden bed."""
     name: Optional[str] = None
     soil_type: Optional[SoilType] = None
     irrigation_zone: Optional[IrrigationZone] = None
