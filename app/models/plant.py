@@ -49,4 +49,4 @@ class PlantUpdate(SQLModel):
     hints: Optional[str] = None
     watch_for: Optional[str] = None
     proven_varieties: Optional[str] = None
-    planting_id: Optional[int] = None
+    planting: Optional[Planting] = None

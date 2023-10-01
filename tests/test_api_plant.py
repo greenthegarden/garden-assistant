@@ -9,8 +9,8 @@ from sqlmodel.pool import StaticPool
 from app.database.session import get_session
 from app.main import app
 from app.models.plant import Plant
-from app.models.bed import Bed
-from app.models.bed import IrrigationZone
+from app.models.planting import Planting
+
 
 # Based on
 # https://fastapi.tiangolo.com/tutorial/testing/
@@ -76,28 +76,6 @@ def test_create_plant_incomplete(client: TestClient):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_read_plant(
-        session: Session,
-        client: TestClient
-):
-    plant_1 = Plant(name_common="test plant", hints="test")
-    session.add(plant_1)
-
-    session.commit()
-
-    response = client.get(f"/api/plants/{plant_1.id}")
-
-    assert response.status_code == status.HTTP_200_OK
-
-    data = response.json()
-
-    assert data["name_common"] == plant_1.name_common
-    assert data["variety"] is None
-    assert data["family_group"] is None
-    assert data["hints"] == plant_1.hints
-    assert data["id"] == plant_1.id
-
-
 def test_read_plants(
         session: Session,
         client: TestClient
@@ -128,6 +106,54 @@ def test_read_plants(
     assert data[1]["family_group"] == plant_2.family_group
     assert data[1]["hints"] == plant_2.hints
     assert data[1]["id"] == plant_2.id
+
+
+def test_read_plant(
+        session: Session,
+        client: TestClient
+):
+    plant_1 = Plant(name_common="test plant", hints="test")
+    session.add(plant_1)
+
+    session.commit()
+
+    response = client.get(f"/api/plants/{plant_1.id}")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+
+    assert data["name_common"] == plant_1.name_common
+    assert data["variety"] is None
+    assert data["family_group"] is None
+    assert data["hints"] == plant_1.hints
+    assert data["id"] == plant_1.id
+
+
+def test_read_plant_with_planting(
+        session: Session,
+        client: TestClient
+):
+    planting_1 = Planting(name="Test Planting")
+    session.add(planting_1)
+
+    plant_1 = Plant(name_common="test plant", hints="test", planting=planting_1)
+    session.add(plant_1)
+
+    session.commit()
+
+    response = client.get(f"/api/plants/{plant_1.id}")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+
+    assert data["name_common"] == plant_1.name_common
+    assert data["variety"] is None
+    assert data["family_group"] is None
+    assert data["hints"] == plant_1.hints
+    assert data["id"] == plant_1.id
+    assert data["planting"]["name"] == planting_1.name
 
 
 def test_update_plant(

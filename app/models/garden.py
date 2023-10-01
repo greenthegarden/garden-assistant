@@ -36,13 +36,16 @@ class ClimaticZone(str, Enum):
 
 
 class GardenBase(SQLModel):
+    """Base model for a garden"""
     name: str = Field(index=True)
     type: Optional[GardenType] = None
     location: Optional[str] = None
     zone: Optional[ClimaticZone] = None
+    notes: Optional[str] = None
 
 
 class Garden(GardenBase, table=True):
+    """Garden model with relationship to associated beds a garden"""
     id: Optional[int] = Field(default=None, primary_key=True)
 
     beds: List["Bed"] = Relationship(back_populates="garden")
@@ -57,12 +60,9 @@ class GardenRead(GardenBase):
     id: int
 
 
-# class GardenReadWithBeds(GardenRead):
-#     beds: List["BedRead"] = []
-
-
 class GardenUpdate(SQLModel):
     name: Optional[str] = None
     type: Optional[GardenType] = None
     location: Optional[str] = None
     zone: Optional[ClimaticZone] = None
+    notes: Optional[str] = None

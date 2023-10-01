@@ -8,6 +8,8 @@ from sqlmodel.pool import StaticPool
 
 from app.database.session import get_session
 from app.main import app
+from app.models.bed import Bed
+from app.models.bed import IrrigationZone
 from app.models.garden import Garden
 from app.models.garden import GardenType, ClimaticZone
 
@@ -128,18 +130,23 @@ def test_read_gardens(
         session: Session,
         client: TestClient
 ):
-    climatic_zone=random.choice(ClimaticZone.list())
-    garden_type=random.choice(GardenType.list())
+    climatic_zone = random.choice(ClimaticZone.list())
+    garden_type = random.choice(GardenType.list())
 
     garden_1 = Garden(
-        name="Test Garden 1",
-        climatic_zone=climatic_zone
+        name = "Test Garden 1",
+        type = garden_type,
+        zone = climatic_zone,
     )
     session.add(garden_1)
 
+    climatic_zone=random.choice(ClimaticZone.list())
+    garden_type=random.choice(GardenType.list())
+
     garden_2 = Garden(
-        name="Test Garden 2",
-        garden_type=garden_type
+        name = "Test Garden 2",
+        type = garden_type,
+        zone = climatic_zone,
     )
     session.add(garden_2)
 
@@ -164,3 +171,153 @@ def test_read_gardens(
     assert data[1]["location"] == garden_2.location
     assert data[1]["zone"] == garden_2.zone
     assert data[1]["id"] == garden_2.id
+
+
+def test_read_garden(
+        session: Session,
+        client: TestClient
+):
+    climatic_zone = random.choice(ClimaticZone.list())
+    garden_type = random.choice(GardenType.list())
+
+    garden_1 = Garden(
+        name = "Test Garden 1",
+        type = garden_type,
+        zone = climatic_zone,
+    )
+    session.add(garden_1)
+
+    session.commit()
+
+    response = client.get(f"/api/gardens/{garden_1.id}")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+
+    assert data["name"] == garden_1.name
+    assert data["type"] == garden_1.type
+    assert data["location"] == garden_1.location
+    assert data["zone"] == garden_1.zone
+    assert data["id"] == garden_1.id
+
+
+def test_read_garden_with_beds(
+        session: Session,
+        client: TestClient
+):
+    climatic_zone = random.choice(ClimaticZone.list())
+    garden_type = random.choice(GardenType.list())
+
+    garden_1 = Garden(
+        name = "Test Garden 1",
+        climatic_zone = climatic_zone,
+        garden_type = garden_type
+    )
+    session.add(garden_1)
+
+    irrigation_zone = random.choice(IrrigationZone.list())
+
+    bed_1 = Bed(
+        name = "Test Bed 1",
+        irrigation_zone = irrigation_zone,
+        garden = garden_1
+    )
+    session.add(bed_1)
+
+    irrigation_zone = random.choice(IrrigationZone.list())
+
+    bed_2 = Bed(
+        name = "Test Bed 2",
+        irrigation_zone = irrigation_zone,
+        garden = garden_1
+    )
+    session.add(bed_2)
+
+
+    session.commit()
+
+    response = client.get(f"/api/gardens/{garden_1.id}")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+
+    assert data["name"] == garden_1.name
+    assert data["type"] == garden_1.type
+    assert data["location"] == garden_1.location
+    assert data["zone"] == garden_1.zone
+    assert data["id"] == garden_1.id
+
+    assert len(data["beds"]) == 2
+
+    assert data["beds"][0]["name"] == bed_1.name
+    assert data["beds"][1]["name"] == bed_2.name
+
+
+def test_update_garden(
+        session: Session,
+        client: TestClient
+):
+    notes_original = "Test note"
+    notes_updated = "Updated note"
+
+    climatic_zone = random.choice(ClimaticZone.list())
+    garden_type = random.choice(GardenType.list())
+
+    garden_1 = Garden(
+        name = "Test Garden 1",
+        climatic_zone = climatic_zone,
+        garden_type = garden_type,
+        notes = notes_original
+    )
+    session.add(garden_1)
+
+    session.commit()
+
+    response = client.get(f"/api/gardens/{garden_1.id}")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+
+    assert data["name"] == garden_1.name
+    assert data["notes"] == notes_original
+    assert data["id"] == garden_1.id
+
+    response = client.patch(
+        f"/api/gardens/{garden_1.id}",
+        json={"notes": notes_updated},
+    )
+    assert response.status_code == status.HTTP_201_CREATED
+
+    data = response.json()
+
+    assert data["name"] == garden_1.name
+    assert data["notes"] == notes_updated
+    assert data["id"] == garden_1.id
+
+
+def test_delete_garden(
+        session: Session,
+        client: TestClient
+):
+    climatic_zone = random.choice(ClimaticZone.list())
+    garden_type = random.choice(GardenType.list())
+
+    garden_1 = Garden(
+        name = "Test Garden 1",
+        climatic_zone = climatic_zone,
+        garden_type = garden_type
+    )
+    session.add(garden_1)
+
+    session.commit()
+
+    response = client.delete(f"/api/gardens/{garden_1.id}")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    dp_garden = session.get(Garden, garden_1.id)
+
+    assert dp_garden is None

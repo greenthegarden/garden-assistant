@@ -89,7 +89,7 @@ def read_garden(
     if not db_garden:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'Garden with ID {garden_id} not found'
+            detail=f"Garden with ID {garden_id} not found"
         )
     return db_garden
 
@@ -116,7 +116,7 @@ def update_garden(
     if not db_garden:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f'Garden with ID {garden_id} not found'
+            detail=f"Garden with ID {garden_id} not found"
         )
     garden_data = garden.dict(exclude_unset=True)
     for key, val in garden_data.items():
@@ -124,7 +124,7 @@ def update_garden(
     session.add(db_garden)
     session.commit()
     session.refresh(db_garden)
-    content = {"garden": jsonable_encoder(db_garden)}
+    content = jsonable_encoder(db_garden)
     headers = {"HX-Trigger": "gardensChanged"}
     return JSONResponse(
         content=content,
@@ -154,7 +154,7 @@ def delete_garden(
     if not db_garden:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f'Garden with ID {garden_id} not found'
+            detail=f"Garden with ID {garden_id} not found"
         )
     session.delete(db_garden)
     session.commit()

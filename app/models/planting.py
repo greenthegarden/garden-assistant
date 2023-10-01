@@ -46,7 +46,7 @@ class PlantingUpdate(SQLModel):
     # date_first_harvested: Optional[datetime]
     # date_removed: Optional[datetime]
     notes: Optional[str] = None
-    bed_id: Optional[int] = None
+    bed: Optional[Bed] = None
 
     @classmethod
     def as_form(

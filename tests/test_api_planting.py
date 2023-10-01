@@ -67,26 +67,6 @@ def test_create_planting_incomplete(client: TestClient):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_read_planting(
-        session: Session,
-        client: TestClient
-):
-    planting_1 = Planting(name="Test Planting 1", notes="Test note")
-    session.add(planting_1)
-
-    session.commit()
-
-    response = client.get(f"/api/plantings/{planting_1.id}")
-
-    assert response.status_code == status.HTTP_200_OK
-
-    data = response.json()
-
-    assert data["name"] == planting_1.name
-    assert data["notes"] == planting_1.notes
-    assert data["id"] == planting_1.id
-
-
 def test_read_plantings(
         session: Session,
         client: TestClient
@@ -114,6 +94,61 @@ def test_read_plantings(
     assert data[1]["name"] == planting_2.name
     assert data[1]["notes"] == planting_2.notes
     assert data[1]["id"] == planting_2.id
+
+
+def test_read_planting(
+        session: Session,
+        client: TestClient
+):
+    planting_1 = Planting(name="Test Planting 1", notes="Test note")
+    session.add(planting_1)
+
+    session.commit()
+
+    response = client.get(f"/api/plantings/{planting_1.id}")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+
+    assert data["name"] == planting_1.name
+    assert data["notes"] == planting_1.notes
+    assert data["id"] == planting_1.id
+
+
+def test_read_planting_with_bed(
+        session: Session,
+        client: TestClient
+):
+    irrigation_zone=random.choice(IrrigationZone.list())
+
+    bed_1 = Bed(name="Test Bed", irrigation_zone=irrigation_zone)
+    session.add(bed_1)
+
+    planting_1 = Planting(name="Test Planting", bed=bed_1)
+    session.add(planting_1)
+
+    session.commit()
+
+    response = client.get(f"/api/beds/{bed_1.id}")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+
+    assert data["name"] == bed_1.name
+
+    response = client.get(f"/api/plantings/{planting_1.id}")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+
+    assert data["name"] == planting_1.name
+    assert data["notes"] == planting_1.notes
+    assert data["bed_id"] == planting_1.bed_id
+    assert data["id"] == planting_1.id
+    assert data["bed"]["name"] == bed_1.name
 
 
 def test_update_planting(
@@ -167,38 +202,3 @@ def test_delete_planting(
     dp_planting = session.get(Planting, planting_1.id)
 
     assert dp_planting is None
-
-
-def test_read_planting_with_bed(
-        session: Session,
-        client: TestClient
-):
-    irrigation_zone=random.choice(IrrigationZone.list())
-
-    bed_1 = Bed(name="Test Bed", irrigation_zone=irrigation_zone)
-    session.add(bed_1)
-
-    planting_1 = Planting(name="Test Planting", bed=bed_1)
-    session.add(planting_1)
-
-    session.commit()
-
-    response = client.get(f"/api/beds/{bed_1.id}")
-
-    assert response.status_code == status.HTTP_200_OK
-
-    data = response.json()
-
-    assert data["name"] == bed_1.name
-
-    response = client.get(f"/api/plantings/{planting_1.id}")
-
-    assert response.status_code == status.HTTP_200_OK
-
-    data = response.json()
-
-    assert data["name"] == planting_1.name
-    assert data["notes"] == planting_1.notes
-    assert data["bed_id"] == planting_1.bed_id
-    assert data["id"] == planting_1.id
-    assert data["bed"]["test"] == bed_1.name

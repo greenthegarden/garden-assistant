@@ -69,3 +69,4 @@ class BedUpdate(SQLModel):
     name: Optional[str] = None
     soil_type: Optional[SoilType] = None
     irrigation_zone: Optional[IrrigationZone] = None
+    garden: Optional[Garden] = None

@@ -10,6 +10,7 @@ from app.database.session import get_session
 from app.main import app
 from app.models.bed import IrrigationZone, SoilType
 from app.models.bed import Bed
+from app.models.garden import Garden
 
 
 # Based on
@@ -127,7 +128,10 @@ def test_read_beds(
     assert data[1]["id"] == bed_2.id
 
 
-def test_read_bed(session: Session, client: TestClient):
+def test_read_bed(
+        session: Session,
+        client: TestClient
+):
     bed_1 = Bed(name="Vegetable Plot", irrigation_zone=IrrigationZone.VEGETABLES)
     session.add(bed_1)
     session.commit()
@@ -142,6 +146,37 @@ def test_read_bed(session: Session, client: TestClient):
     assert data["soil_type"] == bed_1.soil_type
     assert data["irrigation_zone"] == bed_1.irrigation_zone
     assert data["id"] == bed_1.id
+
+
+def test_read_bed_with_garden(
+        session: Session,
+        client: TestClient
+):
+    garden_1 = Garden(name="Test Garden")
+    session.add(garden_1)
+
+    irrigation_zone=random.choice(IrrigationZone.list())
+
+    bed_1 = Bed(
+        name="Vegetable Plot",
+        irrigation_zone=irrigation_zone,
+        garden=garden_1
+    )
+    session.add(bed_1)
+
+    session.commit()
+
+    response = client.get(f"/api/beds/{bed_1.id}")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+
+    assert data["name"] == bed_1.name
+    assert data["soil_type"] == bed_1.soil_type
+    assert data["irrigation_zone"] == bed_1.irrigation_zone
+    assert data["id"] == bed_1.id
+    assert data["garden"]["name"] == garden_1.name
 
 
 def test_update_bed(
