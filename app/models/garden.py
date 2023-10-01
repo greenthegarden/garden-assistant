@@ -66,3 +66,4 @@ class GardenUpdate(SQLModel):
     location: Optional[str] = None
     zone: Optional[ClimaticZone] = None
     notes: Optional[str] = None
+    beds: Optional["Bed"] = None
