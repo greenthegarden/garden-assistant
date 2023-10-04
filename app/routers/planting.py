@@ -71,7 +71,7 @@ def read_plantings(
 def read_planting(
     *,
     session: Session = Depends(get_session),
-    planting_id: int, #= Path(None, description="The ID of the planting  to return")
+    planting_id: int,
 ):
     """Get the garden planting with the given ID, or None if it does not exist."""
     db_planting = session.get(Planting, planting_id)

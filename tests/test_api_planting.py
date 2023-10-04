@@ -10,6 +10,8 @@ from app.database.session import get_session
 from app.main import app
 from app.models.planting import Planting
 from app.models.bed import Bed, IrrigationZone
+from app.models.plant import Plant
+
 
 # Based on
 # https://fastapi.tiangolo.com/tutorial/testing/
@@ -149,6 +151,32 @@ def test_read_planting_with_bed(
     assert data["bed_id"] == planting_1.bed_id
     assert data["id"] == planting_1.id
     assert data["bed"]["name"] == bed_1.name
+
+
+def test_read_planting_with_plant(
+        session: Session,
+        client: TestClient
+):
+    plant = Plant(name_common="Test Plant", variety="Test Variety")
+    session.add(plant)
+    
+    planting_1 = Planting(name="Test Planting", plants=[plant])
+    session.add(planting_1)
+
+    session.commit()
+
+    response = client.get(f"/api/plantings/{planting_1.id}")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+
+    print(data)
+
+    assert data["name"] == planting_1.name
+    assert data["notes"] == planting_1.notes
+    assert data["bed_id"] == planting_1.bed_id
+    assert data["id"] == planting_1.id
 
 
 def test_update_planting(

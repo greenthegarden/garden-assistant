@@ -41,6 +41,7 @@ httpx = "^0.25.0"
 
 [tool.poetry.scripts]
 start = "app.server.main:run"
+populate = "app.populate:populate_plants"
 
 [build-system]
 requires = ["poetry-core"]

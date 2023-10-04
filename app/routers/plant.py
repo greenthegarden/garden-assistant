@@ -60,10 +60,12 @@ def create_plant(
     #   return {}
     statement = select(Plant)
     db_plants = session.exec(statement).all()
-    if any(x.name == plant.name for x in db_plants):
+    if any(x.name_common == plant.name_common and x.variety == plant.variety \
+           for x in db_plants):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Plant with name {plant.name} already exists"
+            detail=f"Plant with name {plant.name_common} and \
+                variety {plant.variety} ready exists"
         )
     db_plant = Plant.from_orm(plant)
     session.add(db_plant)

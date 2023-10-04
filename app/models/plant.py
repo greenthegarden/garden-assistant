@@ -8,9 +8,13 @@ from .planting import Planting
 
 # Model based on https://www.abc.net.au/gardening/plant-finder
 class PlantBase(SQLModel):
-    """Base model for a plant"""
+    """Base model for a plant.
+
+    The common name and variety are both required and indexed to be\
+    able to search for plants effeciently.
+    """
     name_common: str = Field(index=True)
-    variety: Optional[str] = None
+    variety: str = Field(index=True)
     name_botanical: Optional[str] = None
     family_group: Optional[str] = None
     harvest: Optional[str]= None

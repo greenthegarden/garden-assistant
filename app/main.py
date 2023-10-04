@@ -15,6 +15,7 @@ from .routers.garden import garden_router
 from .routers.pages import pages_router
 from .routers.plant import plant_router
 from .routers.planting import planting_router
+from .populate import populate_plants
 
 # Logging setup based on https://philstories.medium.com/fastapi-logging-f6237b84ea64
 # setup loggers
@@ -78,5 +79,5 @@ def on_startup():
     """
     print("Creating database and tables...")
     create_db_and_tables()
-    # print(f"Populating tables...")
-    # create_planting_db()
+    print(f"Populating tables...")
+    populate_plants()

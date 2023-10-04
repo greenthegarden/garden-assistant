@@ -30,7 +30,7 @@ templates = Jinja2Templates(directory="templates")
 @garden_router.post(
     "/api/gardens/",
     status_code=status.HTTP_201_CREATED,
-    response_model=GardenRead,
+    response_model=GardenReadWithBeds,
     tags=["Garden API"]
 )
 def create_garden(

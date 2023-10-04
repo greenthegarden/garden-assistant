@@ -1,5 +1,4 @@
 import pytest
-import random
 
 from fastapi import status
 from fastapi.testclient import TestClient
@@ -50,14 +49,14 @@ def client_fixture(session: Session):
 def test_create_plant(client: TestClient):
     response = client.post(
         "/api/plants/",
-        json={"name_common": "test plant"},
+        json={"name_common": "Test Plant", "variety": "Test Variety"},
     )
     assert response.status_code == status.HTTP_201_CREATED
 
     data = response.json()
 
-    assert data["name_common"] == "test plant"
-    assert data["variety"] is None
+    assert data["name_common"] == "Test Plant"
+    assert data["variety"] == "Test Variety"
     assert data["name_botanical"] is None
     assert data["family_group"] is None
     assert data["harvest"] is None
@@ -65,6 +64,36 @@ def test_create_plant(client: TestClient):
     assert data["watch_for"] is None
     assert data["proven_varieties"] is None
     assert data["id"] is not None
+
+
+def test_create_plant_duplicate_name(client: TestClient):
+    """Attempt to create a plant with duplicate name_common"""
+    response = client.post(
+        "/api/plants/",
+        json={"name_common": "Test Plant", "variety": "Test Variety 1"},
+    )
+    assert response.status_code == status.HTTP_201_CREATED
+
+    response = client.post(
+        "/api/plants/",
+        json={"name_common": "Test Plant", "variety": "Test Variety 2"},
+    )
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+def test_create_plant_duplicate_name_and_variety(client: TestClient):
+    """Attempt to create a plant with duplicate name_common and variety"""
+    response = client.post(
+        "/api/plants/",
+        json={"name_common": "Test Plant", "variety": "Test Variety"},
+    )
+    assert response.status_code == status.HTTP_201_CREATED
+
+    response = client.post(
+        "/api/plants/",
+        json={"name_common": "Test Plant", "variety": "Test Variety"},
+    )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
 def test_create_plant_incomplete(client: TestClient):
@@ -81,10 +110,10 @@ def test_read_plants(
         client: TestClient
 ):
     """Test creation and retrieving multiple plants"""
-    plant_1 = Plant(name_common="test plant 1", hints="test")
+    plant_1 = Plant(name_common="test plant 1", variety="Test Variety", hints="test")
     session.add(plant_1)
 
-    plant_2 = Plant(name_common="test plant 2")
+    plant_2 = Plant(name_common="test plant 2", variety="Test Variety")
     session.add(plant_2)
 
     session.commit()
@@ -112,7 +141,7 @@ def test_read_plant(
         session: Session,
         client: TestClient
 ):
-    plant_1 = Plant(name_common="test plant", hints="test")
+    plant_1 = Plant(name_common="test plant", variety="Test Variety", hints="test")
     session.add(plant_1)
 
     session.commit()
@@ -124,7 +153,7 @@ def test_read_plant(
     data = response.json()
 
     assert data["name_common"] == plant_1.name_common
-    assert data["variety"] is None
+    assert data["variety"] == plant_1.variety
     assert data["family_group"] is None
     assert data["hints"] == plant_1.hints
     assert data["id"] == plant_1.id
@@ -137,7 +166,12 @@ def test_read_plant_with_planting(
     planting_1 = Planting(name="Test Planting")
     session.add(planting_1)
 
-    plant_1 = Plant(name_common="test plant", hints="test", planting=planting_1)
+    plant_1 = Plant(
+        name_common="test plant",
+        variety="Test Variety",
+        hints="test",
+        planting=planting_1
+    )
     session.add(plant_1)
 
     session.commit()
@@ -149,7 +183,7 @@ def test_read_plant_with_planting(
     data = response.json()
 
     assert data["name_common"] == plant_1.name_common
-    assert data["variety"] is None
+    assert data["variety"] == plant_1.variety
     assert data["family_group"] is None
     assert data["hints"] == plant_1.hints
     assert data["id"] == plant_1.id
@@ -163,7 +197,11 @@ def test_update_plant(
     hints_original = "test"
     hints_updated = "updated"
 
-    plant_1 = Plant(name_common="test plant", hints=hints_original)
+    plant_1 = Plant(
+        name_common="test plant",
+        variety="Test Variety",
+        hints=hints_original
+    )
     session.add(plant_1)
     session.commit()
 
@@ -188,6 +226,7 @@ def test_update_plant(
     data = response.json()
 
     assert data["name_common"] == plant_1.name_common
+    assert data["variety"] == plant_1.variety
     assert data["family_group"] == plant_1.family_group
     assert data["hints"] == hints_updated
     assert data["id"] == plant_1.id
@@ -197,10 +236,10 @@ def test_delete_plant(
         session: Session,
         client: TestClient
 ):
-    plant_1 = Plant(name_common="test plant 1")
+    plant_1 = Plant(name_common="test plant 1", variety="Test Variety")
     session.add(plant_1)
 
-    plant_2 = Plant(name_common="test plant 2")
+    plant_2 = Plant(name_common="test plant 2", variety="Test Variety")
     session.add(plant_2)
 
     session.commit()

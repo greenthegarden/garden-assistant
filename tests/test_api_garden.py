@@ -68,6 +68,28 @@ def test_create_garden(client: TestClient):
     assert data["id"] is not None
 
 
+def test_create_garden_with_same_name(client: TestClient):
+    response = client.post(
+        "/api/gardens/",
+        json={
+            "name": "Test Garden"
+        },
+    )
+    assert response.status_code == status.HTTP_201_CREATED
+
+    data = response.json()
+
+    assert data["name"] == "Test Garden"
+
+    response = client.post(
+        "/api/gardens/",
+        json={
+            "name": "Test Garden"
+        },
+    )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
 def test_create_garden_with_type(client: TestClient):
     response = client.post(
         "/api/gardens/",
@@ -106,23 +128,24 @@ def test_create_garden_with_location(client: TestClient):
     assert data["id"] is not None
 
 
-def test_create_garden_with_zone(client: TestClient):
+def test_create_garden_with_beds(client: TestClient):
     response = client.post(
         "/api/gardens/",
         json={
-            "name": "Test Garden with zone",
-            "zone": ClimaticZone.TROPICAL
+            "name": "Test Garden with beds",
+            "beds": []
         },
     )
     assert response.status_code == status.HTTP_201_CREATED
 
     data = response.json()
 
-    assert data["name"] == "Test Garden with zone"
+    assert data["name"] == "Test Garden with beds"
     assert data["type"] is None
     assert data["location"] is None
-    assert data["zone"] == "Tropical"
+    assert data["zone"] is None
     assert data["id"] is not None
+    assert data["beds"] is not None
 
 
 def test_read_gardens(

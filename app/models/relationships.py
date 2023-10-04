@@ -29,6 +29,7 @@ class PlantingReadWithBed(PlantingRead):
     """Planting model used to get an instance of a planting\
         with associated garden bed."""
     bed: Optional[BedRead] = None
+    plants: List[PlantRead] = []
 
 
 class PlantingReadWithPlants(PlantingRead):
