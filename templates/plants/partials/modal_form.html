@@ -10,26 +10,28 @@
   <p class="pt-2 pb-4">Edit the details of the plant {{ plant.name_common }}</p>
   <form hx-post="/plant/edit/{{plant.id}}" _="on submit toggle @disabled on #submit-button">
   {% endif %}
-    <div class="grid grid-cols-2 gap-x-4 gap-y-0">
-      <div class="col-span-2">
-        <label for="name_common">Common Name</label>
-        <input type="text" name="name_common" placeholder="Common Name" required>
-      </div>
-      <div class="col-span-2">
-        <label for="name_botanical">Botanical Name</label>
-        <input type="text" name="name_botanical" placeholder="Botanical Name" required>
-      </div>
-      <div class="col-span-2">
-        <label for="family_group">Family Group</label>
-        <input type="text" name="family_group" placeholder="Family Group" required>
-      </div>
-      <div class="col-span-2">
-        <label for="harvest">Harvest</label>
-        <input type="text" name="harvest" placeholder="Harvest" required>
-      </div>
-      <button id="submit-button" type="submit" class="btn btn-primary border-none">
-        Submit
-      </button>
+    <div>
+      <label for="name_common">Common Name</label>
+      <input type="text" name="name_common" placeholder="Common Name" required>
     </div>
+    <div">
+      <label for="variety">Variety</label>
+      <input type="text" name="variety" placeholder="Variety" required>
+    </div>
+    <div">
+      <label for="name_botanical">Botanical Name</label>
+      <input type="text" name="name_botanical" placeholder="Botanical Name" required>
+    </div>
+    <div">
+      <label for="family_group">Family Group</label>
+      <input type="text" name="family_group" placeholder="Family Group" required>
+    </div>
+    <div">
+      <label for="harvest">Harvest</label>
+      <input type="text" name="harvest" placeholder="Harvest" required>
+    </div>
+    <button id="submit-button" type="submit" class="btn btn-primary">
+      Submit
+    </button>
   </form>
 </div>

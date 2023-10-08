@@ -1,0 +1,8 @@
+fastapi
+jsonable
+pipx
+pydantic
+sqlmodel
+templating
+uvicorn
+venv

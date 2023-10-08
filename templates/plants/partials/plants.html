@@ -15,12 +15,19 @@
       role="alert" style="display: none">
       <span class="block inline">Plants updated successfully!</span>
     </div>
+    <div>
+      <button _="on htmx:afterRequest add .modal-open to #modal" hx-get="/plant/create" hx-select="#modal-box"
+        hx-target="#modal" class="mx-auto md:ml-2 btn btn-primary btn-square border-none basis-14" value="New">
+        New
+      </button>
+    </div>
     <div id="plants-table" class="flex flex-row w-screen">
       <!-- Use daisyUI table class -->
       <table class="table table-zebra w-full">
         <thead class="w-auto">
           <tr class="text-left flex-1">
             <th scope="col">Common Name</th>
+            <th scope="col">Variety</th>
             <th scope="col">Botanical Name</th>
             <th scope="col">Family Group</th>
             <th scope="col">Harvest</th>
@@ -33,10 +40,6 @@
           _="on htmx:afterOnLoad add .hidden to #spinner">
         </tbody>
       </table>
-      <button _="on htmx:afterRequest add .modal-open to #modal" hx-get="/plant/create" hx-select="#modal-box"
-        hx-target="#modal" class="mx-auto md:ml-2 btn btn-primary btn-square border-none basis-14" value="New">
-        New
-      </button>
     </div>
     <!-- By Sam Herbert (@sherb), for everyone. More @ http://goo.gl/7AJzbL -->
     <svg id="spinner" class="animate-spin mt-8" width="38" height="38" viewBox="0 0 38 38" stroke="#2962ff">
@@ -50,7 +53,6 @@
     </svg>
     <div class="divider w-1/2 mx-auto"></div>
   </div>
-  
   <div id="modal" class="modal">
     {% include 'plants/partials/modal_form.html' %}
   </div>

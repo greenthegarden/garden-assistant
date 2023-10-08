@@ -14,15 +14,10 @@ def populate_plants():
 
     data_file_path = Path(WORKSPACE_BASE_PATH).joinpath(DATA_DIR, data_filename)
 
-    # assert Path(data_file_path).is_file
-
     with data_file_path.open() as file:
         plants_data = json.load(file)
 
-    print(plants_data)
-
     with Session(engine) as session:
-        print(session)
         create_plants(session, plants_data)
 
 

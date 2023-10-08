@@ -1,6 +1,10 @@
 {% block content %}
   <div id="gardens-content" class="card items-center pt-8" style="min-height: 24rem">
     <h1 class="text-x1 text-center font-bold">Gardens</h1>
+    <button _="on htmx:afterRequest add .modal-open to #modal" hx-get="/garden/create" hx-select="#modal-box"
+      hx-target="#modal" class="mx-auto md:ml-2 btn btn-primary btn-square border-none basis-14" value="New">
+      New
+    </button>
     <div class="divider w-1/2 mx-auto"></div>
     <script type="text/hyperscript">
       on gardensChanged
@@ -28,10 +32,6 @@
           _="on htmx:afterOnLoad add .hidden to #spinner">
         </tbody>
       </table>
-      <button _="on htmx:afterRequest add .modal-open to #modal" hx-get="/garden/create" hx-select="#modal-box"
-        hx-target="#modal" class="mx-auto md:ml-2 btn btn-primary btn-square border-none basis-14" value="New">
-        New
-      </button>
     </div>
     <!-- By Sam Herbert (@sherb), for everyone. More @ http://goo.gl/7AJzbL -->
     <svg id="spinner" class="animate-spin mt-8" width="38" height="38" viewBox="0 0 38 38" stroke="#2962ff">
@@ -45,7 +45,6 @@
     </svg>
     <div class="divider w-1/2 mx-auto"></div>
   </div>
-  
   <div id="modal" class="modal">
     {% include 'gardens/partials/modal_form.html' %}
   </div>

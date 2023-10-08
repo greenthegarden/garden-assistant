@@ -11,10 +11,10 @@ from ..models.relationships import PlantReadWithPlanting
 
 
 def get_plant(db: Session, plant_id: int) -> PlantReadWithPlanting:
-    # statement = select(Plant).where(Plant.id == plant_id)
-    db_plant = db.get(Plant, plant_id)
-    # results = db.exec(statement)
-    return db_plant # db.query(Plant).filter(Plant.id == plant_id).first()
+    statement = select(Plant).where(Plant.id == plant_id)
+    # db_plant = db.get(Plant, plant_id)
+    results = db.exec(statement)
+    return results # db_plant # db.query(Plant).filter(Plant.id == plant_id).first()
 
 
 def get_plants(db: Session) -> List[PlantReadWithPlanting]:
@@ -24,6 +24,7 @@ def get_plants(db: Session) -> List[PlantReadWithPlanting]:
 
 
 def create_plant(db: Session, _plant: PlantCreate | dict) -> PlantRead:
+    """Add a plant to the database if it does not currently exist."""
     if isinstance(_plant, PlantCreate) or isinstance(_plant, Plant):
         plant = Plant.from_orm(_plant)
     elif isinstance(_plant, dict):
@@ -39,6 +40,7 @@ def create_plant(db: Session, _plant: PlantCreate | dict) -> PlantRead:
 
 
 def create_plants(db:Session, plants: list) -> List[PlantRead]:
+    """Add a list of plants to the database"""
     for plant in plants:
         create_plant(db, plant)
     return get_plants(db)

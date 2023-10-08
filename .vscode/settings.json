@@ -1,15 +1,21 @@
 {
-  "cSpell.language": "en-GB",
-  "cSpell.words": [
-    "fastapi",
-    "jsonable",
-    "pipx",
-    "pydantic",
-    "sqlmodel",
-    "templating",
-    "uvicorn",
-    "venv"
+  "git.autofetch": true,
+  "cSpell.customDictionaries": {
+    "project-words": {
+      "name": "project-words",
+      "path": "${workspaceRoot}/.dictionaries/project-words.txt",
+      "description": "Words used in this project",
+      "addWords": true      
+    },
+    "custom": true,
+    "internal-terms": false
+  },
+  "cSpell.languageSettings": [
+    { "languageId": "markdown", "dictionaries": ["devTerms"] },
+    { "languageId": "python", "dictionaries": ["devTerms"] },
+    { "languageId": "plaintext", "dictionaries": ["devTerms"] }
   ],
+  "cSpell.language": "en-GB",
   "editor.cursorSmoothCaretAnimation": "on",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.detectIndentation": true,
