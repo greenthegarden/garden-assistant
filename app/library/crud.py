@@ -5,9 +5,10 @@ Based on https://fastapi.tiangolo.com/tutorial/sql-databases/
 
 # from sqlalchemy.orm import Session
 from sqlmodel import Session, select
+from typing import List
 
 from ..models.garden import Garden, GardenCreate
-from ..models.plant import Plant, PlantCreate
+from ..models.plant import Plant, PlantCreate, PlantRead
 
 
 # def get_garden(db: Session, garden_id: int):
@@ -44,23 +45,23 @@ from ..models.plant import Plant, PlantCreate
 #     return db_item
 
 
-def get_plant(db: Session, plant_id: int):
-    return db.query(Plant).filter(Plant.id == plant).first()
+def get_plant(db: Session, plant_id: int) -> PlantRead:
+    return db.query(Plant).filter(Plant.id == plant_id).first()
 
 
-
-
-def get_plants(db: Session):
+def get_plants(db: Session) -> List[PlantRead]:
     return db.query(Plant).all()
 
 
-
-def create_plant(db: Session, plant: PlantCreate):
+def create_plant(db: Session, plant: PlantCreate) -> PlantRead:
     db_plants = get_plants(db)
+    print(db_plants)
     if any(x.name_common == plant.name_common and x.variety == plant.variety \
            for x in db_plants):
-        raise Exception()
-    db_plant = PlantCreate(**plant.dict())
+        raise ValueError(f"Plant with name {plant.name_common} and \
+            variety {plant.variety} already exists."
+        )
+    db_plant = Plant.from_orm(plant)
     db.add(db_plant)
     db.commit()
     db.refresh(db_plant)

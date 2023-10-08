@@ -65,7 +65,7 @@ def create_plant(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Plant with name {plant.name_common} and \
-                variety {plant.variety} ready exists"
+                variety {plant.variety} already exists."
         )
     db_plant = Plant.from_orm(plant)
     session.add(db_plant)
@@ -132,7 +132,7 @@ def update_plant(
     if not db_plant:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"Plant with ID {plant_id} not found"
+            detail=f"Plant with ID {plant_id} not found."
         )
     plant_data = plant.dict(exclude_unset=True)
     for key, val in plant_data.items():

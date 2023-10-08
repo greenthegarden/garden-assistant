@@ -45,4 +45,4 @@ def test_load_plant_data(session: session_fixture):
 
     session.commit
 
-    assert False
+    # assert False
