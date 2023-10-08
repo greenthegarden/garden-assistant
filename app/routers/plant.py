@@ -15,6 +15,7 @@ from fastapi_pagination.ext.sqlmodel import paginate
 
 from ..database.session import get_session
 # from app.library.helpers import *
+from ..helpers.plant import create_plant as create_plant_helper
 from ..library.routers import TimedRoute
 from ..models.plant import Plant, PlantCreate, PlantRead, PlantUpdate
 from ..models.relationships import PlantReadWithPlanting
@@ -58,19 +59,26 @@ def create_plant(
     # if not user.gardener:
     #   response.status_code = status.HTTP_401_UNAUTHORIZED
     #   return {}
-    statement = select(Plant)
-    db_plants = session.exec(statement).all()
-    if any(x.name_common == plant.name_common and x.variety == plant.variety \
-           for x in db_plants):
+    db_plant = create_plant_helper(session, plant)
+    if db_plant is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Plant with name {plant.name_common} and \
                 variety {plant.variety} already exists."
         )
-    db_plant = Plant.from_orm(plant)
-    session.add(db_plant)
-    session.commit()
-    session.refresh(db_plant)
+    # statement = select(Plant)
+    # db_plants = session.exec(statement).all()
+    # if any(x.name_common == plant.name_common and x.variety == plant.variety \
+    #        for x in db_plants):
+    #     raise HTTPException(
+    #         status_code=status.HTTP_400_BAD_REQUEST,
+    #         detail=f"Plant with name {plant.name_common} and \
+    #             variety {plant.variety} already exists."
+    #     )
+    # db_plant = Plant.from_orm(plant)
+    # session.add(db_plant)
+    # session.commit()
+    # session.refresh(db_plant)
     return db_plant
 
 
@@ -102,6 +110,7 @@ def read_plant(
     plant_id: int
 ):
     """Get the plant with the given ID, or None if it does not exist."""
+
     db_plant = session.get(Plant, plant_id)
     if not db_plant:
         raise HTTPException(

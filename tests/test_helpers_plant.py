@@ -2,7 +2,7 @@ import pytest
 from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool
 
-from app.library.crud import create_plant, get_plants
+from app.helpers.plant import create_plant, get_plants, get_plant
 from app.models.plant import Plant
 
 # Based on
@@ -23,10 +23,6 @@ def session_fixture():
 
 
 # Garden Plant API tests
-
-# def test_get_plant(session: Session):
-
-
 
 def test_create_plant_from_plant(session: Session):
     plant = Plant(name_common="Test Plant", variety="Test Variety")
@@ -74,11 +70,25 @@ def test_get_plants_single(session: Session):
 
 def test_get_plants(session: Session):
     plant_1 = Plant(name_common="Test Plant 1", variety="Test Variety 1")
-    db_plant_1 = create_plant(session, plant_1)
+    create_plant(session, plant_1)
 
     plant_2 = Plant(name_common="Test Plant 2", variety="Test Variety 2")
-    db_plant_2 = create_plant(session, plant_2)
+    create_plant(session, plant_2)
 
     db_plants = get_plants(session)
 
     assert len(db_plants) == 2
+
+
+def test_get_plant(session: Session):
+    plant_1 = Plant(name_common="Test Plant 1", variety="Test Variety 1")
+    db_plant_created = create_plant(session, plant_1)
+
+    assert db_plant_created is not None
+
+    db_plant = get_plant(session, db_plant_created.id)
+
+    assert db_plant is not None
+    
+    assert db_plant.name_common == plant_1.name_common
+    assert db_plant.variety == plant_1.variety

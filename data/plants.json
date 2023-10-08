@@ -1,6 +1,6 @@
 [
-    {"name_common": "Beetroot"},
-    {"name_common": "Broad Bean"},
-    {"name_common": "Carrot"},
-    {"name_common": "Tomato"}
+    {"name_common": "Beetroot", "variety": "Test"},
+    {"name_common": "Broad Bean", "variety": "Test"},
+    {"name_common": "Carrot", "variety": "Test"},
+    {"name_common": "Tomato", "variety": "Test"}
 ]

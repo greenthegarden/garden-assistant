@@ -9,7 +9,7 @@ from app.database.session import get_session
 from app.main import app
 from app.models.plant import Plant
 from app.models.planting import Planting
-from app.library.crud import create_plant
+from app.helpers.plant import create_plant
 
 
 # Based on

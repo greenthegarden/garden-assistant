@@ -79,5 +79,5 @@ def on_startup():
     """
     print("Creating database and tables...")
     create_db_and_tables()
-    print(f"Populating tables...")
+    print("Populating tables...")
     populate_plants()
