@@ -48,8 +48,6 @@
     "mutantdino.resourcemonitor",
     "ms-edgedevtools.vscode-edge-devtools",
     "davidanson.vscode-markdownlint"
-
-
   ],
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
@@ -66,4 +64,3 @@
     "source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind,consistency=cached"
   ]
 }
-
