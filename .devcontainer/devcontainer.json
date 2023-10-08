@@ -44,7 +44,12 @@
     "oderwat.indent-rainbow",
     "ms-python.black-formatter",
     "ms-python.pylint",
-    "ms-azuretools.vscode-docker"
+    "ms-azuretools.vscode-docker",
+    "mutantdino.resourcemonitor",
+    "ms-edgedevtools.vscode-edge-devtools",
+    "davidanson.vscode-markdownlint"
+
+
   ],
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],

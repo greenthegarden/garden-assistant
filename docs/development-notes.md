@@ -72,7 +72,7 @@ To initialise use
 alembic init migrations
 ```
 
-Ensure import statements for `sqlmodel` ardded to both the `migrations/script.py.mako` and `migrations/env.py` files. In addition, ensure all models are imported into the `migrations/env.py` file
+Ensure import statements for `sqlmodel` added to both the `migrations/script.py.mako` and `migrations/env.py` files. In addition, ensure all models are imported into the `migrations/env.py` file
 
 Update sqlalchemy url in `alembic.ini` file
 
