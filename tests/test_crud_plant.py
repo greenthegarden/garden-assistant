@@ -28,14 +28,25 @@ def session_fixture():
 
 
 
-def test_create_plant(session: Session):
-    plant = Plant(name_common="Test Plant 2", variety="Test Variety")
+def test_create_plant_from_plant(session: Session):
+    plant = Plant(name_common="Test Plant", variety="Test Variety")
     db_plant = create_plant(session, plant)
 
     assert db_plant is not None
 
     assert db_plant.name_common == plant.name_common
     assert db_plant.variety == plant.variety
+    assert db_plant.hints is None
+
+
+def test_create_plant_from_dict(session: Session):
+    plant = {"name_common": "Test Plant", "variety": "Test Variety"}
+    db_plant = create_plant(session, plant)
+
+    assert db_plant is not None
+
+    assert db_plant.name_common == plant["name_common"]
+    assert db_plant.variety == plant["variety"]
     assert db_plant.hints is None
 
 
@@ -51,7 +62,7 @@ def test_create_plant_duplicate(session: Session):
 
 
 def test_get_plants_single(session: Session):
-    plant = Plant(name_common="Test Plant 1", variety="Test Variety")
+    plant = Plant(name_common="Test Plant", variety="Test Variety")
     db_plant = create_plant(session, plant)
 
     assert db_plant is not None

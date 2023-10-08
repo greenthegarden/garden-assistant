@@ -53,15 +53,17 @@ def get_plants(db: Session) -> List[PlantRead]:
     return db.query(Plant).all()
 
 
-def create_plant(db: Session, plant: PlantCreate) -> PlantRead:
+def create_plant(db: Session, plant: PlantCreate | dict) -> PlantRead:
     db_plants = get_plants(db)
-    print(db_plants)
     if any(x.name_common == plant.name_common and x.variety == plant.variety \
            for x in db_plants):
         raise ValueError(f"Plant with name {plant.name_common} and \
             variety {plant.variety} already exists."
         )
-    db_plant = Plant.from_orm(plant)
+    if isinstance(plant, Plant):
+        db_plant = Plant.from_orm(plant)
+    elif isinstance(plant, dict):
+        db_plant = Plant(**plant)
     db.add(db_plant)
     db.commit()
     db.refresh(db_plant)
