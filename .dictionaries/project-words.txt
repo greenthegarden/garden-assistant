@@ -1,7 +1,12 @@
 fastapi
 jsonable
+htmx
+hyperscript
+jinja
 pipx
 pydantic
+pylance
+sqlalchemy
 sqlmodel
 templating
 uvicorn
