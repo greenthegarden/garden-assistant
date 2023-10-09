@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+from icecream import ic
 from sqlmodel import Session
 
 from .database.database import engine, create_db_and_tables

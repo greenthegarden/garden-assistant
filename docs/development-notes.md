@@ -31,6 +31,24 @@ pipx install poetry
 
 ## Dependencies
 
+To add dependencies via poetry use
+
+```bash
+poetry add <dependency>
+```
+
+To add dependencies via poetry to docs and dev, respectively, use
+
+```bash
+poetry add mkdocs --group docs
+poetry add pytest --group dev
+```
+
+
+
+
+
+
 * [FastAPI](https://fastapi.tiangolo.com/) as the web framework
 * [SQLModel](https://sqlmodel.tiangolo.com/) as the SQL database abstraction layer
 * [Alembic](https://alembic.sqlalchemy.org/en/latest/) for database versioning and migration
