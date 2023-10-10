@@ -2,12 +2,13 @@ import logging
 import logging.config
 from functools import lru_cache
 
-from fastapi import APIRouter, Depends, FastAPI
+from fastapi import APIRouter, Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi_pagination import add_pagination
 
 from .config import AppConfig, config
 from .database.database import create_db_and_tables
+from .library.metrics import metrics_app, all_requests
 from .library.routers import TimedRoute
 from .routers.api_user import user_router
 from .routers.bed import bed_router
@@ -27,23 +28,6 @@ logging.config.fileConfig('logging.conf', disable_existing_loggers=False)
 logger = logging.getLogger(__name__)   
 
 
-# instantiate the FastAPI app
-app = FastAPI(title="Garden Assistant", debug=True)
-
-router = APIRouter(route_class=TimedRoute)
-
-app.include_router(garden_router)
-app.include_router(bed_router)
-app.include_router(planting_router)
-app.include_router(plant_router)
-app.include_router(user_router)
-app.include_router(pages_router)
-
-add_pagination(app)
-
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-
 @lru_cache()
 def get_config():
     """_summary_
@@ -53,6 +37,11 @@ def get_config():
     """
     return config
 
+
+# instantiate the FastAPI app
+app = FastAPI(title="Garden Assistant", debug=True)
+
+router = APIRouter(route_class=TimedRoute)
 
 @router.get("/info")
 async def info(_config: AppConfig = Depends(get_config)):
@@ -72,6 +61,26 @@ async def info(_config: AppConfig = Depends(get_config)):
     }
 
 app.include_router(router)
+
+app.include_router(garden_router)
+app.include_router(bed_router)
+app.include_router(planting_router)
+app.include_router(plant_router)
+app.include_router(user_router)
+app.include_router(pages_router)
+
+add_pagination(app)
+
+app.mount("/metrics", metrics_app)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+@app.middleware("tracing")
+def tracing(request: Request, call_next):
+    all_requests.inc()
+    response = call_next(request)
+    return response
+
 
 @app.on_event("startup")
 def on_startup():

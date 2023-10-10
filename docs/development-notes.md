@@ -44,16 +44,13 @@ poetry add mkdocs --group docs
 poetry add pytest --group dev
 ```
 
-
-
-
-
+The primary dependencies are the following:
 
 * [FastAPI](https://fastapi.tiangolo.com/) as the web framework
 * [SQLModel](https://sqlmodel.tiangolo.com/) as the SQL database abstraction layer
 * [Alembic](https://alembic.sqlalchemy.org/en/latest/) for database versioning and migration
 
-For poetry
+To install the dependencies via poetry, use
 
 ```sh
 poetry install

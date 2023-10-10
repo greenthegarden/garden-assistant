@@ -1,12 +1,8 @@
-# import external modules
-
 import logging
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select
-
-# import local modules
 
 from ..database.session import get_session
 from ..models.bed import Bed
