@@ -3,7 +3,7 @@
     <h1 class="text-x1 text-center font-bold">Gardens</h1>
     <button _="on htmx:afterRequest add .modal-open to #modal" hx-get="/garden/create" hx-select="#modal-box"
       hx-target="#modal" class="mx-auto md:ml-2 btn btn-primary btn-square border-none basis-14" value="New">
-      New
+      New Garden
     </button>
     <div class="divider w-1/2 mx-auto"></div>
     <script type="text/hyperscript">
@@ -46,6 +46,6 @@
     <div class="divider w-1/2 mx-auto"></div>
   </div>
   <div id="modal" class="modal">
-    {% include 'gardens/partials/modal_form.html' %}
+    {% include 'gardens/partials/modal_form.jinja2' %}
   </div>
 {% endblock content %}

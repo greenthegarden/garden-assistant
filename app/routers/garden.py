@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request, Res
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
+from fastapi_htmx import htmx
 from sqlmodel import Session, select
 
 from app.database.session import get_session
@@ -22,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 garden_router = APIRouter(route_class=TimedRoute)
-templates = Jinja2Templates(directory="templates")
+# templates = Jinja2Templates(directory="templates")
 
 
 # CRUD API methods for Garden
@@ -172,13 +173,11 @@ def delete_garden(
     response_class=HTMLResponse,
     tags=["Pages API"]
 )
+@htmx("gardens/gardens", "gardens/gardens")
 def gardens(request: Request):
     """Send content for gardens page."""
     context = {"request": request}
-    return templates.TemplateResponse(
-        "gardens/gardens.html",
-        context
-    )
+    return context
 
 
 @garden_router.get(
@@ -186,6 +185,7 @@ def gardens(request: Request):
     response_class=HTMLResponse,
     tags=["Pages API"]
 )
+@htmx("gardens/partials/gardens_table_body", "gardens/gardens")
 def gardens_update(
     request: Request,
     session: Session = Depends(get_session)
@@ -194,10 +194,7 @@ def gardens_update(
     statement = select(Garden)
     db_gardens = session.exec(statement).all()
     context = {"request": request, "gardens": db_gardens }
-    return templates.TemplateResponse(
-        "gardens/partials/gardens_table_body.html",
-        context
-    )
+    return context
 
 
 @garden_router.get(
@@ -205,6 +202,7 @@ def gardens_update(
     response_class=HTMLResponse,
     tags=["Pages API"]
 )
+@htmx("gardens/partials/modal_form", "gardens/gardens")
 def garden_create_form(request: Request):
     """Send modal form to create a garden bed"""
     types = GardenType.list()
@@ -214,10 +212,7 @@ def garden_create_form(request: Request):
         "types": types,
         "zones": zones
     }
-    return templates.TemplateResponse(
-        "gardens/partials/modal_form.html",
-        context
-    )
+    return context
 
 
 @garden_router.post(
