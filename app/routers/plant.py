@@ -8,19 +8,16 @@ from fastapi_pagination import Page, paginate
 from fastapi_pagination import LimitOffsetPage, Page
 from fastapi_pagination.ext.sqlmodel import paginate
 from fastapi_htmx import htmx
-from jinja2 import Template
 from sqlmodel import Session, select
 
 
+from .api_user import auth_handler
 from ..database.session import get_session
-# from app.library.helpers import *
 from ..helpers.plant import create_plant as create_plant_helper
 from ..library.routers import TimedRoute
 from ..models.plant import Plant, PlantCreate, PlantRead, PlantUpdate
 from ..models.relationships import PlantReadWithPlanting
 from ..models.user import User
-from .api_user import auth_handler
-# from .pages import templates
 
 
 logger = logging.getLogger(__name__)

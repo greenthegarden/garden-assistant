@@ -5,11 +5,10 @@ from fastapi import (APIRouter, Depends, HTTPException, Query, Request,
                      Response, status)
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import HTMLResponse, JSONResponse
-from fastapi.templating import Jinja2Templates
+from fastapi_htmx import htmx
 from sqlmodel import Session, select
 
 from ..database.session import get_session
-# from ..library.helpers import *
 from ..library.routers import TimedRoute
 from ..models.bed import Bed, BedCreate, BedRead, BedUpdate
 from ..models.bed import IrrigationZone, SoilType
@@ -20,7 +19,6 @@ logger = logging.getLogger(__name__)
 
 
 bed_router = APIRouter(route_class=TimedRoute)
-templates = Jinja2Templates(directory="templates")
 
 
 # CRUD API methods for Garden Beds
@@ -196,10 +194,11 @@ def read_irrigation_zones():
     response_class=HTMLResponse,
     tags=["Pages API"]
 )
+@htmx("beds/beds.html", "beds/beds.html")
 def beds(request: Request):
     """Send content for beds page."""
     context = {"request": request}
-    return templates.TemplateResponse("beds/beds.html", context)
+    return context
 
 
 @bed_router.get(
@@ -207,6 +206,7 @@ def beds(request: Request):
     response_class=HTMLResponse,
     tags=["Pages API"]
 )
+@htmx("beds/partials/beds_table_body.html", "beds/beds.html")
 def beds_update(
     request: Request,
     session: Session = Depends(get_session)
@@ -218,10 +218,7 @@ def beds_update(
         "request": request,
         "beds": db_beds
     }
-    return templates.TemplateResponse(
-        "beds/partials/beds_table_body.html",
-        context
-    )
+    return context
 
 
 @bed_router.get(
@@ -229,6 +226,7 @@ def beds_update(
     response_class=HTMLResponse,
     tags=["Pages API"]
 )
+@htmx("beds/partials/modal_form.html", "beds/beds.html")
 def bed_create_form(
     request: Request,
     session: Session = Depends(get_session)
@@ -244,10 +242,7 @@ def bed_create_form(
         "irrigation_zones": irrigation_zones,
         "soil_types": soil_types,
     }
-    return templates.TemplateResponse(
-        "beds/partials/modal_form.html",
-        context
-    )
+    return context
 
 
 @bed_router.post(
@@ -277,6 +272,7 @@ def bed_create(
     response_class=HTMLResponse,
     tags=["Pages API"]
 )
+@htmx("beds/partials/modal_form.html", "beds/beds.html")
 def bed_edit_form(
     *,
     request: Request,
@@ -301,10 +297,7 @@ def bed_edit_form(
         "irrigation_zones": irrigation_zones,
         "soil_types": soil_types,
     }
-    return templates.TemplateResponse(
-        "beds/partials/modal_form.html",
-        context
-    )
+    return context
 
 
 @bed_router.post(

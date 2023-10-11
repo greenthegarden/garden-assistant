@@ -4,25 +4,23 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import HTMLResponse, JSONResponse
-from fastapi.templating import Jinja2Templates
+from fastapi_htmx import htmx
 from sqlmodel import Session, select
 
 
+from .api_user import auth_handler
 from ..database.session import get_session
-# from ..library.helpers import *
 from ..library.routers import TimedRoute
 from ..models.bed import Bed
 from ..models.planting import Planting, PlantingCreate, PlantingRead, PlantingUpdate
 from ..models.relationships import PlantingReadWithBed
 from ..models.user import User
-from .api_user import auth_handler
 
 
 logger = logging.getLogger(__name__)
 
 
 planting_router = APIRouter(route_class=TimedRoute)
-templates = Jinja2Templates(directory="templates")
 
 
 # CRUD API methods for Garden Plantings
@@ -150,13 +148,11 @@ def delete_planting(
         response_class=HTMLResponse,
         tags=["Pages API"]
 )
+@htmx("plantings/plantings.html", "plantings/plantings.html")
 def plantings(request: Request):
     """Send content for plantings page."""
     context = {"request": request}
-    return templates.TemplateResponse(
-        "plantings/plantings.html",
-        context
-    )
+    return context
 
 
 @planting_router.get(
@@ -164,6 +160,7 @@ def plantings(request: Request):
         response_class=HTMLResponse,
         tags=["Pages API"]
 )
+@htmx("plantings/partials/plantings_table_body.html", "plantings/plantings.html")
 def plantings_update(
     request: Request,
     session: Session = Depends(get_session)
@@ -175,10 +172,7 @@ def plantings_update(
         "request": request,
         "plantings": db_plantings
     }
-    return templates.TemplateResponse(
-        "plantings/partials/plantings_table_body.html",
-        context
-    )
+    return context
 
 
 @planting_router.get(
@@ -186,6 +180,7 @@ def plantings_update(
         response_class=HTMLResponse,
         tags=["Pages API"]
 )
+@htmx("plantings/partials/modal_form.html", "plantings/plantings.html")
 def planting_create_form(
     request: Request,
     session: Session = Depends(get_session)
@@ -197,10 +192,7 @@ def planting_create_form(
         "request": request,
         "beds": db_beds
     }
-    return templates.TemplateResponse(
-        "plantings/partials/modal_form.html",
-        context
-    )
+    return context
 
 
 @planting_router.post(
@@ -227,6 +219,7 @@ def planting_create(
         response_class=HTMLResponse,
         tags=["Pages API"]
 )
+@htmx("plantings/partials/modal_form.html", "plantings/plantings.html")
 def planting_edit_form(
     *,
     request: Request,
@@ -247,10 +240,7 @@ def planting_edit_form(
         "planting": db_planting,
         "beds": db_beds
     }
-    return templates.TemplateResponse(
-        'plantings/partials/modal_form.html',
-        context
-    )
+    return context
 
 
 # @planting_router.post("/planting/edit/{planting_id}", response_class=JSONResponse, tags=["Pages API"])
@@ -297,6 +287,6 @@ async def planting_edit(
     session.add(db_planting)
     session.commit()
     session.refresh(db_planting)
-    content = {"planting": jsonable_encoder(db_planting)}
+    content = jsonable_encoder(db_planting)
     headers = {"HX-Trigger": "plantingsChanged"}
     return JSONResponse(content=content, headers=headers)
