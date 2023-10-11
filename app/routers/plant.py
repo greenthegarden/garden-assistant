@@ -192,7 +192,7 @@ def delete_plant(
         response_class=HTMLResponse,
         tags=["Plant API"]
 )
-@htmx("plants/plants", "plants/plants")
+@htmx("plants/plants.html", "plants/plants.html")
 def plants(request: Request):
     """Send content for plants page."""
     context = {"request": request}
@@ -204,7 +204,7 @@ def plants(request: Request):
         response_class=HTMLResponse,
         tags=["Plant API"]
 )
-@htmx("plants/partials/plants_table_body", "plants/plants")
+@htmx("plants/partials/plants_table_body.html", "plants/plants.html")
 def plants_update(
     request: Request,
     session: Session = Depends(get_session)
@@ -221,7 +221,7 @@ def plants_update(
         response_class=HTMLResponse,
         tags=["Plant API"]
 )
-@htmx("plants/partials/modal_form", "plants/plants")
+@htmx("plants/partials/modal_form.html", "plants/plants.html")
 def plant_create_form(request: Request):
     """Send modal form to create a plant bed"""
     context = {"request": request }
@@ -255,7 +255,7 @@ async def plant_create(
         response_class=HTMLResponse,
         tags=["Plant API"]
 )
-@htmx("plants/partials/modal_form", "plants/plants")
+@htmx("plants/partials/modal_form.html", "plants/plants.html")
 def plant_edit_form(
     request: Request,
     plant_id: int,

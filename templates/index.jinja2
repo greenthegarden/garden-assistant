@@ -2,10 +2,10 @@
 
 {% block content %}
   {% if not garden_exists %}
-    {% include 'gardens/partials/gardens.html' %}
+    {% include 'gardens/partials/gardens.html.jinja2' %}
   {% elif not bed_exists %}
-    {% include 'beds/partials/beds.html' %}
+    {% include 'beds/partials/beds.html.jinja2' %}
   {% else %}
-    {% include 'plantings/partials/plantings.html' %}
+    {% include 'plantings/partials/plantings.html.jinja2' %}
   {% endif %}
 {% endblock content %}

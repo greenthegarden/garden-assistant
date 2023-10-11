@@ -4,19 +4,17 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import HTMLResponse, JSONResponse
-from fastapi.templating import Jinja2Templates
 from fastapi_htmx import htmx
 from sqlmodel import Session, select
 
 from app.database.session import get_session
-# from app.library.helpers import *
+from .api_user import auth_handler
 from ..library.routers import TimedRoute
 from ..models.bed import Bed
 from ..models.garden import ClimaticZone, GardenType
 from ..models.garden import Garden, GardenCreate, GardenRead, GardenUpdate
 from ..models.relationships import GardenReadWithBeds
 from ..models.user import User
-from .api_user import auth_handler
 
 
 logger = logging.getLogger(__name__)
@@ -173,7 +171,7 @@ def delete_garden(
     response_class=HTMLResponse,
     tags=["Pages API"]
 )
-@htmx("gardens/gardens", "gardens/gardens")
+@htmx("gardens/gardens.html", "gardens/gardens.html")
 def gardens(request: Request):
     """Send content for gardens page."""
     context = {"request": request}
@@ -185,7 +183,7 @@ def gardens(request: Request):
     response_class=HTMLResponse,
     tags=["Pages API"]
 )
-@htmx("gardens/partials/gardens_table_body", "gardens/gardens")
+@htmx("gardens/partials/gardens_table_body.html", "gardens/gardens.html")
 def gardens_update(
     request: Request,
     session: Session = Depends(get_session)
@@ -202,7 +200,7 @@ def gardens_update(
     response_class=HTMLResponse,
     tags=["Pages API"]
 )
-@htmx("gardens/partials/modal_form", "gardens/gardens")
+@htmx("gardens/partials/modal_form.html", "gardens/gardens.html")
 def garden_create_form(request: Request):
     """Send modal form to create a garden bed"""
     types = GardenType.list()
@@ -242,6 +240,7 @@ async def garden_create(
     response_class=HTMLResponse,
     tags=["Pages API"]
 )
+@htmx("gardens/partials/modal_form.html", "gardens/gardens.html")
 def garden_edit_form(
     request: Request,
     garden_id: int,
@@ -262,10 +261,7 @@ def garden_edit_form(
         "types": types,
         "zones": zones
     }
-    return templates.TemplateResponse(
-        'gardens/partials/modal_form.html',
-        context
-    )
+    return context
 
 
 @garden_router.post(
