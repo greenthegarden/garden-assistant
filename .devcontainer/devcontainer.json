@@ -14,50 +14,109 @@
       "POETRY_VERSION": "1.1.13"
     }
   },
-  // Set *default* container specific settings.json values on container create.
-  "settings": {
-    "python.defaultInterpreterPath": "/usr/local/bin/python",
-    "python.linting.enabled": true,
-    "python.linting.pylintEnabled": true,
-    "python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
-    "python.formatting.blackPath": "/usr/local/py-utils/bin/black",
-    "python.formatting.yapfPath": "/usr/local/py-utils/bin/yapf",
-    "python.linting.banditPath": "/usr/local/py-utils/bin/bandit",
-    "python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
-    "python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
-    "python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
-    "python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
-    "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint"
-  },
-  // Add the IDs of extensions you want installed when the container is created.
-  "extensions": [
-    "njpwerner.autodocstring",
-    "streetsidesoftware.code-spell-checker",
-    "ms-python.isort",
-    "charliermarsh.ruff",
-    "ms-python.vscode-pylance",
-    "aaron-bond.better-comments",
-    "ms-python.python",
-    "ms-python.mypy-type-checker",
-    "visualstudioexptteam.vscodeintellicode",
-    "usernamehw.errorlens",
-    "oderwat.indent-rainbow",
-    "ms-python.black-formatter",
-    "ms-python.pylint",
-    "ms-azuretools.vscode-docker",
-    "mutantdino.resourcemonitor",
-    "ms-edgedevtools.vscode-edge-devtools",
-    "davidanson.vscode-markdownlint"
-  ],
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
   // Install project dependencies
-  // "postCreateCommand": "poetry install",
   "postCreateCommand": "bash ./.devcontainer/post-install.sh",
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   //   "remoteUser": "philip",
   "features": {
-    "github-cli": "latest"
+    "github-cli": "latest",
+    // "ghcr.io/devcontainers/features/python:1": {
+    //   "version": "3.10"
+    // }
+  },
+  "customizations": {
+    "vscode": {
+      // Set *default* container specific settings.json values on container create.
+      "settings": {
+        "cSpell.customDictionaries": {
+          "project-words": {
+            "name": "project-words",
+            "path": "${workspaceRoot}/.dictionaries/project-words.txt",
+            "description": "Words used in this project",
+            "addWords": true
+          },
+          "custom": true,
+          "internal-terms": false
+        },
+        "cSpell.languageSettings": [
+          { "languageId": "markdown", "dictionaries": ["devTerms"] },
+          { "languageId": "python", "dictionaries": ["devTerms"] },
+          { "languageId": "plaintext", "dictionaries": ["devTerms"] }
+        ],
+        "cSpell.language": "en-GB",
+        "editor.cursorSmoothCaretAnimation": "on",
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.detectIndentation": true,
+        "editor.formatOnSave": false,
+        "editor.minimap.autohide": true,
+        "editor.minimap.renderCharacters": false,
+        "editor.rulers": [88, 120],
+        "editor.tabSize": 4,
+        "files.autoSave": "afterDelay",
+        "files.autoSaveDelay": 1000,
+        "git.autofetch": true,
+        "python.defaultInterpreterPath": "${workspaceRoot}/.venv/bin/python",
+        "ruff.organizeImports": false,
+        "workbench.tree.indent": 20,
+        "[python]": {
+          "analysis.diagnosticMode": "workspace",
+          "analysis.typeCheckingMode": "basic",
+          "editor.codeActionsOnSave": {
+            "source.fixAll.ruff": true,
+            "source.organizeImports": true
+          },
+          "editor.defaultFormatter": "ms-python.black-formatter"
+        },
+        "[javascript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[html]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[typescript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[javascriptreact]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[typescriptreact]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "files.associations": {
+          "*.jinja2": "html"
+        },
+        "files.exclude": {
+          "**/__pycache__": true
+        },
+        "files.watcherExclude": {
+          "**/target/**": true,
+          "**/__pycache__": true
+        }
+      },
+      // Add the IDs of extensions you want installed when the container is created.
+      "extensions": [
+        "njpwerner.autodocstring",
+        "streetsidesoftware.code-spell-checker",
+        "ms-python.isort",
+        "charliermarsh.ruff",
+        "ms-python.vscode-pylance",
+        "aaron-bond.better-comments",
+        "ms-python.python",
+        "ms-python.mypy-type-checker",
+        "visualstudioexptteam.vscodeintellicode",
+        "usernamehw.errorlens",
+        "oderwat.indent-rainbow",
+        "ms-python.black-formatter",
+        "ms-python.pylint",
+        "ms-azuretools.vscode-docker",
+        "mutantdino.resourcemonitor",
+        "ms-edgedevtools.vscode-edge-devtools",
+        "davidanson.vscode-markdownlint",
+        "esbenp.prettier-vscode"
+      ]
+    }
   },
   "mounts": [
     // Re-use local Git configuration

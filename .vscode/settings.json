@@ -1,11 +1,10 @@
 {
-  "git.autofetch": true,
   "cSpell.customDictionaries": {
     "project-words": {
       "name": "project-words",
       "path": "${workspaceRoot}/.dictionaries/project-words.txt",
       "description": "Words used in this project",
-      "addWords": true      
+      "addWords": true
     },
     "custom": true,
     "internal-terms": false
@@ -26,6 +25,7 @@
   "editor.tabSize": 4,
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 1000,
+  "git.autofetch": true,
   "workbench.tree.indent": 20,
   "[python]": {
     "editor.codeActionsOnSave": {
@@ -33,5 +33,8 @@
       "source.organizeImports": true
     },
     "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "files.associations": {
+    "*.jinja2": "html"
   }
 }

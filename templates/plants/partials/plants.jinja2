@@ -1,0 +1,40 @@
+{% block content %}
+<!-- Use daisyUI card class -->
+<div id="content-plants" class="card items-center" style="min-height: 24rem">
+  <h1 class="text-x1 text-center font-bold">Garden Plants</h1>
+  <!-- Use daisyUI divider class -->
+  <div class="divider w-1/2 mx-auto"></div>
+  <div id="button_plant_new">
+    <!-- Use daisyUI button class -->
+    <button class="btn btn-primary" onclick="modal_plant.showModal()"
+      hx-get="/plant/create"
+    >
+      New Plant
+    </button>
+  </div>
+  <div id="table_plants" class="flex flex-row w-screen">
+    <!-- Use daisyUI table class -->
+    <table class="table table-zebra w-full">
+      <thead>
+        <tr>
+          <th>Common Name</th>
+          <th>Variety</th>
+        </tr>
+      </thead>
+      <tbody
+        id="table_body_plants"
+        hx-trigger="load, plantsChanged from:body"
+        hx-get="/plants/update"
+        hx-target="this"
+      ></tbody>
+    </table>
+  </div>
+  <!-- Use daisyUI divider class -->
+  <div class="divider w-1/2 mx-auto"></div>
+</div>
+<!-- Modal form -->
+<!-- Use daisyUI modal class -->
+<dialog id="modal_plant" class="modal">
+  {% include 'plants/partials/modal_form.jinja2' %}
+</dialog>
+{% endblock content %}

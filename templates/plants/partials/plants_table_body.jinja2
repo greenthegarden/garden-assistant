@@ -1,0 +1,12 @@
+{% if not plants %}
+<tr>
+  <td class="text-center italic text-lg text-gray-600">Nothing to see here</td>
+</tr>
+{% else %}
+{% for plant in plants %}
+<tr class="h-auto">
+  <td>{{ plant.name_common }}</td>
+  <td>{{ plant.variety }}</td>
+</tr>
+{% endfor %}
+{% endif %}

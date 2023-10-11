@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi_pagination import add_pagination
 
+
 from .config import AppConfig, config
 from .database.database import create_db_and_tables
 from .library.metrics import metrics_app, all_requests
@@ -17,6 +18,7 @@ from .routers.pages import pages_router
 from .routers.plant import plant_router
 from .routers.planting import planting_router
 from .populate import populate_plants
+
 
 # Logging setup based on https://philstories.medium.com/fastapi-logging-f6237b84ea64
 # setup loggers

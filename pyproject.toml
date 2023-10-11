@@ -26,6 +26,7 @@ types-passlib = "^1.7.7.13"
 uvicorn = "^0.23.2"
 pendulum = "^2.1.2"
 prometheus-client = "^0.17.1"
+fastapi-htmx = "^0.2.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.9.0"

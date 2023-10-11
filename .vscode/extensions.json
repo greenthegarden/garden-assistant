@@ -1,21 +1,22 @@
 {
-    "recommendations": [
-        "njpwerner.autodocstring",
-        "streetsidesoftware.code-spell-checker",
-        "ms-python.isort",
-        "charliermarsh.ruff",
-        "ms-python.vscode-pylance",
-        "aaron-bond.better-comments",
-        "ms-python.python",
-        "ms-python.mypy-type-checker",
-        "visualstudioexptteam.vscodeintellicode",
-        "usernamehw.errorlens",
-        "oderwat.indent-rainbow",
-        "ms-python.black-formatter",
-        "ms-python.pylint",
-        "ms-azuretools.vscode-docker",
-        "mutantdino.resourcemonitor",
-        "ms-edgedevtools.vscode-edge-devtools",
-        "davidanson.vscode-markdownlint"
-    ]
+  "recommendations": [
+    "njpwerner.autodocstring",
+    "streetsidesoftware.code-spell-checker",
+    "ms-python.isort",
+    "charliermarsh.ruff",
+    "ms-python.vscode-pylance",
+    "aaron-bond.better-comments",
+    "ms-python.python",
+    "ms-python.mypy-type-checker",
+    "visualstudioexptteam.vscodeintellicode",
+    "usernamehw.errorlens",
+    "oderwat.indent-rainbow",
+    "ms-python.black-formatter",
+    "ms-python.pylint",
+    "ms-azuretools.vscode-docker",
+    "mutantdino.resourcemonitor",
+    "ms-edgedevtools.vscode-edge-devtools",
+    "davidanson.vscode-markdownlint",
+    "esbenp.prettier-vscode"
+  ]
 }

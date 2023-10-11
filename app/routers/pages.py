@@ -1,7 +1,9 @@
 import logging
+
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi_htmx import htmx, htmx_init
 from sqlmodel import Session, select
 
 from ..database.session import get_session
@@ -15,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 # pages_router = APIRouter(route_class=TimedRoute)
 pages_router = APIRouter()
-templates = Jinja2Templates(directory="templates")
+htmx_init(templates = Jinja2Templates(directory="templates"))
 
 
 @pages_router.get(
@@ -23,6 +25,7 @@ templates = Jinja2Templates(directory="templates")
         response_class=HTMLResponse,
         tags=["Pages API"]
 )
+@htmx("index", "index")
 def index(
     request: Request,
     session: Session = Depends(get_session)
@@ -48,4 +51,4 @@ def index(
         "bed_exists": bed_exists,
         "planting_exists": planting_exists
     }
-    return templates.TemplateResponse("index.html", context)
+    return context

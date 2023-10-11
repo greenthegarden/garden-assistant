@@ -1,0 +1,27 @@
+<!-- Use daisyUI modal-box class -->
+<div class="modal-box" hx-target="this" hx-swap="outerHTML">
+  <!-- Use daisyUI button class -->
+  <form method="dialog">
+    <button class="btn btn-sm btn-circle absolute right-2 top-2">✕</button>
+  </form>
+  <h3 class="font-bold text-lg">Plant</h3>
+  {% if not plant %}
+  <p>Enter the details of the plant</p>
+  <form hx-post="/plant/create" _="on submit toggle @disabled on #button_submit_plant">
+  {% else %}
+  <p>Edit the details of the plant {{ plant.name_common }}</p>
+  <form hx-post="/plant/edit/{{plant.id}}" _="on submit toggle @disabled on #button_submit_plant">
+  {% endif %}
+    <div>
+      <label for="name_common">Common Name</label>
+      <input type="text" name="name_common" placeholder="Common Name" required>
+    </div>
+    <div">
+      <label for="variety">Variety</label>
+      <input type="text" name="variety" placeholder="Variety" required>
+    </div>
+    <button id="button_submit_plant" class="btn btn-primary" type="submit">
+      Submit
+    </button>
+  </form>
+</div>

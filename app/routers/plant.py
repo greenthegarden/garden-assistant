@@ -1,16 +1,15 @@
 import logging
+from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi_pagination import Page, paginate
-from jinja2 import Template
-from sqlmodel import Session, select
-from typing import List
-
-
 from fastapi_pagination import LimitOffsetPage, Page
 from fastapi_pagination.ext.sqlmodel import paginate
+from fastapi_htmx import htmx
+from jinja2 import Template
+from sqlmodel import Session, select
 
 
 from ..database.session import get_session
@@ -21,7 +20,7 @@ from ..models.plant import Plant, PlantCreate, PlantRead, PlantUpdate
 from ..models.relationships import PlantReadWithPlanting
 from ..models.user import User
 from .api_user import auth_handler
-from .pages import templates
+# from .pages import templates
 
 
 logger = logging.getLogger(__name__)
@@ -196,13 +195,11 @@ def delete_plant(
         response_class=HTMLResponse,
         tags=["Plant API"]
 )
+@htmx("plants/plants", "plants/plants")
 def plants(request: Request):
     """Send content for plants page."""
     context = {"request": request}
-    return templates.TemplateResponse(
-        "plants/plants.html",
-        context
-    )
+    return context
 
 
 @plant_router.get(
@@ -210,6 +207,7 @@ def plants(request: Request):
         response_class=HTMLResponse,
         tags=["Plant API"]
 )
+@htmx("plants/partials/plants_table_body", "plants/plants")
 def plants_update(
     request: Request,
     session: Session = Depends(get_session)
@@ -218,10 +216,7 @@ def plants_update(
     statement = select(Plant)
     db_plants = session.exec(statement).all()
     context = {"request": request, "plants": db_plants}
-    return templates.TemplateResponse(
-        'plants/partials/plants_table_body.html',
-        context
-    )
+    return context
 
 
 @plant_router.get(
@@ -229,13 +224,11 @@ def plants_update(
         response_class=HTMLResponse,
         tags=["Plant API"]
 )
+@htmx("plants/partials/modal_form", "plants/plants")
 def plant_create_form(request: Request):
     """Send modal form to create a plant bed"""
     context = {"request": request }
-    return templates.TemplateResponse(
-        'plants/partials/modal_form.html',
-        context
-    )
+    return context
 
 
 @plant_router.post(
@@ -262,8 +255,10 @@ async def plant_create(
 
 @plant_router.get(
         "/plant/edit/{plant_id}",
-        response_class=HTMLResponse, tags=["Plant API"]
+        response_class=HTMLResponse,
+        tags=["Plant API"]
 )
+@htmx("plants/partials/modal_form", "plants/plants")
 def plant_edit_form(
     request: Request,
     plant_id: int,
@@ -277,10 +272,7 @@ def plant_edit_form(
             detail='plant not found'
         )
     context = {"request": request, "plant": db_plant}
-    return templates.TemplateResponse(
-        'plants/partials/modal_form.html',
-        context
-    )
+    return context
 
 
 @plant_router.post(

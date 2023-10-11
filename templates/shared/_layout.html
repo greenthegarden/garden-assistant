@@ -9,33 +9,22 @@
 
   <title>{% block title %}Garden Assistant{% endblock %}</title>
 
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@2.50.1/dist/full.css" rel="stylesheet" type="text/css" />
-  <script src="https://unpkg.com/htmx.org@1.8.5"></script>
-  <script src="https://unpkg.com/hyperscript.org@0.9.7"></script>
+  <!-- Configure to utilise daisyUI -->
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.2/dist/full.css" rel="stylesheet" type="text/css" />
+  <!-- <link href="https://cdn.jsdelivr.net/npm/daisyui@2.50.1/dist/full.css" rel="stylesheet" type="text/css" /> -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  {% block additional_css %}{% endblock %}
+  <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+  <script src="https://unpkg.com/hyperscript.org@0.9.7"></script>
+
+  <!-- {% block additional_css %}{% endblock %} -->
 </head>
 <body>
-  <div class="flex-row flex-grow">
-    {% include "shared/navbar.html" %}
 
-    <div class="content pb-28">
-      {% block content %}
-      {% endblock %}
-    </div>
-
-    {% include "shared/footer.html" %}
+  <div class="content">
+    {% block content %}
+    {% endblock %}
   </div>
-
-  <!-- <script>
-    document.body.addEventListener('htmx:configRequest', (event) => {
-      event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
-    })
-  </script> -->
-
-  {% block additional_js %}
-  {% endblock %}
 
 </body>
 </html>
