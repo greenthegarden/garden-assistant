@@ -114,7 +114,8 @@
         "mutantdino.resourcemonitor",
         "ms-edgedevtools.vscode-edge-devtools",
         "davidanson.vscode-markdownlint",
-        "esbenp.prettier-vscode"
+        "esbenp.prettier-vscode",
+        "wholroyd.jinja"
       ]
     }
   },

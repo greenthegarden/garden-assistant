@@ -25,7 +25,7 @@ htmx_init(templates = Jinja2Templates(directory="templates"))
         response_class=HTMLResponse,
         tags=["Pages API"]
 )
-@htmx("index", "index")
+@htmx("index.html", "index.html")
 def index(
     request: Request,
     session: Session = Depends(get_session)
